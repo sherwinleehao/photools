@@ -1,0 +1,22 @@
+#frame1{background-color:rgb(0,255,0)}
+#frame1:hover{background-color:rgb(0,255,235)}
+#frame2{background-color:rgb(0,255,0);border-radius:15px;}
+
+QPushButton{border-radius:50px;width:100px;height:100px;opacity:10;font-family: "Lato";font-size: 24px}
+QPushButton:hover{}
+QPushButton:pressed{}
+
+
+#pageUpButton{image:url(./GUI/left-circle-n.png)}
+#pageUpButton:hover  {image:url(./GUI/left-circle-h.png)}
+#pageUpButton:pressed{image:url(./GUI/left-circle-p.png)}
+
+
+#pageDownButton{image:url(./GUI/right-circle-n.png)}
+#pageDownButton:hover  {image:url(./GUI/right-circle-h.png)}
+#pageDownButton:pressed{image:url(./GUI/right-circle-p.png)}
+
+#canvas{background-color:black;}
+
+//#TestButton{background-color:rgb(0,255,0)}
+//#TestButton:hover{background-color:rgb(233,255,0)}
