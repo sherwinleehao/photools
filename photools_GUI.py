@@ -1,3 +1,14 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+"""
+Image Tool Library
+
+Author: Sherwin Lee
+Website: Sherwinleehao.com
+Last edited: 20180813
+"""
+
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
