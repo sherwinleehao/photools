@@ -6,7 +6,7 @@ Image Tool Library
 
 Author: Sherwin Lee
 Website: Sherwinleehao.com
-Last edited: 20180806
+Last edited: 20180812
 """
 
 import os
@@ -116,7 +116,6 @@ def getAllImgs(path):
             if "image" in str(kind.mime):
                 imgs.append(file)
     return imgs
-
 
 def getAllFiles(path):
     tempfiles = []
