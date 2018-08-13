@@ -16,6 +16,7 @@ from PyQt5.QtGui import *
 import cv2
 import numpy as np
 import time
+import sip
 from photools import *
 
 
@@ -40,6 +41,11 @@ class Example(QWidget):
 
         self.thumbContainer = QLabel("", self)
         self.thumbContainer.setObjectName("thumbContainer")
+        self.tchbox = QHBoxLayout()
+        self.thumbContainer.setLayout(self.tchbox)
+
+
+
 
         pageUpButton = QPushButton()
         pageDownButton = QPushButton()
@@ -74,7 +80,7 @@ class Example(QWidget):
         self.mouseOldPosX = 0
         self.mouseOldPosY = 0
         self.mouseDown = 0
-        self.thumbCount = 0
+        self.thumbCount = int(0)
 
     def getResizeQpixmap(self, IMG):
         st = time.time()
@@ -128,6 +134,7 @@ class Example(QWidget):
         pixmap = self.getResizeQpixmap(self.IMG)
         self.canvas.setPixmap(pixmap)
         self.moveThumbContainer(win_w,win_h)
+        self.createThumbs()
 
     def next_Img(self):
         self.change_Img(1)
@@ -147,12 +154,10 @@ class Example(QWidget):
             tempID = tempID - len(self.IMGPaths)
         elif tempID < 0:
             tempID = tempID + len(self.IMGPaths)
-        print(tempID)
         self.IMGPath = self.IMGPaths[tempID]
         self.IMG = cv2.imread(self.IMGPath)
         pixmap = self.getResizeQpixmap(self.IMG)
         self.canvas.setPixmap(pixmap)
-        print(self.IMGPath)
 
     def mousePressEvent(self, e):
         self.mouseOldPosX = e.globalX()
@@ -187,8 +192,35 @@ class Example(QWidget):
         width = maxThumbCount *85
         posX = int((win_w-width)*0.5)
         posY = win_h-height-10
-
+        self.thumbCount = int(maxThumbCount)
         self.thumbContainer.setGeometry(posX,posY,width,height)
+
+
+    def createThumbs(self):
+        self.clearLayoutItems(self.tchbox)
+        print("Count of widgets:", self.tchbox.count())
+
+        for i in range(self.thumbCount):
+            ThumbnailButton = QPushButton(str(i))
+            ThumbnailButton.setObjectName("ThumbnailButton")
+            self.tchbox.addStretch(1)
+            self.tchbox.addWidget(ThumbnailButton)
+        pass
+        self.tchbox.addStretch(1)
+        print("Count of widgets:", self.tchbox.count())
+
+    def clearLayoutItems(self,layout):
+        print("Clear Layout :",layout)
+        while layout.count() >0:
+            item = layout.takeAt(0)
+            if not item:
+                continue
+            w = item.widget()
+            if w:
+                w.deleteLater()
+
+
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
