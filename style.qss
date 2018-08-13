@@ -20,5 +20,5 @@ QPushButton:pressed{}
 
 #thumbContainer{background-color:rgba(255,255,255,128);border-radius:10px;}
 
-#TestButton{background-color:rgb(0,255,0)}
-#TestButton:hover{background-color:rgb(233,255,0)}
+//#TestButton{background-color:rgb(0,255,0)}
+//#TestButton:hover{background-color:rgb(233,255,0)}
