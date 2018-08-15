@@ -69,8 +69,19 @@ class SuperSlider(QWidget):
     def drawWidget(self, qp):
         # font = QFont("Serif", 7, QFont.Light)
         # qp.setFont(font)
+        qp.setRenderHint(QPainter.Antialiasing, True)
+        # brush = QBrush(Qt.SolidPattern)
+        # brush.setStyle(Qt.BDiagPattern)
+        # qp.setBrush(brush)
+        qp.drawRect(250, 195, 90, 60)
         qp.drawRect(0, 0, 200, 20)
         qp.drawLine(0, 0, 200, 20)
+        # rectangle(10.0, 20.0, 80.0, 60.0)
+        # qp.drawEllipse(30)
+        for i in range(100):
+            qp.setPen(Qt.red)
+            # qp.drawPoint(i,i)
+            qp.drawLine(6*i, 0, 5*i, 20)
 
 
 
