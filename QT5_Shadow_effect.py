@@ -32,7 +32,7 @@ class Example(QWidget):
         frm.setGeometry(200, 50, 500, 500)
         frm.setObjectName("frame1")
         frm2 = QFrame(self)
-        frm2.setGeometry(250, 100, 100, 100)
+        frm2.setGeometry(100, 100, 100, 100)
         frm2.setObjectName("frame2")
 
 

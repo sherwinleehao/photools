@@ -12,7 +12,7 @@ from PyQt5.QtGui import *
 ###鼠标按下拖拽时，鼠标消失，游标高亮，控件边缘高亮
 ###鼠标拖拽能偏移数值及游标位置
 ###鼠标抬起时能回到之前鼠标消失的位置
-###
+###鼠标滚轮能对应操作
 
 class Communicate(QObject):
     updateBW = pyqtSignal(int)
@@ -23,31 +23,43 @@ class TestWidget(QWidget):
         self.initUI()
 
     def initUI(self):
-        # self.setGeometry(300,300,500,400)
-        self.bar = QLabel("BBBBB",self)
-        self.bar.setGeometry(10,10,500,100)
-        self.bar.setStyleSheet('background-color: red;border-radius:10px;')
+        self.value = 5500
+        self.w = 300
+        self.h = 50
+        self.r = 8
+        self.inner = 4
+
+        self.bar = QLabel("",self)
+        self.bar.setGeometry(0,0,self.w,self.h)
+        self.bar.setStyleSheet('background-color: rgba(128, 128, 128,128);border-width: 2px;border-style: solid;border-color: rgb(128, 128, 128);border-radius:%dpx;'%self.r)
         self.bar.setAlignment(Qt.AlignCenter)
-        self.num = QLabel("NN",self)
+
+        self.pointer = QLabel(self)
+        self.pointer.setStyleSheet('background-color:rgba(0, 0, 0,255);border-radius:%dpx;'%(self.r-self.inner))
+        self.pointer.setGeometry((self.w-(2*self.r))*(self.value/10000)+self.inner,self.inner,(self.r-self.inner)*2,(self.h-2*self.inner))
+
+        self.num = QLabel(str(self.value/100),self)
+        self.num.setFont(QFont("Microsoft YaHei", 15, QFont.Bold))
+        self.num.setStyleSheet('color: white;background-color:None;border-width:0px;')
         self.num.setParent(self.bar)
         self.num.setAlignment(Qt.AlignCenter)
-        # self.num.setGeometry(10, 10, 500, 100)
-        self.value = 75
+        self.num.setGeometry(int(self.w*0.25),int(0.1*self.h),int(self.w*0.5),int(0.8*self.h))
+        self.shadow = QGraphicsDropShadowEffect(self)
+        self.shadow.setBlurRadius(10)
+        self.shadow.setXOffset(0)
+        self.shadow.setYOffset(2)
+        self.shadow.setColor(QColor(0, 0, 0, 255))
+        self.num.setGraphicsEffect(self.shadow)
+
+
+    def updateUI(self):
+        self.pointer.setGeometry((self.w - (2 * self.r)) * (self.value / 10000) + self.inner, self.inner,
+                                 (self.r - self.inner) * 2, (self.h - 2 * self.inner))
+        self.num.setText("%.2f"%(self.value/100))
+
 
     def setValue(self, value):
         self.value = value
-
-    def paintEvent(self, e):
-        qp = QPainter()
-        qp.begin(self)
-        self.drawWidget(qp)
-        qp.end()
-
-    def drawWidget(self, qp):
-        width = self.value *5
-        # qp.setPen(QColor(5, 255, 5))
-        # qp.setBrush(QColor(255, 0, 4))
-        # qp.drawRect(0, 0, width, 200)
 
 
 
@@ -110,48 +122,40 @@ class BurningWidget(QWidget):
             qp.drawText(i-fw/2, h/2, str(self.num[j]))
             j = j + 1
 
-
 class Example(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
 
     def initUI(self):
-        sld = QSlider(Qt.Horizontal, self)
-        sld.setFocusPolicy(Qt.NoFocus)
-        sld.setRange(1, 750)
-        sld.setValue(75)
-<<<<<<< HEAD
-        sld.setGeometry(30, 40, 550, 30)
-=======
-        sld.setGeometry(30, 390, 450, 30)
->>>>>>> 6ebc09e39bfc8cf47d6f76d4fea867fdefaf1808
-
-        self.c = Communicate()
-        # self.wid = BurningWidget()
         self.wid = TestWidget()
-        self.c.updateBW[int].connect(self.wid.setValue)
-
-        sld.valueChanged[int].connect(self.changeValue)
+        # self.wid = BurningWidget()
         hbox = QHBoxLayout()
         vbox = QVBoxLayout()
         vbox.addWidget(self.wid)
-        # vbox.addWidget(sld)
         hbox.addLayout(vbox)
         self.setLayout(hbox)
 
+        sld = QSlider(Qt.Horizontal, self)
+        sld.setFocusPolicy(Qt.NoFocus)
+        sld.setRange(0, 10000)
+        sld.setValue(7500)
+        sld.setGeometry(30, 40, 550, 30)
+        sld.setGeometry(30, 390, 450, 30)
+        self.c = Communicate()
 
-<<<<<<< HEAD
+        self.c.updateBW[int].connect(self.wid.setValue)
+        sld.valueChanged[int].connect(self.changeValue)
+
         self.setGeometry(300, 300, 600, 210)
-=======
         self.setGeometry(300, 300, 990, 510)
->>>>>>> 6ebc09e39bfc8cf47d6f76d4fea867fdefaf1808
         self.setWindowTitle("Burning widget")
         self.show()
 
     def changeValue(self, value):
         self.c.updateBW.emit(value)
-        self.wid.repaint()
+        self.wid.updateUI()
+        # self.wid.repaint()
 
 
 if __name__ == "__main__":
