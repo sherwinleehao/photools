@@ -11,9 +11,12 @@ from PyQt5.QtGui import *
 ###鼠标进入控件后开始变成左右的光标
 ###鼠标按下拖拽时，鼠标消失，游标高亮，控件边缘高亮
 ###鼠标拖拽能偏移数值及游标位置
-###鼠标抬起时能回到之前鼠标消失的位置
-
 ###鼠标滚轮能对应操作
+###鼠标抬起时能回到之前鼠标消失的位置
+###鼠标右键单击能将值设置为默认值
+
+###拖拽控件 能修改旁边label的值
+###面板内放置多个控件及label，相互不干扰
 
 class Communicate(QObject):
     updateBW = pyqtSignal(int)
@@ -24,11 +27,15 @@ class TestWidget(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.value = 5500
+        self.default = 5000
+        self.value = 5000
         self.w = 300
         self.h = 50
         self.r = 8
         self.inner = 4
+        self.oldPosX = 0
+        self.oldPosY = 0
+
 
         self.bar = QLabel("",self)
         self.bar.setGeometry(0,0,self.w,self.h)
@@ -36,7 +43,7 @@ class TestWidget(QWidget):
         self.bar.setAlignment(Qt.AlignCenter)
 
         self.pointer = QLabel(self)
-        self.pointer.setStyleSheet('background-color:rgba(0, 0, 0,255);border-radius:%dpx;'%(self.r-self.inner))
+        self.pointer.setStyleSheet('background-color:rgba(0, 255, 0,255);border-radius:%dpx;'%(self.r-self.inner))
         self.pointer.setGeometry((self.w-(2*self.r))*(self.value/10000)+self.inner,self.inner,(self.r-self.inner)*2,(self.h-2*self.inner))
 
         self.num = QLabel(str(self.value/100),self)
@@ -52,6 +59,8 @@ class TestWidget(QWidget):
         self.shadow.setColor(QColor(0, 0, 0, 255))
         self.num.setGraphicsEffect(self.shadow)
 
+        self.bar.setCursor(Qt.SizeHorCursor)
+        self.pointer.setCursor(Qt.SizeHorCursor)
 
     def updateUI(self):
         self.pointer.setGeometry((self.w - (2 * self.r)) * (self.value / 10000) + self.inner, self.inner,
@@ -60,9 +69,47 @@ class TestWidget(QWidget):
 
 
     def setValue(self, value):
+        if value > 10000:
+            value = 10000
+        elif value <0:
+            value = 0
         self.value = value
+        self.updateUI()
+
+    def mousePressEvent(self, e):
+        if e.button() == 1:
+            self.oldPosX = e.pos().x()
+            self.oldPosY = e.pos().y()
+            print("Mouse Down Pos :",self.oldPosX,self.oldPosY)
+            self.bar.setStyleSheet('background-color: rgba(128, 128, 128,128);border-width: 2px;border-style: solid;border-color: rgb(255, 128, 128);border-radius:%dpx;'%self.r)
+            self.bar.setCursor(Qt.BlankCursor)
+        elif e.button() == 2:
+            self.setValue(self.default)
+
+    def mouseMoveEvent(self, e):
+            print(e.button())
+            self.deltaX = e.pos().x()-self.oldPosX
+            self.deltaY = e.pos().y()-self.oldPosY
+            self.oldPosX = e.pos().x()
+            self.oldPosY = e.pos().y()
+            print("Mouse Delta Pos :",self.deltaX,self.deltaY)
+            self.setValue(self.value + self.deltaX*30)
+            self.bar.setCursor(Qt.BlankCursor)
 
 
+    def mouseReleaseEvent(self, e):
+        self.oldPosX = 0
+        self.oldPosY = 0
+        print("Mouse Up Pos :",self.oldPosX,self.oldPosY)
+        self.bar.setStyleSheet('background-color: rgba(128, 128, 128,128);border-width: 2px;border-style: solid;border-color: rgb(128, 128, 128);border-radius:%dpx;'%self.r)
+        self.bar.setCursor(Qt.SizeHorCursor)
+
+    def wheelEvent(self, e):
+        angle = e.angleDelta() / 8
+        angleX = angle.x()
+        angleY = angle.y()
+        print(angleX,angleY)
+        self.setValue(self.value + angleY * 10)
 
 class BurningWidget(QWidget):
     def __init__(self):
