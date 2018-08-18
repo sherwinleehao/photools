@@ -27,46 +27,60 @@ class TestWidget(QWidget):
         self.initUI()
 
     def initUI(self):
+        self.name = "Slider"
         self.default = 5000
         self.value = 5000
         self.w = 300
-        self.h = 50
+        self.h = 90
         self.r = 8
-        self.inner = 4
+        self.title_h = 30
+        self.inner = 6
         self.oldPosX = 0
         self.oldPosY = 0
 
 
+        self.container = QLabel("",self)
+        self.container.setGeometry(0, 0, self.w, self.h)
+        # self.container.setStyleSheet('background-color: rgb(128, 0, 0)')
+        self.container.setAlignment(Qt.AlignCenter)
+
+        self.title = QLabel(self.name,self)
+        self.title.setParent(self.container)
+        self.title.setAlignment(Qt.AlignCenter)
+        self.title.setFont(QFont("Microsoft YaHei", 8))
+        self.title.setStyleSheet('color: red')
+        self.title.setGeometry(int(self.w * 0.25), 0, int(self.w * 0.5),self.title_h)
+
         self.bar = QLabel("",self)
-        self.bar.setGeometry(0,0,self.w,self.h)
+        self.bar.setGeometry(0,self.title_h,self.w,(self.h-self.title_h))
         self.bar.setStyleSheet('background-color: rgba(128, 128, 128,128);border-width: 2px;border-style: solid;border-color: rgb(128, 128, 128);border-radius:%dpx;'%self.r)
         self.bar.setAlignment(Qt.AlignCenter)
 
         self.pointer = QLabel(self)
         self.pointer.setStyleSheet('background-color:rgba(0, 255, 0,255);border-radius:%dpx;'%(self.r-self.inner))
-        self.pointer.setGeometry((self.w-(2*self.r))*(self.value/10000)+self.inner,self.inner,(self.r-self.inner)*2,(self.h-2*self.inner))
+        self.pointer.setGeometry((self.w-(2*self.r))*(self.value/10000)+self.inner,self.inner+self.title_h,(self.r-self.inner)*2,((self.h-self.title_h)-2*self.inner))
 
         self.num = QLabel(str(self.value/100),self)
         self.num.setFont(QFont("Microsoft YaHei", 15, QFont.Bold))
         self.num.setStyleSheet('color: white;background-color:None;border-width:0px;')
         self.num.setParent(self.bar)
         self.num.setAlignment(Qt.AlignCenter)
-        self.num.setGeometry(int(self.w*0.25),int(0.1*self.h),int(self.w*0.5),int(0.8*self.h))
+        self.num.setGeometry(int(self.w*0.25),int(0.1*(self.h-self.title_h)),int(self.w*0.5),int(0.8*(self.h-self.title_h)))
+
         self.shadow = QGraphicsDropShadowEffect(self)
         self.shadow.setBlurRadius(10)
         self.shadow.setXOffset(0)
         self.shadow.setYOffset(2)
-        self.shadow.setColor(QColor(0, 0, 0, 255))
+        self.shadow.setColor(QColor(0, 0, 0, 64))
         self.num.setGraphicsEffect(self.shadow)
 
         self.bar.setCursor(Qt.SizeHorCursor)
         self.pointer.setCursor(Qt.SizeHorCursor)
 
     def updateUI(self):
-        self.pointer.setGeometry((self.w - (2 * self.r)) * (self.value / 10000) + self.inner, self.inner,
-                                 (self.r - self.inner) * 2, (self.h - 2 * self.inner))
+        self.pointer.setGeometry((self.w - (2 * self.r)) * (self.value / 10000) + self.inner, self.inner + self.title_h,
+                                 (self.r - self.inner) * 2, ((self.h - self.title_h) - 2 * self.inner))
         self.num.setText("%.2f"%(self.value/100))
-
 
     def setValue(self, value):
         if value > 10000:
@@ -80,27 +94,25 @@ class TestWidget(QWidget):
         if e.button() == 1:
             self.oldPosX = e.pos().x()
             self.oldPosY = e.pos().y()
-            print("Mouse Down Pos :",self.oldPosX,self.oldPosY)
+            # print("Mouse Down Pos :",self.oldPosX,self.oldPosY)
             self.bar.setStyleSheet('background-color: rgba(128, 128, 128,128);border-width: 2px;border-style: solid;border-color: rgb(255, 128, 128);border-radius:%dpx;'%self.r)
             self.bar.setCursor(Qt.BlankCursor)
         elif e.button() == 2:
             self.setValue(self.default)
 
     def mouseMoveEvent(self, e):
-            print(e.button())
             self.deltaX = e.pos().x()-self.oldPosX
             self.deltaY = e.pos().y()-self.oldPosY
             self.oldPosX = e.pos().x()
             self.oldPosY = e.pos().y()
-            print("Mouse Delta Pos :",self.deltaX,self.deltaY)
+            # print("Mouse Delta Pos :",self.deltaX,self.deltaY)
             self.setValue(self.value + self.deltaX*30)
             self.bar.setCursor(Qt.BlankCursor)
-
 
     def mouseReleaseEvent(self, e):
         self.oldPosX = 0
         self.oldPosY = 0
-        print("Mouse Up Pos :",self.oldPosX,self.oldPosY)
+        # print("Mouse Up Pos :",self.oldPosX,self.oldPosY)
         self.bar.setStyleSheet('background-color: rgba(128, 128, 128,128);border-width: 2px;border-style: solid;border-color: rgb(128, 128, 128);border-radius:%dpx;'%self.r)
         self.bar.setCursor(Qt.SizeHorCursor)
 
@@ -111,64 +123,17 @@ class TestWidget(QWidget):
         print(angleX,angleY)
         self.setValue(self.value + angleY * 10)
 
-class BurningWidget(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.initUI()
+    def setTitle(self,newTitle):
+        self.title.setText(newTitle)
 
-    def initUI(self):
-        self.setMinimumSize(1, 30)
-        self.value = 75
-        self.num = [75, 150, 225, 300, 375, 450, 525, 600, 675]
+    # def enterEvent(self, e):
+    #     print("mouse enter!",self.name)
+    #
+    # def leaveEvent(self, e):
+    #     print("mouse leave!",self.name)
 
-    def setValue(self, value):
-        self.value = value
-
-    def paintEvent(self, e):
-        qp = QPainter()
-        qp.begin(self)
-        self.drawWidget(qp)
-        qp.end()
-
-    def drawWidget(self, qp):
-        font = QFont("Serif", 7, QFont.Light)
-        qp.setFont(font)
-
-        size = self.size()
-        w = size.width()
-        h = size.height()
-
-        step = int(round(w / 10.0))
-
-        till = int(((w / 750.0) * self.value))
-        full = int(((w / 750.0) * 700))
-
-        if self.value >=700:
-            qp.setPen(QColor(5, 255, 5))
-            qp.setBrush(QColor(255, 0, 4))
-            qp.drawRect(0, 0, full, h)
-            qp.setPen(QColor(255, 175, 175))
-            qp.setBrush(QColor(255, 175, 175))
-            qp.drawRect(full, 0, till-full, h)
-        else:
-            qp.setPen(QColor(255, 255, 255))
-            qp.setBrush(QColor(255, 255, 184))
-            qp.drawRect(0, 0, till, h)
-
-        pen = QPen(QColor(20, 20, 20), 1, Qt.SolidLine)
-
-        qp.setPen(pen)
-        qp.setBrush(Qt.NoBrush)
-        qp.drawRect(0, 0, w-1, h-1)
-
-        j = 0
-
-        for i in range(step, 10*step, step):
-            qp.drawLine(i, 0, i, 5)
-            metrics = qp.fontMetrics()
-            fw = metrics.width(str(self.num[j]))
-            qp.drawText(i-fw/2, h/2, str(self.num[j]))
-            j = j + 1
+    def changeValue(self,value):
+        signal = pyqtSignal(int)
 
 class Example(QWidget):
     def __init__(self):
@@ -177,23 +142,34 @@ class Example(QWidget):
 
     def initUI(self):
         self.wid = TestWidget()
-        # self.wid = BurningWidget()
+        self.wid.setTitle('Hue')
+        self.wid2 = TestWidget()
+        self.wid2.setTitle('Saturation')
+        self.wid3 = TestWidget()
+        self.wid3.setTitle('Lumemass')
         hbox = QHBoxLayout()
         vbox = QVBoxLayout()
         vbox.addWidget(self.wid)
+        vbox.addWidget(self.wid2)
+        vbox.addWidget(self.wid3)
         hbox.addLayout(vbox)
-        self.setLayout(hbox)
 
-        sld = QSlider(Qt.Horizontal, self)
-        sld.setFocusPolicy(Qt.NoFocus)
-        sld.setRange(0, 10000)
-        sld.setValue(7500)
-        sld.setGeometry(30, 40, 550, 30)
-        sld.setGeometry(30, 390, 450, 30)
+        showbox0 = QLabel("12.34",self)
+        showbox1 = QLabel("23.45",self)
+        showbox2 = QLabel("34.56",self)
+        vbox2 = QVBoxLayout()
+        vbox2.addWidget(showbox0)
+        vbox2.addWidget(showbox1)
+        vbox2.addWidget(showbox2)
+        hbox.addLayout(vbox2)
+
+        self.setLayout(hbox)
         self.c = Communicate()
 
-        self.c.updateBW[int].connect(self.wid.setValue)
-        sld.valueChanged[int].connect(self.changeValue)
+        # self.c.updateBW[int].connect(self.wid.setValue)
+        # sld.valueChanged[int].connect(self.changeValue)
+
+        self.c.updateBW[int].connect(self.changeValue)
 
         self.setGeometry(300, 300, 600, 210)
         self.setGeometry(300, 300, 990, 510)
@@ -201,9 +177,9 @@ class Example(QWidget):
         self.show()
 
     def changeValue(self, value):
-        self.c.updateBW.emit(value)
-        self.wid.updateUI()
-        # self.wid.repaint()
+        # self.c.updateBW.emit(value)
+        print("XXXX")
+        # self.wid.updateUI()
 
 
 if __name__ == "__main__":
