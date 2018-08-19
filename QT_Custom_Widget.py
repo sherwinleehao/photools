@@ -19,9 +19,10 @@ from PyQt5.QtGui import *
 ###面板内放置多个控件及label，相互不干扰
 
 class Communicate(QObject):
-    updateBW = pyqtSignal(int)
+    valueChanged = pyqtSignal(int)
 
 class TestWidget(QWidget):
+    valueChanged = pyqtSignal(int)
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -89,6 +90,8 @@ class TestWidget(QWidget):
             value = 0
         self.value = value
         self.updateUI()
+        self.valueChanged.emit(self.value)
+
 
     def mousePressEvent(self, e):
         if e.button() == 1:
@@ -132,26 +135,26 @@ class TestWidget(QWidget):
     # def leaveEvent(self, e):
     #     print("mouse leave!",self.name)
 
-    def changeValue(self,value):
-        signal = pyqtSignal(int)
 
 class Example(QWidget):
+    # sldSignal = pyqtSignal(int)
+
     def __init__(self):
         super().__init__()
         self.initUI()
 
     def initUI(self):
-        self.wid = TestWidget()
-        self.wid.setTitle('Hue')
-        self.wid2 = TestWidget()
-        self.wid2.setTitle('Saturation')
-        self.wid3 = TestWidget()
-        self.wid3.setTitle('Lumemass')
+        wid = TestWidget()
+        wid.setTitle('Hue')
+        wid2 = TestWidget()
+        wid2.setTitle('Saturation')
+        wid3 = TestWidget()
+        wid3.setTitle('Lumemass')
         hbox = QHBoxLayout()
         vbox = QVBoxLayout()
-        vbox.addWidget(self.wid)
-        vbox.addWidget(self.wid2)
-        vbox.addWidget(self.wid3)
+        vbox.addWidget(wid)
+        vbox.addWidget(wid2)
+        vbox.addWidget(wid3)
         hbox.addLayout(vbox)
 
         showbox0 = QLabel("12.34",self)
@@ -164,12 +167,9 @@ class Example(QWidget):
         hbox.addLayout(vbox2)
 
         self.setLayout(hbox)
-        self.c = Communicate()
 
-        # self.c.updateBW[int].connect(self.wid.setValue)
-        # sld.valueChanged[int].connect(self.changeValue)
+        wid.valueChanged[int].connect(self.changeValue)
 
-        self.c.updateBW[int].connect(self.changeValue)
 
         self.setGeometry(300, 300, 600, 210)
         self.setGeometry(300, 300, 990, 510)
@@ -177,9 +177,7 @@ class Example(QWidget):
         self.show()
 
     def changeValue(self, value):
-        # self.c.updateBW.emit(value)
-        print("XXXX")
-        # self.wid.updateUI()
+        print(value)
 
 
 if __name__ == "__main__":
