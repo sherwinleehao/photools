@@ -18,9 +18,6 @@ from PyQt5.QtGui import *
 ###拖拽控件 能修改旁边label的值
 ###面板内放置多个控件及label，相互不干扰
 
-class Communicate(QObject):
-    valueChanged = pyqtSignal(int)
-
 class TestWidget(QWidget):
     valueChanged = pyqtSignal(int)
     def __init__(self):
@@ -135,50 +132,53 @@ class TestWidget(QWidget):
     # def leaveEvent(self, e):
     #     print("mouse leave!",self.name)
 
-
 class Example(QWidget):
-    # sldSignal = pyqtSignal(int)
-
     def __init__(self):
         super().__init__()
         self.initUI()
 
     def initUI(self):
-        wid = TestWidget()
-        wid.setTitle('Hue')
+        wid0 = TestWidget()
+        wid0.setTitle('Hue')
+        wid1 = TestWidget()
+        wid1.setTitle('Saturation')
         wid2 = TestWidget()
-        wid2.setTitle('Saturation')
-        wid3 = TestWidget()
-        wid3.setTitle('Lumemass')
+        wid2.setTitle('Lumemass')
         hbox = QHBoxLayout()
         vbox = QVBoxLayout()
-        vbox.addWidget(wid)
+        vbox.addWidget(wid0)
+        vbox.addWidget(wid1)
         vbox.addWidget(wid2)
-        vbox.addWidget(wid3)
         hbox.addLayout(vbox)
 
-        showbox0 = QLabel("12.34",self)
-        showbox1 = QLabel("23.45",self)
-        showbox2 = QLabel("34.56",self)
+        self.showbox0 = QLabel("12.34",self)
+        self.showbox1 = QLabel("23.45",self)
+        self.showbox2 = QLabel("34.56",self)
         vbox2 = QVBoxLayout()
-        vbox2.addWidget(showbox0)
-        vbox2.addWidget(showbox1)
-        vbox2.addWidget(showbox2)
+        vbox2.addWidget(self.showbox0)
+        vbox2.addWidget(self.showbox1)
+        vbox2.addWidget(self.showbox2)
         hbox.addLayout(vbox2)
 
         self.setLayout(hbox)
 
-        wid.valueChanged[int].connect(self.changeValue)
+        wid0.valueChanged[int].connect(self.changeValue0)
+        wid1.valueChanged[int].connect(self.changeValue1)
+        wid2.valueChanged[int].connect(self.changeValue2)
 
 
         self.setGeometry(300, 300, 600, 210)
         self.setGeometry(300, 300, 990, 510)
         self.setWindowTitle("Burning widget")
+
         self.show()
 
-    def changeValue(self, value):
-        print(value)
-
+    def changeValue0(self, value):
+        self.showbox0.setText(str(value/100))
+    def changeValue1(self, value):
+        self.showbox1.setText(str(value/100))
+    def changeValue2(self, value):
+        self.showbox2.setText(str(value / 100))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
