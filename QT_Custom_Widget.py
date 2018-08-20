@@ -18,6 +18,8 @@ from PyQt5.QtGui import *
 ###拖拽控件 能修改旁边label的值
 ###面板内放置多个控件及label，相互不干扰
 
+###Pointer 排列顺序有问题
+
 class TestWidget(QWidget):
     valueChanged = pyqtSignal(int)
     def __init__(self):

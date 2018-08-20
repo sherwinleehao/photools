@@ -26,7 +26,7 @@ class Example(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.IMGPath = "img\\04.jpg"
+        self.IMGPath = "img/04.jpg"
         self.IMGPaths = getAllImgs('img')
         self.IMG = cv2.imread(self.IMGPath)
 
