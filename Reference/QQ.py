@@ -146,10 +146,10 @@ class ListModel(QAbstractListModel):
             # randname = Random_Name.getname()
             # randname = str(uuid.uuid4())
             randname = str("Sherwin lee")
-        ItemData = {'name': '', 'iconPath': ''}
-        ItemData['name'] = randname
-        ItemData['iconPath'] = "./res/" + str(i) + ".jpg"
-        self.ListItemData.append(ItemData)
+            ItemData = {'name': '', 'iconPath': ''}
+            ItemData['name'] = randname
+            ItemData['iconPath'] = "./res/" + str(i) + ".jpg"
+            self.ListItemData.append(ItemData)
 
 
     def addItem(self, itemData):

@@ -138,10 +138,8 @@ class ListModel(QAbstractListModel):
         else:
             return QVariant()
 
-
     def rowCount(self, parent=QModelIndex()):
         return len(self.ListItemData)
-
 
     def Data_init(self):
         randomnum = random.sample(range(100), 30)
@@ -152,17 +150,14 @@ class ListModel(QAbstractListModel):
             ItemData['iconPath'] = "img/thumb/thumb_%04d.jpg"%i
             self.ListItemData.append(ItemData)
 
-
     def addItem(self, itemData):
         if itemData:
             self.beginInsertRows(QModelIndex(), len(self.ListItemData), len(self.ListItemData) + 1)
             self.ListItemData.append(itemData)
             self.endInsertRows()
 
-
     def deleteItem(self, index):
         del self.ListItemData[index]
-
 
     def getItem(self, index):
         if index > -1 and index < len(self.ListItemData):
@@ -178,14 +173,21 @@ class Example(QWidget):
     def initUI(self):
 
         LM = QQ()
+        tester = QPushButton("tester",self)
         Vbox = QVBoxLayout()
         Vbox.addWidget(LM)
+        Vbox.addWidget(tester)
         self.setLayout(Vbox)
-        # print(LM.data)
         self.setGeometry(100, 100, 360, 720)
         self.setWindowTitle("Pre-Research")
 
+        tester.clicked.connect(self.tester)
+
         self.show()
+
+    def tester(self):
+        print("This is Tester!")
+        # self.LM.pListView.deleteItem(1)
 
 
 
