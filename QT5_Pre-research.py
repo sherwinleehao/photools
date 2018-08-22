@@ -83,6 +83,7 @@ class ListView(QListView):
     #     for item_dic in self.map_listview:
     #         if item_dic['groupname'] == pmenuname:
     #             return item_dic['listview']
+
     #
 
 class ListModel(QAbstractListModel):
