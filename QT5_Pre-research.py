@@ -35,31 +35,11 @@ class QQ(QToolBox):
         pListView = ListView()
 
         pListView.setViewMode(QListView.ListMode)
-        pListView.setStyleSheet("QListView{icon-size:70px}")
-        dic_list = {'listview': pListView, 'groupname': "我的好友"}
-        pListView.setListMap(dic_list)
-        self.addItem(pListView, "我的好友")
-        print(pListView.map_listview)
+        pListView.setStyleSheet("QListView{icon-size:120px}")
+        self.addItem(pListView, "我的好友2")
+        print('pListView',pListView)
         self.show()
 
-    # def contextMenuEvent(self, event):
-    #     pmenu = QMenu(self)
-    #     pAddGroupAct = QAction("添加分组", pmenu)
-    #     pmenu.addAction(pAddGroupAct)
-    #     pAddGroupAct.triggered.connect(self.addGroupSlot)
-    #     pmenu.popup(self.mapToGlobal(event.pos()))
-    #
-    # def addGroupSlot(self):
-    #     groupname = QInputDialog.getText(self, "输入分组名", "")
-    #     if groupname[0] and groupname[1]:
-    #         pListView1 = ListView()
-    #         pListView1.setViewMode(QListView.ListMode)
-    #         pListView1.setStyleSheet("QListView{icon-size:70px}")
-    #         self.addItem(pListView1, groupname[0])
-    #         dic_list = {'listview': pListView1, 'groupname': groupname[0]}
-    #         pListView1.setListMap(dic_list)
-    #     elif groupname[0] == '' and groupname[1]:
-    #         QMessageBox.warning(self, "警告", "我说你没有填写分组名哦~！")
 
 
 class ListView(QListView):
@@ -75,14 +55,16 @@ class ListView(QListView):
         if hitIndex > -1:
             pmenu = QMenu(self)
             pDeleteAct = QAction("删除", pmenu)
-            pmenu.addAction(pDeleteAct)
+            pDeleteAct.setShortcut('Ctrl+L')
             pDeleteAct.triggered.connect(self.deleteItemSlot)
-            pSubMenu = QMenu("转移联系人至", pmenu)
-            pmenu.addMenu(pSubMenu)
-            for item_dic in self.map_listview:
-                pMoveAct = QAction(item_dic['groupname'], pmenu)
-                pSubMenu.addAction(pMoveAct)
-                pMoveAct.triggered.connect(self.move)
+            pmenu.addAction(pDeleteAct)
+
+            pDeleteAct2 = QAction("22222222", pmenu)
+            pmenu.addAction(pDeleteAct2)
+
+
+            pMenu = QAction("转移联系人至", pmenu)
+            pmenu.addAction(pMenu)
             pmenu.popup(self.mapToGlobal(event.pos()))
 
     def deleteItemSlot(self):
@@ -90,28 +72,18 @@ class ListView(QListView):
         if index > -1:
             self.m_pModel.deleteItem(index)
 
-    def setListMap(self, listview):
-        self.map_listview.append(listview)
+    # def setListMap(self, listview):
+    #     self.map_listview.append(listview)
 
     def addItem(self, pitem):
         self.m_pModel.addItem(pitem)
 
-    def move(self):
-        tolistview = self.find(self.sender().text())
-        if tolistview is self:
-            prelistview = self.sender().text()
-            QMessageBox.warning(self, "警告", "该联系人就在{}，还怎么移动啊！".format(prelistview))
-        else:
-            index = self.currentIndex().row()
-            pItem = self.m_pModel.getItem(index)
-            tolistview.addItem(pItem)
-            self.m_pModel.deleteItem(index)
 
-    def find(self, pmenuname):
-        for item_dic in self.map_listview:
-            if item_dic['groupname'] == pmenuname:
-                return item_dic['listview']
-
+    # def find(self, pmenuname):
+    #     for item_dic in self.map_listview:
+    #         if item_dic['groupname'] == pmenuname:
+    #             return item_dic['listview']
+    #
 
 class ListModel(QAbstractListModel):
     def __init__(self):
@@ -178,7 +150,7 @@ class Example(QWidget):
         Vbox.addWidget(LM)
         Vbox.addWidget(tester)
         self.setLayout(Vbox)
-        self.setGeometry(100, 100, 360, 720)
+        self.setGeometry(-600, 300, 360, 720)
         self.setWindowTitle("Pre-Research")
 
         tester.clicked.connect(self.tester)
@@ -187,14 +159,12 @@ class Example(QWidget):
 
     def tester(self):
         print("This is Tester!")
-        # self.LM.pListView.deleteItem(1)
 
 
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-
     ex = Example()
     sys.exit(app.exec_())
 
