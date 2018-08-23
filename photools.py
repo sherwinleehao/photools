@@ -6,7 +6,7 @@ Image Tool Library
 
 Author: Sherwin Lee
 Website: Sherwinleehao.com
-Last edited: 20180812
+Last edited: 20180820
 """
 
 import os
@@ -27,6 +27,8 @@ import ffmpy
 import subprocess
 import numpy
 import zipfile
+import hashlib
+
 
 def getPhotoROIs(path, level, size):
     blockSize = size
@@ -60,12 +62,14 @@ def getPhotoROIs(path, level, size):
             res.append(imCrop)
     return res
 
+
 def detectBlur(ima):
     # image = cv2.imread(ima)
     image = ima
     img2gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     imageVar = cv2.Laplacian(img2gray, cv2.CV_64F).var()
     return imageVar
+
 
 def detectFaces(img, scale):
     # img = cv2.imread(image_name)
@@ -84,6 +88,7 @@ def detectFaces(img, scale):
     # return result
     return faces
 
+
 # def drawFaces(image_name):
 #     faces = detectFaces(image_name)
 #     if faces:
@@ -99,23 +104,12 @@ def saveRaw2IMG(RawPath, IMGPath):
         rgb = raw.postprocess()
     imageio.imsave(IMGPath, rgb)
 
+
 def saveRaw2IMG16(RawPath, IMGPath):
     with rawpy.imread(RawPath) as raw:
         rgb = raw.postprocess(gamma=(18, 10), no_auto_bright=True, output_bps=16)
     imageio.imsave(IMGPath, rgb)
 
-def getAllImgs(path):
-    imgs = []
-    for i in os.listdir(path):
-        file = os.path.join(path,i)
-        kind = filetype.guess(file)
-        # print(kind)
-        if kind is None:
-            pass
-        else:
-            if "image" in str(kind.mime):
-                imgs.append(file)
-    return imgs
 
 def getAllFiles(path):
     tempfiles = []
@@ -127,6 +121,7 @@ def getAllFiles(path):
         else:
             tempfiles += getAllFiles(tempPath)
     return tempfiles
+
 
 def getResizedImg(frame, limit):
     frameSize = frame.size
@@ -140,6 +135,7 @@ def getResizedImg(frame, limit):
     thumb = frame.resize(thumbSize, resample=1)
     return thumb
 
+
 def getImgExif(filePath):
     path = filePath
     img = Image.open(path)
@@ -150,10 +146,12 @@ def getImgExif(filePath):
     }
     return exif
 
+
 def getRawExif(filePath):
     f = open(filePath, 'rb')
     tags = exifread.process_file(f)
     return tags
+
 
 def getThumbnail(filePath, frameSize):
     if os.path.isfile(filePath):
@@ -204,6 +202,29 @@ def getMediaInfo(filePath):
     print(meta)
     return  meta
 
+def getMD5(filePath):
+    hash_md5 = hashlib.md5()
+    with open(filePath,'rb')as f:
+        for chunk in iter(lambda :f.read(1024*8),b""):
+            hash_md5.update(chunk)
+    # print(filePath," MD5 is :",hash_md5.hexdigest())
+    return hash_md5.hexdigest()
+
+def getDraftMD5(filePath):
+    tempInfo = ''
+    fsize = os.path.getsize(filePath)
+    mt = os.path.getmtime(filePath)
+    tempInfo += str(fsize)
+    tempInfo += str(mt)
+
+    hash_md5 = hashlib.md5()
+    hash_md5.update(tempInfo.encode())
+    print(hash_md5.hexdigest()," ",filePath)
+    # print(tempInfo)
+    # print('\n')
+
+
+
 def getVideoFrame(filePath,frameSize,frameID):
     image = None
     cap = cv2.VideoCapture(filePath)
@@ -247,7 +268,7 @@ def getVideoFrames(filePath,frameSize,frameCount):
 def saveVideoFrameAsThumb(filePath):
     st = time.time()
     img = getVideoFrame(filePath, 0)
-    tga = "temp\\Thumbnail\\%s.jpg" % uuid.uuid4()
+    tga =  "C:\Temp\Thumbnails\%s.jpg" % uuid.uuid4()
     img = getResizedImg(img, 144)
     img.save(tga)
     et = time.time() - st
@@ -362,7 +383,8 @@ def multiProcess(mainList, function, threadCount):
 ################################################################
 
 def fastSaveThumbnail(path):
-    tga = "temp\\Thumbnail\\%s.jpg" % uuid.uuid4()
+    # tga = "temp\\Thumbnail\\%s.jpg" % uuid.uuid4()
+    tga = "C:\Temp\Thumbnails\%s.jpg" % str(getMD5(path))
     saveThumbnail(path, 144, tga)
 
 def main():
@@ -395,8 +417,8 @@ def main2():
                 # et = time.time() - st
                 # print("Use time: ", et)
     # multiThread(images, fastSaveThumbnail, 200)
-    # multiProcess(images, fastSaveThumbnail, 6)
-    multiThread(images, fastSaveThumbnail, 6)
+    multiProcess(images, fastSaveThumbnail, 56)
+    # multiThread(images, fastSaveThumbnail, 160)
 
 def main3():
     files = getAllFiles(r"D:\Test Clips\London")
@@ -406,7 +428,7 @@ def main3():
         if kind is not None:
             if "video" in str(kind.mime):
                 videos.append(file)
-    # multiProcess(videos, saveVideoFrameAsThumb, 16)
+    # multiProcess(videos, saveVideoFrameAsThumb, 12)
     multiThread(videos, saveVideoFrameAsThumb, 2)
 
 def main4():
@@ -431,10 +453,27 @@ def main5():
     multiThread(videos, getMediaInfo, 23)
     # multiProcess(videos, getMediaInfo, 7)
 
+def main6():
+    # path = r"D:\Test Clips\IMA"
+    path = r"D:\Test Clips"
+    files = getAllFiles(path)
+    # videos = []
+    # for file in files:
+    #     kind = filetype.guess(file)
+    #     if kind is None:
+    #         pass
+    #     else:
+    #         if "video" in str(kind.mime):
+    #             videos.append(file)
+    # # multiThread(images, getMD5, 4)
+    # multiProcess(files, getMD5, 4)
+    multiProcess(files, getDraftMD5, 1)
+
+
 if __name__ == '__main__':
     st = time.time()
 
-    main5()
+    main6()
 
     et = time.time() - st
     print("All Use time: ", et)
