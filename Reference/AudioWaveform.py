@@ -15,4 +15,5 @@ for i in range(0,250):
     print('%5d'%i,segment.max)
 
 et = time.time()
+
 print("used time:",et-st)
