@@ -26,10 +26,10 @@ class Example(QWidget):
         self.initUI()
 
     def initUI(self):
-        # self.IMGPath = "img/04.jpg"
         self.IMGPath = "img/thumb/thumb_0006.jpg"
         self.IMGPaths = getAllImgs('img/thumb/')
-        # print(self.IMGPaths)
+
+
         self.IMG = cv2.imread(self.IMGPath)
 
 
