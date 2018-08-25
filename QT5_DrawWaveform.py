@@ -26,6 +26,7 @@ from PyQt5.QtGui import *
 import os, random
 import uuid
 import math
+import time
 
 class Communicate(QObject):
     updateBW = pyqtSignal(int)
@@ -57,29 +58,61 @@ class AudioWaveform(QWidget):
         w = size.width()
         h = size.height()
         print("Size :",w,h)
-        pen = QPen(QColor(200, 20, 20), 1, Qt.SolidLine)
+        pen = QPen(QColor(50, 105, 78), 1, Qt.SolidLine)
 
         # qp.setRenderHint(QPainter.Antialiasing)
         qp.setPen(pen)
-        qp.setBrush(Qt.NoBrush)
+        # qp.setBrush(Qt.NoBrush)
+        qp.setBrush(QColor(50, 105, 78))
         qp.drawRect(0, 0, w-1, h-1)
+
+
+        # qp.setBackground(QColor('red'))
 
         waveMax = max(self.wave)
         # print("Max Wave Value:",waveMax)
         mirro = self.mirro
         index= 0
+        st = time.time()
         for i in self.wave:
             v = i / waveMax * self.scale/100
-
             v = math.pow(v,0.5) #set the value unlinear
-
             l = v * h
+            qc = QColor(103, 210, 157)
+
+            hl = self.inRange((v-0.2)/(1-0.2))
+            r,g,b = self.mixColor([103, 210, 157],[216,78,10],math.pow(hl,10))
+            qc.setRgb(r,g,b,255)
+            #set the overload color red
+
+            qp.setPen(QPen(qc, 1, Qt.SolidLine))
             if mirro :
                 qp.drawLine(index, (h-l)/2, index, (h-l)/2+l)
             else:
                 qp.drawLine(index, h-l, index, h)
             index += 1
+        et = time.time()
+        print("QT update time is :",et-st)
 
+    def mixColor(self,color1,color0,v):
+        r0 = color0[0]
+        g0 = color0[1]
+        b0 = color0[2]
+        r1 = color1[0]
+        g1 = color1[1]
+        b1 = color1[2]
+        r = int(r0*v + r1*(1-v))
+        g = int(g0*v + g1*(1-v))
+        b = int(b0*v + b1*(1-v))
+        return r,g,b
+
+    def inRange(self,value):
+        if value < 0:
+            return 0
+        elif value>1.0:
+            return 1.0
+        else:
+            return value
 
 class Example(QWidget):
     def __init__(self):
