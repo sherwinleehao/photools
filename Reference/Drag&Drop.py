@@ -101,11 +101,11 @@ class Example(QWidget):
         edit.move(30, 65)
 
         button = Button("Button", self)
-        # button.move(100, 65)
+        button.move(100, 65)
         button.setGeometry(100, 65,400,40)
 
         self.setWindowTitle('Simple drag and drop')
-        self.setGeometry(300, 300, 500, 150)
+        self.setGeometry(300, 300, 800, 150)
 
 
 if __name__ == '__main__':
