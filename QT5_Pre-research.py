@@ -14,7 +14,7 @@ Task:
 # 加入Add More和Remove，Remove All的按钮
 #     添加多个文件到列表
     删除选中的文件
-    删除全部文件
+    # 删除全部文件
 修改列表缩略图的列表样式，修改滑动栏的样式，列表样式
 
 做加载过程的占位GIF，完成后显示真缩图，缩略图将以MD5形式命名并缓存
@@ -65,6 +65,8 @@ class ListView(QListView):
     def removeItem(self,index):
         self.m_pModel.deleteItem(index)
 
+    def showSelection(self):
+        print(self.currentIndex().row())
 
 
 class ListModel(QAbstractListModel):
@@ -74,6 +76,7 @@ class ListModel(QAbstractListModel):
         self.Data_init()
 
     def data(self, index, role):
+        # print("data:",index.isValid(),index.row,role)
         if index.isValid() or (0 <= index.row() < len(self.ListItemData)):
             if role == Qt.DisplayRole:
                 return QVariant(self.ListItemData[index.row()]['name'])
@@ -91,7 +94,7 @@ class ListModel(QAbstractListModel):
             return QVariant()
 
     def rowCount(self, parent=QModelIndex()):
-        print('rowCount')
+        # print('rowCount',len(self.ListItemData))
         return len(self.ListItemData)
 
     def Data_init(self):
@@ -136,13 +139,13 @@ class Example(QWidget):
 
         self.btn_tester = QPushButton("tester", self)
         self.btn_addmore = QPushButton("Add More", self)
-        self.btn_remove = QPushButton("Remove", self)
+        # self.btn_remove = QPushButton("Remove", self)
         self.btn_removeall = QPushButton("Remove All", self)
 
         Hbox = QHBoxLayout()
         Hbox.addWidget(self.btn_addmore)
         Hbox.addStretch(1)
-        Hbox.addWidget(self.btn_remove)
+        # Hbox.addWidget(self.btn_remove)
         Hbox.addWidget(self.btn_removeall)
 
         Vbox = QVBoxLayout()
@@ -154,13 +157,14 @@ class Example(QWidget):
         self.setWindowTitle("Pre-Research")
         self.btn_tester.clicked.connect(self.supdate)
         self.btn_addmore.clicked.connect(self.addmore)
-        self.btn_remove.clicked.connect(self.remove)
+        # self.btn_remove.clicked.connect(self.remove)
         self.btn_removeall.clicked.connect(self.removeall)
         self.show()
 
     def tester(self):
         print("This is Tester!")
-        self.updateGeometry()
+        # print(self.pListView.selectedIndexes())
+        self.pListView.showSelection()
 
     def addmore(self):
         print("This is addmore!")
@@ -175,11 +179,13 @@ class Example(QWidget):
 
     def remove(self):
         print("This is remove22222222222!")
-        self.pListView.removeItem(1)
+        self.pListView.removeItem(0)
+        self.supdate()
 
     def removeall(self):
         print("This is removeall!")
-        self.pListView.removeItem(0)
+        for i in range(len(self.pListView.m_pModel.ListItemData)):
+            self.pListView.removeItem(0)
         self.supdate()
 
     def openFileNamesDialog(self):

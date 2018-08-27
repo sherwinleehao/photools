@@ -6,7 +6,7 @@ Image Tool Library
 
 Author: Sherwin Lee
 Website: Sherwinleehao.com
-Last edited: 20180820
+Last edited: 20180828
 """
 
 import os
@@ -89,28 +89,6 @@ def detectFaces(img, scale):
     return faces
 
 
-# def drawFaces(image_name):
-#     faces = detectFaces(image_name)
-#     if faces:
-#         img = Image.open(image_name)
-#         draw_instance = ImageDraw.Draw(img)
-#         for (x1,y1,x2,y2) in faces:
-#             draw_instance.rectangle((x1,y1,x2,y2), outline=(0, 255,0))
-#         img.save('images\\xxxxxxxx.jpg')
-
-def saveRaw2IMG(RawPath, IMGPath):
-    path = RawPath
-    with rawpy.imread(path) as raw:
-        rgb = raw.postprocess()
-    imageio.imsave(IMGPath, rgb)
-
-
-def saveRaw2IMG16(RawPath, IMGPath):
-    with rawpy.imread(RawPath) as raw:
-        rgb = raw.postprocess(gamma=(18, 10), no_auto_bright=True, output_bps=16)
-    imageio.imsave(IMGPath, rgb)
-
-
 def getAllFiles(path):
     tempfiles = []
     for i in os.listdir(path):
@@ -190,6 +168,7 @@ def getThumbnail(filePath, frameSize):
             thumb = getResizedImg(img, frameSize)
             return thumb
 
+
 def getMediaInfo(filePath):
     tup_resp = ffmpy.FFprobe(
         inputs={filePath: None},
@@ -200,15 +179,16 @@ def getMediaInfo(filePath):
     ).run(stdout=subprocess.PIPE)
     meta = json.loads(tup_resp[0].decode('utf-8'))
     print(meta)
-    return  meta
+    return meta
+
 
 def getMD5(filePath):
     hash_md5 = hashlib.md5()
-    with open(filePath,'rb')as f:
-        for chunk in iter(lambda :f.read(1024*8),b""):
+    with open(filePath, 'rb')as f:
+        for chunk in iter(lambda: f.read(1024 * 8), b""):
             hash_md5.update(chunk)
-    # print(filePath," MD5 is :",hash_md5.hexdigest())
     return hash_md5.hexdigest()
+
 
 def getDraftMD5(filePath):
     tempInfo = ''
@@ -219,13 +199,10 @@ def getDraftMD5(filePath):
 
     hash_md5 = hashlib.md5()
     hash_md5.update(tempInfo.encode())
-    print(hash_md5.hexdigest()," ",filePath)
-    # print(tempInfo)
-    # print('\n')
+    return hash_md5.hexdigest()
 
 
-
-def getVideoFrame(filePath,frameSize,frameID):
+def getVideoFrame(filePath, frameSize, frameID):
     image = None
     cap = cv2.VideoCapture(filePath)
     # while (cap.isOpened()):
@@ -241,44 +218,61 @@ def getVideoFrame(filePath,frameSize,frameID):
     cap.release()
     return image
 
-def getVideoFrames(filePath,frameSize,frameCount):
+
+def getVideoFrames(filePath, frameSize, frameCount):
     image = None
     frames = []
     cap = cv2.VideoCapture(filePath)
     totalFrame = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-    frameStep = int(totalFrame/(frameCount+1))
+    frameStep = int(totalFrame / (frameCount + 1))
     FID = 0
     while (cap.isOpened() and FID < frameCount):
         FID += 1
-        frameID = FID*frameStep
+        frameID = FID * frameStep
         print(frameID)
         cap.set(cv2.CAP_PROP_POS_FRAMES, frameID)
         ret, frame = cap.read()
-        width,height,_ =frame.shape
+        width, height, _ = frame.shape
         if width > height:
-            scale = frameSize/width
+            scale = frameSize / width
         else:
-            scale = frameSize/height
+            scale = frameSize / height
         frame = cv2.resize(frame, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
         image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         frames.append(image)
     cap.release()
     return frames
 
+
+def saveRaw2IMG(RawPath, IMGPath):
+    path = RawPath
+    with rawpy.imread(path) as raw:
+        rgb = raw.postprocess()
+    imageio.imsave(IMGPath, rgb)
+
+
+def saveRaw2IMG16(RawPath, IMGPath):
+    with rawpy.imread(RawPath) as raw:
+        rgb = raw.postprocess(gamma=(18, 10), no_auto_bright=True, output_bps=16)
+    imageio.imsave(IMGPath, rgb)
+
+
 def saveVideoFrameAsThumb(filePath):
     st = time.time()
     img = getVideoFrame(filePath, 0)
-    tga =  "C:\Temp\Thumbnails\%s.jpg" % uuid.uuid4()
+    tga = "C:\Temp\Thumbnails\%s.jpg" % uuid.uuid4()
     img = getResizedImg(img, 144)
     img.save(tga)
     et = time.time() - st
-    print("Use %.3f sec to save %s: "%(et,tga))
+    print("Use %.3f sec to save %s: " % (et, tga))
+
 
 def saveThumbnail(filePath, frameSize, thumbPath):
-    print("saveThumbnail :", filePath, frameSize, thumbPath)
+    # print("saveThumbnail :", filePath, frameSize, thumbPath)
     thumb = getThumbnail(filePath, frameSize)
     thumb.save(thumbPath)
     thumb.close()
+
 
 def mkdir(path):
     import os
@@ -292,6 +286,7 @@ def mkdir(path):
     else:
         print(path + ' -- Folder Already Exists')
         return False
+
 
 def zip_dir(dirname, zipfilename):
     filelist = []
@@ -307,6 +302,23 @@ def zip_dir(dirname, zipfilename):
         arcname = tar[len(dirname):]
         zf.write(tar, arcname)
     zf.close()
+
+
+def findThumb(filePath, cachePath):
+    MD5 = getDraftMD5(filePath)
+    print("Draft MD5: ", MD5)
+    errorPath = 'GUI/error.png'
+    tga = os.path.join(cachePath, str(MD5) + ".jpg")
+    if os.path.isfile(tga):
+        return tga
+    else:
+        mkdir(cachePath)
+        try:
+            saveThumbnail(filePath, 144, tga)
+        except:
+            saveThumbnail(errorPath, 144, tga)
+        return tga
+
 
 ################################################################
 ### 多线程加速 ###
@@ -369,6 +381,8 @@ def multiThread(mainList, function, threadCount):
     # 等待所有线程完成
     for t in threads:
         t.join()
+
+
 ################################################################
 ################################################################
 ### 多进程加速 ###
@@ -380,12 +394,15 @@ def multiProcess(mainList, function, threadCount):
     print('Waiting for all subprocesses done...')
     p.close()
     p.join()
+
+
 ################################################################
 
 def fastSaveThumbnail(path):
     # tga = "temp\\Thumbnail\\%s.jpg" % uuid.uuid4()
     tga = "C:\Temp\Thumbnails\%s.jpg" % str(getMD5(path))
     saveThumbnail(path, 144, tga)
+
 
 def main():
     path = r"D:\Python\AutoEditor\Images"
@@ -397,6 +414,7 @@ def main():
         print("\n", file)
         getThumbnail(file, tga)
         print(getRawExif(file))
+
 
 def main2():
     path = r"D:\Test Clips\IMA"
@@ -420,6 +438,7 @@ def main2():
     multiProcess(images, fastSaveThumbnail, 56)
     # multiThread(images, fastSaveThumbnail, 160)
 
+
 def main3():
     files = getAllFiles(r"D:\Test Clips\London")
     videos = []
@@ -431,14 +450,16 @@ def main3():
     # multiProcess(videos, saveVideoFrameAsThumb, 12)
     multiThread(videos, saveVideoFrameAsThumb, 2)
 
+
 def main4():
     path = r"temp\G3.MOV"
-    frames =getVideoFrames(path,320,25)
+    frames = getVideoFrames(path, 320, 25)
     for frame in frames:
         tga = r"temp\\frames\\%.2f.png" % time.time()
         frame.save(tga)
     print(len(frames))
     pass
+
 
 def main5():
     path = r"D:\Test Clips\London"
@@ -449,9 +470,10 @@ def main5():
         if kind is not None:
             if "video" in str(kind.mime):
                 videos.append(file)
-    print("Videos :",len(videos))
+    print("Videos :", len(videos))
     multiThread(videos, getMediaInfo, 23)
     # multiProcess(videos, getMediaInfo, 7)
+
 
 def main6():
     # path = r"D:\Test Clips\IMA"

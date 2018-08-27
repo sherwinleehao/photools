@@ -1,28 +1,17 @@
-import sys
-from PyQt5.QtWidgets import *
+from photools import *
 import time
+# path = 'img'
+path = '/Users/ws/Desktop/comparation/IMA'
 
-class WinForm(QWidget):
-    def __init__(self, parent = None):
-        super(WinForm, self).__init__(parent)
-        self.setWindowTitle('实时刷新页面例子')
-        self.listFile = QListWidget()
-        self.btnStart = QPushButton('开始')
-        layout = QGridLayout(self)
-        layout.addWidget(self.listFile, 0, 0, 1, 2)
-        layout.addWidget(self.btnStart, 1, 1)
+files = getAllFiles(path)
+# print(files)
 
-        self.btnStart.clicked.connect(self.slotAdd)
-        self.setLayout(layout)
+st = time.time()
 
-    def slotAdd(self):
-        QApplication.processEvents()
-        time.sleep(0.5)
-        print("Sleep:0.5s")
+for file in files:
+    iconPath = findThumb(file,"Temp/Cache")
+    print(iconPath)
 
+et = time.time()
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    form = WinForm()
-    form.show()
-    sys.exit(app.exec_())
+print("Used time of %.3f"%(et-st))

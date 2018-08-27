@@ -20,7 +20,9 @@ class WinForm(QWidget):
             str_n = 'file index {0}'.format(n)
             self.listFile.addItem(str_n)
             QApplication.processEvents()
-            time.sleep(0.2)
+            print("finish add item:",str_n)
+            time.sleep(1.0)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
