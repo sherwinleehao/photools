@@ -9,14 +9,16 @@ print(loudness)
 st = time.time()
 
 wave = []
-for i in range(0,1024):
 
-    # second = i*1000
+# for i in range(0,1024):
+#     segment = sound[i*1000/4:(i+1)*1000/4]
+#     wave.append(segment.max)
 
-    segment = sound[i*1000/4:(i+1)*1000/4]
-    print('%5d'%i,segment.max)
-    # wave.append([i,segment.max])
+for i in range(0,10240):
+    segment = sound[i*1000/40:(i+1)*1000/40]
     wave.append(segment.max)
+
+
 et = time.time()
 
 print("used time:",et-st)
