@@ -16,10 +16,11 @@ class WinForm(QWidget):
         self.setLayout(layout)
 
     def slotAdd(self):
-        QApplication.processEvents()
-        time.sleep(0.5)
-        print("Sleep:0.5s")
-
+        for n in range(20):
+            str_n = 'file index {0}'.format(n)
+            self.listFile.addItem(str_n)
+            QApplication.processEvents()
+            time.sleep(0.2)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

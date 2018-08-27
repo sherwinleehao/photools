@@ -37,7 +37,7 @@ import uuid
 
 class ListView(QListView):
     map_listview = []
-    name = "xxxxxxxxxxxxxxxxxxxxxxxxxx"
+
     def __init__(self):
         super().__init__()
         self.m_pModel = ListModel()
@@ -55,11 +55,16 @@ class ListView(QListView):
 
     def deleteItemSlot(self):
         index = self.currentIndex().row()
+        print("deleteItemSlot ",index)
         if index > -1:
             self.m_pModel.deleteItem(index)
 
     def addItem(self, pitem):
         self.m_pModel.addItem(pitem)
+
+    def removeItem(self,index):
+        self.m_pModel.deleteItem(index)
+
 
 
 class ListModel(QAbstractListModel):
@@ -86,10 +91,11 @@ class ListModel(QAbstractListModel):
             return QVariant()
 
     def rowCount(self, parent=QModelIndex()):
-        # print('rowCount')
+        print('rowCount')
         return len(self.ListItemData)
 
     def Data_init(self):
+        print('Data_init')
         randomnum = random.sample(range(100), 5)
         for i in randomnum:
             randname = str("Sherwin %d" % i)
@@ -107,13 +113,15 @@ class ListModel(QAbstractListModel):
             self.endInsertRows()
 
     def deleteItem(self, index):
-        print('deleteItem')
+        print('deleteItem',index)
         del self.ListItemData[index]
 
+
     def getItem(self, index):
-        print('getItem')
+        print('getItem',index)
         if index > -1 and index < len(self.ListItemData):
             return self.ListItemData[index]
+
 
 
 class Example(QWidget):
@@ -144,7 +152,7 @@ class Example(QWidget):
         self.setLayout(Vbox)
         self.setGeometry(-600, 300, 360, 720)
         self.setWindowTitle("Pre-Research")
-        self.btn_tester.clicked.connect(self.tester)
+        self.btn_tester.clicked.connect(self.supdate)
         self.btn_addmore.clicked.connect(self.addmore)
         self.btn_remove.clicked.connect(self.remove)
         self.btn_removeall.clicked.connect(self.removeall)
@@ -152,10 +160,7 @@ class Example(QWidget):
 
     def tester(self):
         print("This is Tester!")
-        ItemData = {}
-        ItemData['name'] = "New Item"
-        ItemData['iconPath'] = "img/thumb/thumb_0099.jpg"
-        print(self.pListView.addItem(ItemData))
+        self.updateGeometry()
 
     def addmore(self):
         print("This is addmore!")
@@ -169,10 +174,13 @@ class Example(QWidget):
                 self.pListView.addItem(ItemData)
 
     def remove(self):
-        print("This is remove!")
+        print("This is remove22222222222!")
+        self.pListView.removeItem(1)
 
     def removeall(self):
         print("This is removeall!")
+        self.pListView.removeItem(0)
+        self.supdate()
 
     def openFileNamesDialog(self):
         options = QFileDialog.Options()
@@ -182,6 +190,9 @@ class Example(QWidget):
         if files:
             return files
 
+    def supdate(self):
+        self.setFixedWidth(self.width()+1)
+        self.setFixedWidth(self.width()-1)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
