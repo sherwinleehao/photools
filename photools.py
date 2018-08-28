@@ -303,6 +303,10 @@ def zip_dir(dirname, zipfilename):
         zf.write(tar, arcname)
     zf.close()
 
+def getFileKind(filePath):
+    videoKind = ['mp4','mov','avi','webm','mts','wmv','mpg','3gp','flv','mkv','vob','ts','wma','m4v','ogg','mpeg','mxf']
+    imageKind = ['jpg','png','gif']
+    audioKind = ['mp3','wav','m4a']
 
 def findThumb(filePath, cachePath):
     MD5 = getDraftMD5(filePath)
@@ -313,11 +317,22 @@ def findThumb(filePath, cachePath):
         return tga
     else:
         mkdir(cachePath)
-        try:
-            saveThumbnail(filePath, 144, tga)
-        except:
-            saveThumbnail(errorPath, 144, tga)
-        return tga
+        kind = filetype.guess(filePath)
+        if kind is not None:
+            print(filePath,"is ",str(kind.mime))
+            # if "video" in str(kind.mime):
+            #     thumb = getVideoFrame(filePath, 144, 0)
+            #     thumb.save(tga)
+            #     thumb.close()
+            #     return tga
+            #     pass
+            # elif "image" in str(kind.mime):
+            #     saveThumbnail(filePath, 144, tga)
+            #     return tga
+            # else:
+            #     saveThumbnail(errorPath, 144, tga)
+            #     return tga
+
 
 
 ################################################################

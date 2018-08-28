@@ -15,6 +15,7 @@ Task:
 #     添加多个文件到列表
     删除选中的文件
     # 删除全部文件
+    弹窗显示已经在列表内的item
 修改列表缩略图的列表样式，修改滑动栏的样式，列表样式
 
 做加载过程的占位GIF，完成后显示真缩图，缩略图将以MD5形式命名并缓存
@@ -33,7 +34,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import os, random, time
 import uuid
-
+import photools as pt
 
 class ListView(QListView):
     map_listview = []
@@ -155,7 +156,7 @@ class Example(QWidget):
         self.setLayout(Vbox)
         self.setGeometry(-600, 300, 360, 720)
         self.setWindowTitle("Pre-Research")
-        self.btn_tester.clicked.connect(self.supdate)
+        self.btn_tester.clicked.connect(self.tester)
         self.btn_addmore.clicked.connect(self.addmore)
         # self.btn_remove.clicked.connect(self.remove)
         self.btn_removeall.clicked.connect(self.removeall)
@@ -164,7 +165,7 @@ class Example(QWidget):
     def tester(self):
         print("This is Tester!")
         # print(self.pListView.selectedIndexes())
-        self.pListView.showSelection()
+        print(self.pListView.m_pModel.ListItemData)
 
     def addmore(self):
         print("This is addmore!")
@@ -174,7 +175,8 @@ class Example(QWidget):
                 name = os.path.basename(file).split(".")[0]
                 ItemData = {}
                 ItemData['name'] = name
-                ItemData['iconPath'] = file
+                # ItemData['iconPath'] = file
+                ItemData['iconPath'] = pt.findThumb(file,"Temp/Cache")
                 self.pListView.addItem(ItemData)
 
     def remove(self):
