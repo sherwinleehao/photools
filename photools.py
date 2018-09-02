@@ -5,8 +5,10 @@
 Image Tool Library
 
 Author: Sherwin Lee
+
 Website: Sherwinleehao.com
-Last edited: 20180828
+
+Last edited: 20180903
 """
 
 import os
@@ -307,31 +309,41 @@ def getFileKind(filePath):
     videoKind = ['mp4','mov','avi','webm','mts','wmv','mpg','3gp','flv','mkv','vob','ts','wma','m4v','ogg','mpeg','mxf']
     imageKind = ['jpg','png','gif']
     audioKind = ['mp3','wav','m4a']
+    extension = os.path.splitext(filePath)[-1][1:].lower()
+    if extension in videoKind:
+        return "video"
+    elif extension in imageKind:
+        return "image"
+    elif extension in audioKind:
+        return "audio"
+    else:
+        return None
+
 
 def findThumb(filePath, cachePath):
     MD5 = getDraftMD5(filePath)
-    print("Draft MD5: ", MD5)
+    # print("Draft MD5: ", MD5)
     errorPath = 'GUI/error.png'
     tga = os.path.join(cachePath, str(MD5) + ".jpg")
     if os.path.isfile(tga):
         return tga
     else:
         mkdir(cachePath)
-        kind = filetype.guess(filePath)
+        kind = getFileKind(filePath)
         if kind is not None:
-            print(filePath,"is ",str(kind.mime))
-            # if "video" in str(kind.mime):
-            #     thumb = getVideoFrame(filePath, 144, 0)
-            #     thumb.save(tga)
-            #     thumb.close()
-            #     return tga
-            #     pass
-            # elif "image" in str(kind.mime):
-            #     saveThumbnail(filePath, 144, tga)
-            #     return tga
-            # else:
-            #     saveThumbnail(errorPath, 144, tga)
-            #     return tga
+            print(filePath,"is ",kind)
+            if "video" in kind:
+                thumb = getVideoFrame(filePath, 144, 0)
+                thumb.save(tga)
+                thumb.close()
+                return tga
+                pass
+            elif "image" in kind:
+                saveThumbnail(filePath, 144, tga)
+                return tga
+            else:
+                saveThumbnail(errorPath, 144, tga)
+                return tga
 
 
 
@@ -510,7 +522,7 @@ def main6():
 if __name__ == '__main__':
     st = time.time()
 
-    main6()
-
+    path = r"/sherwinleehao/test/format.JPG"
+    print(getFileKind(path))
     et = time.time() - st
     print("All Use time: ", et)

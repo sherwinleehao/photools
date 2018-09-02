@@ -16,8 +16,10 @@ Task:
     删除选中的文件
     # 删除全部文件
     弹窗显示已经在列表内的item
-修改列表缩略图的列表样式，修改滑动栏的样式，列表样式
 
+加载资源应该先加载占位缩略图，然后开启线程进行后台加载缩略图并替换
+
+修改列表缩略图的列表样式，修改滑动栏的样式，列表样式
 做加载过程的占位GIF，完成后显示真缩图，缩略图将以MD5形式命名并缓存
 视频文件后台获取25张图，划过能动态显示视频
 
@@ -169,6 +171,7 @@ class Example(QWidget):
 
     def addmore(self):
         print("This is addmore!")
+        iconPaths = self.getIconPathList()
         files = self.openFileNamesDialog()
         if files:
             for file in files:
@@ -177,7 +180,11 @@ class Example(QWidget):
                 ItemData['name'] = name
                 # ItemData['iconPath'] = file
                 ItemData['iconPath'] = pt.findThumb(file,"Temp/Cache")
-                self.pListView.addItem(ItemData)
+                if ItemData['iconPath'] in iconPaths:
+                    print("\n",ItemData['name'],"Already in the list!")
+                    pass
+                else:
+                    self.pListView.addItem(ItemData)
 
     def remove(self):
         print("This is remove22222222222!")
@@ -202,6 +209,11 @@ class Example(QWidget):
         self.setFixedWidth(self.width()+1)
         self.setFixedWidth(self.width()-1)
 
+    def getIconPathList(self):
+        iconPaths = []
+        for i in self.pListView.m_pModel.ListItemData:
+            iconPaths.append(i['iconPath'])
+        return iconPaths
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     ex = Example()
