@@ -35,7 +35,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import os, random, time
-import uuid
+import uuid,shutil
 import photools as pt
 
 class ListView(QListView):
@@ -171,21 +171,57 @@ class Example(QWidget):
 
     def addmore(self):
         print("This is addmore!")
-        iconPaths = self.getIconPathList()
+        filePaths = self.getfilePathList()
+        print("Filepaths",filePaths)
         files = self.openFileNamesDialog()
+        existFiles = []
+        unsupportedFiles = []
+        updateFiles = []
+        msg = ''
         if files:
             for file in files:
-                name = os.path.basename(file).split(".")[0]
+                basename = os.path.basename(file)
+                name = basename.split(".")[0]
                 ItemData = {}
                 ItemData['name'] = name
-                # ItemData['iconPath'] = file
-                ItemData['iconPath'] = pt.findThumb(file,"Temp/Cache")
-                if ItemData['iconPath'] in iconPaths:
-                    print("\n",ItemData['name'],"Already in the list!")
+                ItemKind = pt.getFileKind(file)
+                ItemData['iconPath'] = "GUI/%sThumbnail.png"%ItemKind
+                # ItemData['iconPath'] = pt.findThumb(file,"Temp/Cache")
+                ItemData['filePath'] = file
+
+                if ItemData['filePath'] in filePaths:
+                    print("\n",basename,"Already in the list!")
+                    existFiles.append(basename)
                     pass
+                elif ItemKind is None:
+                    unsupportedFiles.append(basename)
                 else:
                     self.pListView.addItem(ItemData)
+                    updateFiles.append(file)
+        if existFiles:
+            tempmsg = str(existFiles).replace('[','').replace(']','').replace(',','\n').replace(' ','').replace('\'','')
+            msg = msg +'\n'+ tempmsg[:300] + "...\nAlready in the list.\n...\n"
+        if unsupportedFiles:
+            tempmsg = str(unsupportedFiles).replace('[','').replace(']','').replace(',','\n').replace(' ','').replace('\'','')
+            msg = msg +'\n'+ tempmsg[:300] + "...\nNot Supported.\n...\n"
+        if msg:
+            print(msg)
+            QMessageBox.about(self, 'Files already in the list', msg)
+        if updateFiles:
+            self.updateListThumb(updateFiles)
 
+    def updateListThumb(self,filePaths):
+        for filePath in filePaths:
+            QApplication.processEvents()
+            print("Updating file:", filePath)
+            iconPath = pt.findThumb(filePath,"Temp/Cache")
+            print("New Icon Path:", iconPath)
+            for i in self.pListView.m_pModel.ListItemData:
+                if i['filePath'] is filePath:
+                    i['iconPath'] = iconPath
+                    break
+        pass
+    #
     def remove(self):
         print("This is remove22222222222!")
         self.pListView.removeItem(0)
@@ -209,12 +245,16 @@ class Example(QWidget):
         self.setFixedWidth(self.width()+1)
         self.setFixedWidth(self.width()-1)
 
-    def getIconPathList(self):
-        iconPaths = []
+    def getfilePathList(self):
+        filePaths = []
         for i in self.pListView.m_pModel.ListItemData:
-            iconPaths.append(i['iconPath'])
-        return iconPaths
+            try:
+                filePaths.append(i['filePath'])
+            except:
+                pass
+        return filePaths
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    # shutil.rmtree('Temp/Cache')
     ex = Example()
     sys.exit(app.exec_())

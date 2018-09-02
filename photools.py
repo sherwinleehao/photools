@@ -307,7 +307,7 @@ def zip_dir(dirname, zipfilename):
 
 def getFileKind(filePath):
     videoKind = ['mp4','mov','avi','webm','mts','wmv','mpg','3gp','flv','mkv','vob','ts','wma','m4v','ogg','mpeg','mxf']
-    imageKind = ['jpg','png','gif']
+    imageKind = ['jpg','png','gif','cr2','arw']
     audioKind = ['mp3','wav','m4a']
     extension = os.path.splitext(filePath)[-1][1:].lower()
     if extension in videoKind:
