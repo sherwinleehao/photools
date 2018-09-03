@@ -35,8 +35,19 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import os, random, time
-import uuid,shutil
+import uuid, shutil
 import photools as pt
+
+
+class BackendThread(QThread):
+    print('BackendThread')
+    update_date = pyqtSignal(str)
+    def run(self):
+        while True:
+            data = QDateTime.currentDateTime()
+            currTime = data.toString("yyyy-MM-dd hh:mm:ss")
+            self.update_date.emit(str(currTime))
+            time.sleep(5)
 
 class ListView(QListView):
     map_listview = []
@@ -58,14 +69,14 @@ class ListView(QListView):
 
     def deleteItemSlot(self):
         index = self.currentIndex().row()
-        print("deleteItemSlot ",index)
+        print("deleteItemSlot ", index)
         if index > -1:
             self.m_pModel.deleteItem(index)
 
     def addItem(self, pitem):
         self.m_pModel.addItem(pitem)
 
-    def removeItem(self,index):
+    def removeItem(self, index):
         self.m_pModel.deleteItem(index)
 
     def showSelection(self):
@@ -119,19 +130,18 @@ class ListModel(QAbstractListModel):
             self.endInsertRows()
 
     def deleteItem(self, index):
-        print('deleteItem',index)
+        print('deleteItem', index)
         del self.ListItemData[index]
 
-
     def getItem(self, index):
-        print('getItem',index)
+        print('getItem', index)
         if index > -1 and index < len(self.ListItemData):
             return self.ListItemData[index]
 
 
-
 class Example(QWidget):
-    updateList =[]
+    updateList = []
+
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -165,15 +175,11 @@ class Example(QWidget):
         self.btn_removeall.clicked.connect(self.removeall)
         self.show()
 
-    def tester(self):
-        print("This is Tester!")
-        # print(self.pListView.selectedIndexes())
-        print(self.pListView.m_pModel.ListItemData)
 
     def addmore(self):
         print("This is addmore!")
         filePaths = self.getfilePathList()
-        print("Filepaths",filePaths)
+        print("Filepaths", filePaths)
         files = self.openFileNamesDialog()
         existFiles = []
         unsupportedFiles = []
@@ -186,12 +192,12 @@ class Example(QWidget):
                 ItemData = {}
                 ItemData['name'] = name
                 ItemKind = pt.getFileKind(file)
-                ItemData['iconPath'] = "GUI/%sThumbnail.png"%ItemKind
+                ItemData['iconPath'] = "GUI/%sThumbnail.png" % ItemKind
                 # ItemData['iconPath'] = pt.findThumb(file,"Temp/Cache")
                 ItemData['filePath'] = file
 
                 if ItemData['filePath'] in filePaths:
-                    print("\n",basename,"Already in the list!")
+                    print("\n", basename, "Already in the list!")
                     existFiles.append(basename)
                     pass
                 elif ItemKind is None:
@@ -202,19 +208,24 @@ class Example(QWidget):
                     updateFiles.append(file)
                     self.updateList.append(file)
         if existFiles:
-            tempmsg = str(existFiles).replace('[','').replace(']','').replace(',','\n').replace(' ','').replace('\'','')
-            msg = msg +'\n'+ tempmsg[:300] + "...\nAlready in the list.\n...\n"
+            tempmsg = str(existFiles).replace('[', '').replace(']', '').replace(',', '\n').replace(' ', '').replace(
+                '\'', '')
+            msg = msg + '\n' + tempmsg[:300] + "...\nAlready in the list.\n...\n"
         if unsupportedFiles:
-            tempmsg = str(unsupportedFiles).replace('[','').replace(']','').replace(',','\n').replace(' ','').replace('\'','')
-            msg = msg +'\n'+ tempmsg[:300] + "...\nNot Supported.\n...\n"
+            tempmsg = str(unsupportedFiles).replace('[', '').replace(']', '').replace(',', '\n').replace(' ',
+                                                                                                         '').replace(
+                '\'', '')
+            msg = msg + '\n' + tempmsg[:300] + "...\nNot Supported.\n...\n"
         if msg:
             print(msg)
             QMessageBox.about(self, 'Files already in the list', msg)
         if updateFiles:
+
             # self.updateListThumb(updateFiles)
-            thread = self.Mythread()
-            thread.breakSignal.connect(self.dosomething)
-            thread.start()
+            # thread = self.BackendThread()
+            # thread.update_date.connect(self.dosomething)
+            # thread.start()
+            pass
 
     # def updateListThumb(self,filePaths):
     #     for filePath in filePaths:
@@ -248,8 +259,8 @@ class Example(QWidget):
             return files
 
     def supdate(self):
-        self.setFixedWidth(self.width()+1)
-        self.setFixedWidth(self.width()-1)
+        self.setFixedWidth(self.width() + 1)
+        self.setFixedWidth(self.width() - 1)
 
     def getfilePathList(self):
         filePaths = []
@@ -260,25 +271,18 @@ class Example(QWidget):
                 pass
         return filePaths
 
-    def dosomething(self,filePath):
-        print("filePath",filePath)
+    def tester(self):
+        print("This is Tester!")
+        # print(self.pListView.m_pModel.ListItemData)
+        self.backend = BackendThread()
+        self.backend.update_date.connect(self.dosomething)
+        self.backend.start()
+
+    def dosomething(self, data):
+        print(data)
         # print("iconPath",iconPath)
 
 
-    class Mythread(QThread):
-        breakSignal = pyqtSignal(str)
-
-        def __init__(self, parent=None):
-            super().__init__(parent)
-
-        def run(self):
-            print("XXXXXXXXXXXXXXXx"*10)
-            self.breakSignal.emit("1qwert")
-            # for file in range(10):
-            # # for file in ex.updateList:
-            #     print("XXXX" * 10)
-            #     icon = pt.findThumb(file, "Temp/Cache")
-            #     self.breakSignal.emit(file,icon)
 
 
 
