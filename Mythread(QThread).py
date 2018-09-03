@@ -16,7 +16,7 @@ pyqtSignal([int,int],[int,str])          #二个参数([整数,整数]或者[整
 
 class Mythread(QThread):
     # 定义信号,定义参数为str类型
-    breakSignal = pyqtSignal(str,list)
+    breakSignal = pyqtSignal(str,str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -27,10 +27,12 @@ class Mythread(QThread):
         for i in range(2000000):
             # 发出信号
             print(12)
-            a=[i,i+1]
-            self.breakSignal.emit(str(i),a)
+            # a=[i,i+1]
+            a=i*2
+
+            self.breakSignal.emit(str(i),str(a))
             # 让程序休眠
-            time.sleep(0.5)
+            time.sleep(0.1)
 
 
 if __name__ == '__main__':
@@ -47,10 +49,10 @@ if __name__ == '__main__':
     dlg.show()
 
 
-    def chuli(a,s):
+    def chuli(aaa,bbb):
         # dlg.setWindowTitle(s)
         # btn.setText(a+str(s[0]*10))
-        btn.setText(a+str(s))
+        btn.setText(aaa+bbb)
 
     # 创建线程
     thread = Mythread()

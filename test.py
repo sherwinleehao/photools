@@ -131,6 +131,7 @@ class ListModel(QAbstractListModel):
 
 
 class Example(QWidget):
+    updateList =[]
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -156,7 +157,7 @@ class Example(QWidget):
         Vbox.addWidget(self.pListView)
         Vbox.addWidget(self.btn_tester)
         self.setLayout(Vbox)
-        self.setGeometry(-600, 300, 360, 720)
+        self.setGeometry(300, 300, 360, 720)
         self.setWindowTitle("Pre-Research")
         self.btn_tester.clicked.connect(self.tester)
         self.btn_addmore.clicked.connect(self.addmore)
@@ -197,7 +198,9 @@ class Example(QWidget):
                     unsupportedFiles.append(basename)
                 else:
                     self.pListView.addItem(ItemData)
+
                     updateFiles.append(file)
+                    self.updateList.append(file)
         if existFiles:
             tempmsg = str(existFiles).replace('[','').replace(']','').replace(',','\n').replace(' ','').replace('\'','')
             msg = msg +'\n'+ tempmsg[:300] + "...\nAlready in the list.\n...\n"
@@ -208,19 +211,22 @@ class Example(QWidget):
             print(msg)
             QMessageBox.about(self, 'Files already in the list', msg)
         if updateFiles:
-            self.updateListThumb(updateFiles)
+            # self.updateListThumb(updateFiles)
+            thread = self.Mythread()
+            thread.breakSignal.connect(self.dosomething)
+            thread.start()
 
-    def updateListThumb(self,filePaths):
-        for filePath in filePaths:
-            QApplication.processEvents()
-            print("Updating file:", filePath)
-            iconPath = pt.findThumb(filePath,"Temp/Cache")
-            print("New Icon Path:", iconPath)
-            for i in self.pListView.m_pModel.ListItemData:
-                if i['filePath'] is filePath:
-                    i['iconPath'] = iconPath
-                    break
-        pass
+    # def updateListThumb(self,filePaths):
+    #     for filePath in filePaths:
+    #         QApplication.processEvents()
+    #         print("Updating file:", filePath)
+    #         iconPath = pt.findThumb(filePath,"Temp/Cache")
+    #         print("New Icon Path:", iconPath)
+    #         for i in self.pListView.m_pModel.ListItemData:
+    #             if i['filePath'] is filePath:
+    #                 i['iconPath'] = iconPath
+    #                 break
+    #     pass
     #
     def remove(self):
         print("This is remove22222222222!")
@@ -253,8 +259,31 @@ class Example(QWidget):
             except:
                 pass
         return filePaths
+
+    def dosomething(self,filePath):
+        print("filePath",filePath)
+        # print("iconPath",iconPath)
+
+
+    class Mythread(QThread):
+        breakSignal = pyqtSignal(str)
+
+        def __init__(self, parent=None):
+            super().__init__(parent)
+
+        def run(self):
+            print("XXXXXXXXXXXXXXXx"*10)
+            self.breakSignal.emit("1qwert")
+            # for file in range(10):
+            # # for file in ex.updateList:
+            #     print("XXXX" * 10)
+            #     icon = pt.findThumb(file, "Temp/Cache")
+            #     self.breakSignal.emit(file,icon)
+
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    # shutil.rmtree('Temp/Cache')
+    # shutil.rmtree('Temp')
     ex = Example()
     sys.exit(app.exec_())

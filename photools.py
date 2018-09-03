@@ -262,7 +262,7 @@ def saveRaw2IMG16(RawPath, IMGPath):
 def saveVideoFrameAsThumb(filePath):
     st = time.time()
     img = getVideoFrame(filePath, 144,8)
-    tga = "C:\Temp\Thumbnails\%s.jpg" % uuid.uuid4()
+    tga = "/Users/ws/Desktop/comparation/Thumbnails/%s.jpg" % uuid.uuid4()
     img = getResizedImg(img, 144)
     img.save(tga)
     et = time.time() - st
@@ -468,7 +468,8 @@ def main2():
 
 def main3():
     # files = getAllFiles(r"D:\Test Clips\London")
-    files = getAllFiles(r"C:\Footages\import_test")
+    # files = getAllFiles(r"C:\Footages\import_test")
+    files = getAllFiles(r"/Users/ws/Desktop/comparation/import_test")
     # files = getAllFiles(r"D:\comparation\import_test")
     videos = []
     for file in files:
