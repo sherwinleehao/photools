@@ -261,7 +261,7 @@ def saveRaw2IMG16(RawPath, IMGPath):
 
 def saveVideoFrameAsThumb(filePath):
     st = time.time()
-    img = getVideoFrame(filePath, 0)
+    img = getVideoFrame(filePath, 144,8)
     tga = "C:\Temp\Thumbnails\%s.jpg" % uuid.uuid4()
     img = getResizedImg(img, 144)
     img.save(tga)
@@ -467,15 +467,16 @@ def main2():
 
 
 def main3():
-    files = getAllFiles(r"D:\Test Clips\London")
+    # files = getAllFiles(r"D:\Test Clips\London")
+    files = getAllFiles(r"C:\Footages\import_test")
+    # files = getAllFiles(r"D:\comparation\import_test")
     videos = []
     for file in files:
-        kind = filetype.guess(file)
-        if kind is not None:
-            if "video" in str(kind.mime):
-                videos.append(file)
-    # multiProcess(videos, saveVideoFrameAsThumb, 12)
-    multiThread(videos, saveVideoFrameAsThumb, 2)
+        kind = getFileKind(file)
+        if kind is "video":
+            videos.append(file)
+    # multiProcess(videos, saveVideoFrameAsThumb, 2)
+    multiThread(videos, saveVideoFrameAsThumb, 4)
 
 
 def main4():
@@ -522,7 +523,6 @@ def main6():
 if __name__ == '__main__':
     st = time.time()
 
-    path = r"/sherwinleehao/test/format.JPG"
-    print(getFileKind(path))
+    main3()
     et = time.time() - st
     print("All Use time: ", et)
