@@ -39,15 +39,7 @@ import uuid, shutil
 import photools as pt
 
 
-class BackendThread(QThread):
-    print('BackendThread')
-    update_date = pyqtSignal(str)
-    def run(self):
-        while True:
-            data = QDateTime.currentDateTime()
-            currTime = data.toString("yyyy-MM-dd hh:mm:ss")
-            self.update_date.emit(str(currTime))
-            time.sleep(5)
+
 
 class ListView(QListView):
     map_listview = []
@@ -175,7 +167,6 @@ class Example(QWidget):
         self.btn_removeall.clicked.connect(self.removeall)
         self.show()
 
-
     def addmore(self):
         print("This is addmore!")
         filePaths = self.getfilePathList()
@@ -183,7 +174,6 @@ class Example(QWidget):
         files = self.openFileNamesDialog()
         existFiles = []
         unsupportedFiles = []
-        updateFiles = []
         msg = ''
         if files:
             for file in files:
@@ -204,8 +194,6 @@ class Example(QWidget):
                     unsupportedFiles.append(basename)
                 else:
                     self.pListView.addItem(ItemData)
-
-                    updateFiles.append(file)
                     self.updateList.append(file)
         if existFiles:
             tempmsg = str(existFiles).replace('[', '').replace(']', '').replace(',', '\n').replace(' ', '').replace(
@@ -219,26 +207,24 @@ class Example(QWidget):
         if msg:
             print(msg)
             QMessageBox.about(self, 'Files already in the list', msg)
-        if updateFiles:
-
-            # self.updateListThumb(updateFiles)
-            # thread = self.BackendThread()
-            # thread.update_date.connect(self.dosomething)
-            # thread.start()
+        if self.updateList:
+            self.backend = BackendThread()
+            self.backend.update_date.connect(self.updateThumb)
+            self.backend.start()
             pass
 
-    # def updateListThumb(self,filePaths):
-    #     for filePath in filePaths:
-    #         QApplication.processEvents()
-    #         print("Updating file:", filePath)
-    #         iconPath = pt.findThumb(filePath,"Temp/Cache")
-    #         print("New Icon Path:", iconPath)
-    #         for i in self.pListView.m_pModel.ListItemData:
-    #             if i['filePath'] is filePath:
-    #                 i['iconPath'] = iconPath
-    #                 break
-    #     pass
-    #
+    def updateThumb(self,filePath,iconPath):
+        print(filePath)
+        print(iconPath)
+        print('\n')
+        for i in self.pListView.m_pModel.ListItemData:
+            if i['filePath'] == filePath:
+                i['iconPath'] = iconPath
+                break
+        self.supdate()
+
+
+
     def remove(self):
         print("This is remove22222222222!")
         self.pListView.removeItem(0)
@@ -273,19 +259,21 @@ class Example(QWidget):
 
     def tester(self):
         print("This is Tester!")
-        # print(self.pListView.m_pModel.ListItemData)
-        self.backend = BackendThread()
-        self.backend.update_date.connect(self.dosomething)
-        self.backend.start()
-
-    def dosomething(self, data):
-        print(data)
-        # print("iconPath",iconPath)
+        print(self.pListView.m_pModel.ListItemData)
 
 
 
-
-
+class BackendThread(QThread):
+    print('BackendThread')
+    print(Example.updateList)
+    update_date = pyqtSignal(str,str)
+    def run(self):
+        st = time.time()
+        for filePath in Example.updateList:
+            iconPath = pt.findThumb(filePath,"Temp/Cache")
+            self.update_date.emit(filePath, iconPath)
+        et = time.time()
+        print("Use Time to Load: %.4f\n"%(et-st))
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     # shutil.rmtree('Temp')
