@@ -6,7 +6,7 @@ Image Tool Library
 
 Author: Sherwin Lee
 Website: Sherwinleehao.com
-Last edited: 20180828
+Last edited: 20180905
 
 Task:
 
@@ -15,15 +15,18 @@ Task:
 #     添加多个文件到列表
     删除选中的文件
     # 删除全部文件
-    弹窗显示已经在列表内的item
+    # 弹窗显示已经在列表内的item
 
-加载资源应该先加载占位缩略图，然后开启线程进行后台加载缩略图并替换
+# 加载资源应该先加载占位缩略图，然后开启线程进行后台加载缩略图并替换
+
+显示两行信息，文件名\n分辨率，帧率，图片仅显示分辨率
 
 修改列表缩略图的列表样式，修改滑动栏的样式，列表样式
 做加载过程的占位GIF，完成后显示真缩图，缩略图将以MD5形式命名并缓存
 视频文件后台获取25张图，划过能动态显示视频
 
 鼠标悬停的Item上有删除按键
+
 
 """
 
@@ -35,8 +38,11 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import os, random, time
-import uuid,shutil
+import uuid, shutil
 import photools as pt
+
+
+
 
 class ListView(QListView):
     map_listview = []
@@ -58,14 +64,14 @@ class ListView(QListView):
 
     def deleteItemSlot(self):
         index = self.currentIndex().row()
-        print("deleteItemSlot ",index)
+        print("deleteItemSlot ", index)
         if index > -1:
             self.m_pModel.deleteItem(index)
 
     def addItem(self, pitem):
         self.m_pModel.addItem(pitem)
 
-    def removeItem(self,index):
+    def removeItem(self, index):
         self.m_pModel.deleteItem(index)
 
     def showSelection(self):
@@ -82,34 +88,35 @@ class ListModel(QAbstractListModel):
         # print("data:",index.isValid(),index.row,role)
         if index.isValid() or (0 <= index.row() < len(self.ListItemData)):
             if role == Qt.DisplayRole:
-                return QVariant(self.ListItemData[index.row()]['name'])
+                # return QVariant(self.ListItemData[index.row()]['name'])
+                return QVariant(self.parseItem(self.ListItemData[index.row()]))
             elif role == Qt.DecorationRole:
                 return QVariant(QIcon(self.ListItemData[index.row()]['iconPath']))
             elif role == Qt.SizeHintRole:
                 return QVariant(QSize(70, 80))
             elif role == Qt.TextAlignmentRole:
-                return QVariant(int(Qt.AlignHCenter | Qt.AlignVCenter))
+                # return QVariant(int(Qt.AlignHCenter | Qt.AlignVCenter))
+                return QVariant(int(Qt.AlignLeft | Qt.AlignVCenter))
             elif role == Qt.FontRole:
                 font = QFont()
-                font.setPixelSize(20)
+                font.setPixelSize(12)
                 return QVariant(font)
         else:
             return QVariant()
 
     def rowCount(self, parent=QModelIndex()):
-        # print('rowCount',len(self.ListItemData))
         return len(self.ListItemData)
 
     def Data_init(self):
         print('Data_init')
-        randomnum = random.sample(range(100), 5)
-        for i in randomnum:
-            randname = str("Sherwin %d" % i)
-            ItemData = {'name': '', 'iconPath': ''}
-            ItemData['name'] = randname
-            ItemData['iconPath'] = "img/thumb/thumb_%04d.jpg" % i
-            self.ListItemData.append(ItemData)
-            print("ItemData", ItemData)
+        # randomnum = random.sample(range(100), 5)
+        # for i in randomnum:
+        #     randname = str("Sherwin %d" % i)
+        #     ItemData = {'name': '', 'iconPath': ''}
+        #     ItemData['name'] = randname
+        #     ItemData['iconPath'] = "img/thumb/thumb_%04d.jpg" % i
+        #     self.ListItemData.append(ItemData)
+        #     print("ItemData", ItemData)
 
     def addItem(self, itemData):
         print('addItem')
@@ -119,18 +126,26 @@ class ListModel(QAbstractListModel):
             self.endInsertRows()
 
     def deleteItem(self, index):
-        print('deleteItem',index)
+        print('deleteItem', index)
         del self.ListItemData[index]
 
-
     def getItem(self, index):
-        print('getItem',index)
+        print('getItem', index)
         if index > -1 and index < len(self.ListItemData):
             return self.ListItemData[index]
 
-
+    def parseItem(self,item):
+        name = item['name']
+        # iconPath = item['iconPath']
+        # filePath = item['filePath']
+        mediaInfo = item['mediaInfo']
+        tempStr = name+"\n"+mediaInfo
+        print(tempStr)
+        return tempStr
 
 class Example(QWidget):
+    updateList = []
+
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -156,7 +171,7 @@ class Example(QWidget):
         Vbox.addWidget(self.pListView)
         Vbox.addWidget(self.btn_tester)
         self.setLayout(Vbox)
-        self.setGeometry(-600, 300, 360, 720)
+        self.setGeometry(300, 300, 360, 720)
         self.setWindowTitle("Pre-Research")
         self.btn_tester.clicked.connect(self.tester)
         self.btn_addmore.clicked.connect(self.addmore)
@@ -164,19 +179,13 @@ class Example(QWidget):
         self.btn_removeall.clicked.connect(self.removeall)
         self.show()
 
-    def tester(self):
-        print("This is Tester!")
-        # print(self.pListView.selectedIndexes())
-        print(self.pListView.m_pModel.ListItemData)
-
     def addmore(self):
         print("This is addmore!")
         filePaths = self.getfilePathList()
-        print("Filepaths",filePaths)
+        print("Filepaths", filePaths)
         files = self.openFileNamesDialog()
         existFiles = []
         unsupportedFiles = []
-        updateFiles = []
         msg = ''
         if files:
             for file in files:
@@ -185,43 +194,52 @@ class Example(QWidget):
                 ItemData = {}
                 ItemData['name'] = name
                 ItemKind = pt.getFileKind(file)
-                ItemData['iconPath'] = "GUI/%sThumbnail.png"%ItemKind
-                # ItemData['iconPath'] = pt.findThumb(file,"Temp/Cache")
+                ItemData['iconPath'] = "GUI/%sThumbnail.png" % ItemKind
                 ItemData['filePath'] = file
+                ItemData['mediaInfo'] = "Reselution FPS\nDuration"
+                # if ItemKind is "video":
+                #     mediaInfo = pt.getMediaInfo(file)
+                #     print(mediaInfo)
+                #     ItemData['mediaInfo']= mediaInfo
 
                 if ItemData['filePath'] in filePaths:
-                    print("\n",basename,"Already in the list!")
+                    print("\n", basename, "Already in the list!")
                     existFiles.append(basename)
                     pass
                 elif ItemKind is None:
                     unsupportedFiles.append(basename)
                 else:
                     self.pListView.addItem(ItemData)
-                    updateFiles.append(file)
+                    self.updateList.append(file)
         if existFiles:
-            tempmsg = str(existFiles).replace('[','').replace(']','').replace(',','\n').replace(' ','').replace('\'','')
-            msg = msg +'\n'+ tempmsg[:300] + "...\nAlready in the list.\n...\n"
+            tempmsg = str(existFiles).replace('[', '').replace(']', '').replace(',', '\n').replace(' ', '').replace(
+                '\'', '')
+            msg = msg + '\n' + tempmsg[:300] + "...\nAlready in the list.\n...\n"
         if unsupportedFiles:
-            tempmsg = str(unsupportedFiles).replace('[','').replace(']','').replace(',','\n').replace(' ','').replace('\'','')
-            msg = msg +'\n'+ tempmsg[:300] + "...\nNot Supported.\n...\n"
+            tempmsg = str(unsupportedFiles).replace('[', '').replace(']', '').replace(',', '\n').replace(' ',
+                                                                                                         '').replace(
+                '\'', '')
+            msg = msg + '\n' + tempmsg[:300] + "...\nNot Supported.\n...\n"
         if msg:
             print(msg)
             QMessageBox.about(self, 'Files already in the list', msg)
-        if updateFiles:
-            self.updateListThumb(updateFiles)
+        if self.updateList:
+            self.backend = BackendThread()
+            self.backend.update_date.connect(self.updateThumb)
+            self.backend.start()
+            pass
 
-    def updateListThumb(self,filePaths):
-        for filePath in filePaths:
-            QApplication.processEvents()
-            print("Updating file:", filePath)
-            iconPath = pt.findThumb(filePath,"Temp/Cache")
-            print("New Icon Path:", iconPath)
-            for i in self.pListView.m_pModel.ListItemData:
-                if i['filePath'] is filePath:
-                    i['iconPath'] = iconPath
-                    break
-        pass
-    #
+    def updateThumb(self,filePath,iconPath,mediaInfo):
+        print(filePath)
+        print(iconPath)
+        print('\n')
+        for i in self.pListView.m_pModel.ListItemData:
+            if i['filePath'] == filePath:
+                i['iconPath'] = iconPath
+                i['mediaInfo'] = mediaInfo
+                break
+        self.supdate()
+
     def remove(self):
         print("This is remove22222222222!")
         self.pListView.removeItem(0)
@@ -242,8 +260,8 @@ class Example(QWidget):
             return files
 
     def supdate(self):
-        self.setFixedWidth(self.width()+1)
-        self.setFixedWidth(self.width()-1)
+        self.setFixedWidth(self.width() + 1)
+        self.setFixedWidth(self.width() - 1)
 
     def getfilePathList(self):
         filePaths = []
@@ -253,8 +271,29 @@ class Example(QWidget):
             except:
                 pass
         return filePaths
+
+    def tester(self):
+        print("This is Tester!")
+        print(self.pListView.m_pModel.ListItemData)
+
+
+
+class BackendThread(QThread):
+    print('BackendThread')
+    print(Example.updateList)
+    update_date = pyqtSignal(str,str,str)
+    def run(self):
+        st = time.time()
+        for filePath in Example.updateList:
+            iconPath = pt.findThumb(filePath,"Temp/Cache")
+            width, height, fps, duration = pt.findMediaInfo(filePath,"Temp/Cache")
+            mediaInfo = "%(width)d x %(height)d  %(fps).03f\n%(duration)s" % {'width':width, 'height':height, 'fps':fps, 'duration':duration}
+            print(mediaInfo)
+            self.update_date.emit(filePath, iconPath,mediaInfo)
+        et = time.time()
+        print("Use Time to Load: %.4f\n"%(et-st))
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    # shutil.rmtree('Temp/Cache')
+    # shutil.rmtree('Temp')
     ex = Example()
     sys.exit(app.exec_())

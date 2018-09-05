@@ -8,7 +8,7 @@ Author: Sherwin Lee
 
 Website: Sherwinleehao.com
 
-Last edited: 20180903
+Last edited: 20180906
 """
 
 import os
@@ -261,7 +261,7 @@ def saveRaw2IMG16(RawPath, IMGPath):
 
 def saveVideoFrameAsThumb(filePath):
     st = time.time()
-    img = getVideoFrame(filePath, 144,8)
+    img = getVideoFrame(filePath, 144, 8)
     tga = "/Users/ws/Desktop/comparation/Thumbnails/%s.jpg" % uuid.uuid4()
     img = getResizedImg(img, 144)
     img.save(tga)
@@ -282,11 +282,11 @@ def mkdir(path):
     path = path.rstrip("\\")
     isExists = os.path.exists(path)
     if not isExists:
-        print(path + ' -- Folder Created Successfully')
+        # print(path + ' -- Folder Created Successfully')
         os.makedirs(path)
         return True
     else:
-        print(path + ' -- Folder Already Exists')
+        # print(path + ' -- Folder Already Exists')
         return False
 
 
@@ -305,10 +305,12 @@ def zip_dir(dirname, zipfilename):
         zf.write(tar, arcname)
     zf.close()
 
+
 def getFileKind(filePath):
-    videoKind = ['mp4','mov','avi','webm','mts','wmv','mpg','3gp','flv','mkv','vob','ts','wma','m4v','ogg','mpeg','mxf']
-    imageKind = ['jpg','png','gif','cr2','arw']
-    audioKind = ['mp3','wav','m4a']
+    videoKind = ['mp4', 'mov', 'avi', 'webm', 'mts', 'wmv', 'mpg', '3gp', 'flv', 'mkv', 'vob', 'ts', 'wma', 'm4v',
+                 'ogg', 'mpeg', 'mxf']
+    imageKind = ['jpg', 'png', 'gif', 'cr2', 'arw']
+    audioKind = ['mp3', 'wav', 'm4a']
     extension = os.path.splitext(filePath)[-1][1:].lower()
     if extension in videoKind:
         return "video"
@@ -319,10 +321,31 @@ def getFileKind(filePath):
     else:
         return None
 
+def getTimestamp(duration,frameRate):
+    if duration >=86400:
+        duration = 86399
+    intTime = int(duration)
+    decimal = duration-intTime
+    hh = intTime // 3600
+    mm = (intTime-hh*3600) // 60
+    ss = intTime % 60
+    ff = int(round(decimal*frameRate))
+    dd = round(decimal*1000)
+    time0 = "%02d:%02d:%02d.%02d" % (hh,mm,ss,ff)
+    time1 = "%02d:%02d:%02d.%03d" % (hh,mm,ss,dd)
+
+    return time0,time1
+
+def getKeyMediaInfo(mediaInfo):
+    height = mediaInfo['streams'][0]['coded_height']
+    width = mediaInfo['streams'][0]['coded_width']
+    fps = int(mediaInfo['streams'][0]['avg_frame_rate'].split('/')[0]) / int(
+        mediaInfo['streams'][0]['avg_frame_rate'].split('/')[1])
+    duration, _ = getTimestamp(float(mediaInfo['streams'][0]['duration']), fps)
+    return width,height,fps,duration
 
 def findThumb(filePath, cachePath):
     MD5 = getDraftMD5(filePath)
-    # print("Draft MD5: ", MD5)
     errorPath = 'GUI/error.png'
     tga = os.path.join(cachePath, str(MD5) + ".jpg")
     if os.path.isfile(tga):
@@ -331,7 +354,7 @@ def findThumb(filePath, cachePath):
         mkdir(cachePath)
         kind = getFileKind(filePath)
         if kind is not None:
-            print(filePath,"is ",kind)
+            print(filePath, "is ", kind)
             if "video" in kind:
                 thumb = getVideoFrame(filePath, 144, 0)
                 thumb.save(tga)
@@ -345,6 +368,27 @@ def findThumb(filePath, cachePath):
                 saveThumbnail(errorPath, 144, tga)
                 return tga
 
+
+def findMediaInfo(filePath, cachePath):
+    MD5 = getDraftMD5(filePath)
+    tga = os.path.join(cachePath, str(MD5) + ".json")
+    if os.path.isfile(tga):
+        mediaInfo = json.loads(open(tga,'r').read())
+
+        print(getKeyMediaInfo(mediaInfo))
+        return getKeyMediaInfo(mediaInfo)
+    else:
+        mkdir(cachePath)
+        kind = getFileKind(filePath)
+        if kind is "video":
+            mediaInfo = getMediaInfo(filePath)
+            mediaInfoJson = json.dumps(mediaInfo, sort_keys=True, indent=4, separators=(',', ': '))
+            print(type(mediaInfoJson))
+            f = open(tga, 'w')
+            f.write(mediaInfoJson)
+            f.close()
+            # mediaInfo[]
+            return getKeyMediaInfo(mediaInfo)
 
 
 ################################################################
@@ -524,6 +568,8 @@ def main6():
 if __name__ == '__main__':
     st = time.time()
 
-    main3()
+    # main3()
+    findMediaInfo('D:\Download\\123.mp4', 'Temp/Cache')
+    findMediaInfo('F:\DCIM\\2017-04-03（澳门）\CLIP\C0001.MP4', 'Temp/Cache')
     et = time.time() - st
     print("All Use time: ", et)
