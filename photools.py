@@ -133,6 +133,17 @@ def getRawExif(filePath):
     return tags
 
 
+def getImgSize(filePath):
+    width = 0
+    height = 0
+    try:
+        im = Image.open(filePath)
+        width, height = im.size
+    except:
+        pass
+    return width, height
+
+
 def getThumbnail(filePath, frameSize):
     if os.path.isfile(filePath):
         try:
@@ -321,33 +332,36 @@ def getFileKind(filePath):
     else:
         return None
 
-def getTimestamp(duration,frameRate):
-    if duration >=86400:
+
+def getTimestamp(duration, frameRate):
+    if duration >= 86400:
         duration = 86399
     intTime = int(duration)
-    decimal = duration-intTime
+    decimal = duration - intTime
     hh = intTime // 3600
-    mm = (intTime-hh*3600) // 60
+    mm = (intTime - hh * 3600) // 60
     ss = intTime % 60
-    ff = int(round(decimal*frameRate))
-    dd = round(decimal*1000)
-    time0 = "%02d:%02d:%02d.%02d" % (hh,mm,ss,ff)
-    time1 = "%02d:%02d:%02d.%03d" % (hh,mm,ss,dd)
+    ff = int(round(decimal * frameRate))
+    dd = round(decimal * 1000)
+    time0 = "%02d:%02d:%02d.%02d" % (hh, mm, ss, ff)
+    time1 = "%02d:%02d:%02d.%03d" % (hh, mm, ss, dd)
 
-    return time0,time1
+    return time0, time1
+
 
 def getKeyMediaInfo(mediaInfo):
     # if mediaInfo is None:
     #     return 0,0,0,0
     # else:
-        streams = mediaInfo['streams']
-        for stream in streams:
-            if stream['codec_type'] == "video":
-                height = stream['coded_height']
-                width = stream['coded_width']
-                fps = int(stream['avg_frame_rate'].split('/')[0]) / int( stream['avg_frame_rate'].split('/')[1])
-                duration, _ = getTimestamp(float(stream['duration']), fps)
-                return width,height,fps,duration
+    streams = mediaInfo['streams']
+    for stream in streams:
+        if stream['codec_type'] == "video":
+            height = stream['coded_height']
+            width = stream['coded_width']
+            fps = int(stream['avg_frame_rate'].split('/')[0]) / int(stream['avg_frame_rate'].split('/')[1])
+            duration, _ = getTimestamp(float(stream['duration']), fps)
+            return width, height, fps, duration
+
 
 def findThumb(filePath, cachePath):
     MD5 = getDraftMD5(filePath)
@@ -373,18 +387,40 @@ def findThumb(filePath, cachePath):
                 saveThumbnail(errorPath, 144, tga)
                 return tga
 
+
+# def findMediaInfo(filePath, cachePath):
+#     MD5 = getDraftMD5(filePath)
+#     tga = os.path.join(cachePath, str(MD5) + ".json")
+#     if os.path.isfile(tga):
+#         mediaInfo = json.loads(open(tga,'r').read())
+#         print(mediaInfo)
+#         print(getKeyMediaInfo(mediaInfo))
+#         return getKeyMediaInfo(mediaInfo)
+#     else:
+#         mkdir(cachePath)
+#         kind = getFileKind(filePath)
+#         if kind is "video":
+#             mediaInfo = getMediaInfo(filePath)
+#             mediaInfoJson = json.dumps(mediaInfo, sort_keys=True, indent=4, separators=(',', ': '))
+#             f = open(tga, 'w')
+#             f.write(mediaInfoJson)
+#             f.close()
+#             # mediaInfo[]
+#             return getKeyMediaInfo(mediaInfo)
+#         elif kind is "image":
+#             mediaInfo = getMediaInfo(filePath)
+
 def findMediaInfo(filePath, cachePath):
     MD5 = getDraftMD5(filePath)
     tga = os.path.join(cachePath, str(MD5) + ".json")
-    if os.path.isfile(tga):
-        mediaInfo = json.loads(open(tga,'r').read())
-        print(mediaInfo)
-        print(getKeyMediaInfo(mediaInfo))
-        return getKeyMediaInfo(mediaInfo)
-    else:
-        mkdir(cachePath)
-        kind = getFileKind(filePath)
-        if kind is "video":
+    mkdir(cachePath)
+    kind = getFileKind(filePath)
+    if kind is "video":
+        if os.path.isfile(tga):
+            mediaInfo = json.loads(open(tga, 'r').read())
+            print(getKeyMediaInfo(mediaInfo))
+            return getKeyMediaInfo(mediaInfo)
+        else:
             mediaInfo = getMediaInfo(filePath)
             mediaInfoJson = json.dumps(mediaInfo, sort_keys=True, indent=4, separators=(',', ': '))
             f = open(tga, 'w')
@@ -392,6 +428,20 @@ def findMediaInfo(filePath, cachePath):
             f.close()
             # mediaInfo[]
             return getKeyMediaInfo(mediaInfo)
+    elif kind is "image":
+        if os.path.isfile(tga):
+            mediaInfo = json.loads(open(tga, 'r').read())
+            width = mediaInfo['width']
+            height = mediaInfo['height']
+            return width,height,0.0,"——"
+        else:
+            width,height = getImgSize(filePath)
+            mediaInfo = {'width':width,'height':height}
+            mediaInfoJson = json.dumps(mediaInfo, sort_keys=True, indent=4, separators=(',', ': '))
+            f = open(tga, 'w')
+            f.write(mediaInfoJson)
+            f.close()
+            return width,height,0.0,"——"
 
 
 ################################################################

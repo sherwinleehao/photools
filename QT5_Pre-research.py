@@ -20,7 +20,7 @@ Task:
 # 加载资源应该先加载占位缩略图，然后开启线程进行后台加载缩略图并替换
 
 # 显示两行信息，文件名\n分辨率，帧率，
-图片仅显示分辨率
+# 图片仅显示分辨率
 
 修改列表缩略图的列表样式，修改滑动栏的样式，列表样式
 做加载过程的占位GIF，完成后显示真缩图，缩略图将以MD5形式命名并缓存
@@ -41,7 +41,7 @@ from PyQt5.QtGui import *
 import os, random, time
 import uuid, shutil
 import photools as pt
-
+import ctypes
 
 
 
@@ -151,6 +151,7 @@ class Example(QWidget):
         super().__init__()
         self.initUI()
 
+
     def initUI(self):
         self.pListView = ListView()
         self.pListView.setViewMode(QListView.ListMode)
@@ -174,6 +175,8 @@ class Example(QWidget):
         self.setLayout(Vbox)
         self.setGeometry(300, 300, 360, 720)
         self.setWindowTitle("Pre-Research")
+        self.setWindowIcon(QIcon('GUI/icon_32.png'))
+        self.title.setFixedHeight(35)
         self.btn_tester.clicked.connect(self.tester)
         self.btn_addmore.clicked.connect(self.addmore)
         # self.btn_remove.clicked.connect(self.remove)
@@ -289,7 +292,7 @@ class BackendThread(QThread):
             iconPath = pt.findThumb(filePath,"Temp/Cache")
             pt.findMediaInfo(filePath, "Temp/Cache")
             width, height, fps, duration = pt.findMediaInfo(filePath,"Temp/Cache")
-            mediaInfo = "%(width)d x %(height)d  %(fps).03f\n%(duration)s" % {'width':width, 'height':height, 'fps':fps, 'duration':duration}
+            mediaInfo = "%(width)d x %(height)d  %(fps).02f\n%(duration)s" % {'width':width, 'height':height, 'fps':fps, 'duration':duration}
             # print(mediaInfo)
             self.update_date.emit(filePath, iconPath, mediaInfo)
         et = time.time()
@@ -298,4 +301,5 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     # shutil.rmtree('Temp')
     ex = Example()
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("ex")
     sys.exit(app.exec_())
