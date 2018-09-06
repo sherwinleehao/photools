@@ -337,12 +337,17 @@ def getTimestamp(duration,frameRate):
     return time0,time1
 
 def getKeyMediaInfo(mediaInfo):
-    height = mediaInfo['streams'][0]['coded_height']
-    width = mediaInfo['streams'][0]['coded_width']
-    fps = int(mediaInfo['streams'][0]['avg_frame_rate'].split('/')[0]) / int(
-        mediaInfo['streams'][0]['avg_frame_rate'].split('/')[1])
-    duration, _ = getTimestamp(float(mediaInfo['streams'][0]['duration']), fps)
-    return width,height,fps,duration
+    # if mediaInfo is None:
+    #     return 0,0,0,0
+    # else:
+        streams = mediaInfo['streams']
+        for stream in streams:
+            if stream['codec_type'] == "video":
+                height = stream['coded_height']
+                width = stream['coded_width']
+                fps = int(stream['avg_frame_rate'].split('/')[0]) / int( stream['avg_frame_rate'].split('/')[1])
+                duration, _ = getTimestamp(float(stream['duration']), fps)
+                return width,height,fps,duration
 
 def findThumb(filePath, cachePath):
     MD5 = getDraftMD5(filePath)
@@ -368,13 +373,12 @@ def findThumb(filePath, cachePath):
                 saveThumbnail(errorPath, 144, tga)
                 return tga
 
-
 def findMediaInfo(filePath, cachePath):
     MD5 = getDraftMD5(filePath)
     tga = os.path.join(cachePath, str(MD5) + ".json")
     if os.path.isfile(tga):
         mediaInfo = json.loads(open(tga,'r').read())
-
+        print(mediaInfo)
         print(getKeyMediaInfo(mediaInfo))
         return getKeyMediaInfo(mediaInfo)
     else:
@@ -383,7 +387,6 @@ def findMediaInfo(filePath, cachePath):
         if kind is "video":
             mediaInfo = getMediaInfo(filePath)
             mediaInfoJson = json.dumps(mediaInfo, sort_keys=True, indent=4, separators=(',', ': '))
-            print(type(mediaInfoJson))
             f = open(tga, 'w')
             f.write(mediaInfoJson)
             f.close()
@@ -569,7 +572,7 @@ if __name__ == '__main__':
     st = time.time()
 
     # main3()
-    findMediaInfo('D:\Download\\123.mp4', 'Temp/Cache')
-    findMediaInfo('F:\DCIM\\2017-04-03（澳门）\CLIP\C0001.MP4', 'Temp/Cache')
+    ttt = findMediaInfo('/Users/ws/Desktop/comparation/export_test/03.MOV', 'Temp/Cache')
+    print(ttt)
     et = time.time() - st
     print("All Use time: ", et)
