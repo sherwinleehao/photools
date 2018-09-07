@@ -176,7 +176,7 @@ class Example(QWidget):
         self.setGeometry(300, 300, 360, 720)
         self.setWindowTitle("Pre-Research")
         self.setWindowIcon(QIcon('GUI/icon_32.png'))
-        self.title.setFixedHeight(35)
+        # self.title.setFixedHeight(35)
         self.btn_tester.clicked.connect(self.tester)
         self.btn_addmore.clicked.connect(self.addmore)
         # self.btn_remove.clicked.connect(self.remove)

@@ -102,6 +102,14 @@ def getAllFiles(path):
             tempfiles += getAllFiles(tempPath)
     return tempfiles
 
+def getAllImgs(path):
+    files = getAllFiles(path)
+    IMGs = []
+    for file in files:
+        if getFileKind(file) == "image":
+            IMGs.append(file)
+    return IMGs
+
 
 def getResizedImg(frame, limit):
     frameSize = frame.size
