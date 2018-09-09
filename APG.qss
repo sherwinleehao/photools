@@ -1,0 +1,14 @@
+
+QPushButton{font-family: "Lato";font-size: 20px;color:white}
+QPushButton:hover{}
+QPushButton:pressed{}
+
+
+#Export{        background-color:rgb(255,0,0);border:none;}
+#Export:hover  {background-color:rgb(128,128,255);}
+#Export:pressed {background-color:rgb(45,54,255);}
+
+
+#Setting{background-color:rgb(0,0,0);image:url(./GUI/setting-n.png); border:none; padding: 2px}
+#Setting:hover  {background-color:rgb(32,128,32);image:url(./GUI/setting-h.png)}
+#Setting:pressed{background-color:rgb(128,0,0);image:url(./GUI/setting-p.png)}

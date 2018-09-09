@@ -58,14 +58,20 @@ import photools as pt
 class MainWindow(QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
+        # self.setMinimumSize(360, 720)
+        self.setFixedSize(360,720)
+
         self.layout = QVBoxLayout()
         self.layout.addWidget(TitleBar(self))
         self.layout.addWidget(FootagesPanel(self))
+        self.layout.addWidget(MusicPanel(self))
+        self.layout.addWidget(ExportPanel(self))
         self.setLayout(self.layout)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
-        self.layout.addStretch(-1)
-        self.setMinimumSize(360, 720)
+        self.layout.addStretch(1)
+
+
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.pressing = False
         self.show()
@@ -87,7 +93,7 @@ class TitleBar(QWidget):
         self.btn_close.setFixedSize(btn_size, btn_size)
         self.btn_close.setStyleSheet("background-color: red;")
 
-        self.title.setFixedHeight(35)
+        self.title.setFixedHeight(50)
         self.title.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.title)
         # self.layout.addWidget(self.btn_min)
@@ -129,25 +135,24 @@ class TitleBar(QWidget):
 
 
 class FootagesPanel(QWidget):
+    w = 0
+    h = 470
+    label = "Footages"
+    label_h = 30
+
     def __init__(self, parent):
         super(FootagesPanel, self).__init__()
         self.parent = parent
-        print(self.parent.width())
-        self.setBaseSize(self.parent.width(),380)
-        # self.setStyleSheet("""
-        #             background-color: red;
-        #             color: white;
-        #         """)
+        self.w = self.parent.width()
+        self.setBaseSize(self.w, self.h)
 
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
-        self.title = QLabel("Footages")
-        self.title.setFixedHeight(30)
+        self.title = QLabel(self.label)
+        self.title.setFixedHeight(self.label_h)
         self.content = QLabel()
-        self.content.setFixedHeight(350)
-
-        # self.title.setFixedHeight(380)
+        self.content.setFixedHeight(self.h - self.label_h)
 
         self.title.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.title)
@@ -162,8 +167,111 @@ class FootagesPanel(QWidget):
                 """)
         self.setLayout(self.layout)
         self.start = QPoint(0, 0)
-        print('FootagesPanel height:',self.height())
+        print('FootagesPanel height:', self.height())
 
+
+class MusicPanel(QWidget):
+    w = 0
+    h = 120
+    label = "Background Music"
+    label_h = 30
+
+    def __init__(self, parent):
+        super(MusicPanel, self).__init__()
+        self.parent = parent
+        self.w = self.parent.width()
+        self.setBaseSize(self.w, self.h)
+
+        self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(0)
+        self.title = QLabel(self.label)
+        self.title.setFixedHeight(self.label_h)
+        self.content = QLabel()
+        self.content.setFixedHeight(self.h - self.label_h)
+
+        self.title.setAlignment(Qt.AlignCenter)
+        self.layout.addWidget(self.title)
+        self.layout.addWidget(self.content)
+        self.title.setStyleSheet("""
+                    background-color: blue;
+                    color: white;
+                """)
+        self.content.setStyleSheet("""
+                    background-color: red;
+                    color: white;
+                """)
+        self.setLayout(self.layout)
+        self.start = QPoint(0, 0)
+        print('MusicPanel height:', self.height())
+
+
+class ExportPanel(QWidget):
+    w = 0
+    h = 80
+    label_h = 32
+
+    def __init__(self, parent):
+        super(ExportPanel, self).__init__()
+        self.parent = parent
+        self.w = self.parent.width()
+        # self.setBaseSize(self.w, self.h)
+        self.setFixedSize(self.w, self.h)
+
+        # self.content= QLabel('123456789')
+        # self.content.setFixedHeight(self.h)
+        # self.content.setStyleSheet('background-color: green;')
+        # self.content.setFixedSize(self.w, self.h)
+        self.hLayout = QHBoxLayout()
+        self.hLayout.setSpacing(0)
+        #
+        self.export = QPushButton("Export", self)
+        self.export.setObjectName("Export")
+        self.export.setFixedHeight(self.label_h)
+        self.export.setFixedWidth(self.w-(self.h-self.label_h)-self.label_h)
+        # self.export.setAlignment(Qt.AlignCenter)
+
+        self.setting = QPushButton("", self)
+        self.setting.setObjectName("Setting")
+        self.setting.setFixedHeight(self.label_h)
+        self.setting.setFixedWidth(self.label_h)
+        # self.setting.setAlignment(Qt.AlignCenter)
+
+        self.hLayout.addStretch(1)
+        self.hLayout.addWidget(self.export)
+        self.hLayout.addWidget(self.setting)
+        self.hLayout.addStretch(1)
+        self.vLayout = QVBoxLayout()
+        self.vLayout.setSpacing(0)
+        self.vLayout.addStretch(1)
+        self.vLayout.addLayout(self.hLayout)
+        self.vLayout.addStretch(1)
+        self.setLayout(self.vLayout)
+
+
+
+        # self.hlayout = QHBoxLayout()
+        # self.vlayout = QVBoxLayout()
+        # self.vlayout.setContentsMargins(0, 0, 0, 0)
+        # self.vlayout.setSpacing(0)
+        # # self.title = QLabel(self.label)
+        # # self.title.setFixedHeight(self.label_h)
+        # self.content = QLabel()
+        # self.content.setFixedHeight(self.h)
+        #
+        # self.export = QPushButton("Export")
+        # self.export.setParent(self.content)
+        # # self.title.setAlignment(Qt.AlignCenter)
+        #
+        # self.vlayout.addWidget(self.content)
+        # self.content.setStyleSheet("""
+        #             background-color: green;
+        #             color: white;
+        #         """)
+        # self.setLayout(self.vlayout)
+        self.start = QPoint(0, 0)
+        with open('APG.qss', "r") as qss:
+            self.setStyleSheet(qss.read())
 
 
 if __name__ == "__main__":
