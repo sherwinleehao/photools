@@ -78,36 +78,46 @@ class MainWindow(QWidget):
 
 
 class TitleBar(QWidget):
+    logo_w = 120
+    logo_h = 30
+    w = 0
+    h = 50
     def __init__(self, parent):
         super(TitleBar, self).__init__()
         self.parent = parent
-        print(self.parent.width())
+        self.w = self.parent.width()
         self.layout = QHBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
-        self.title = QLabel("Filmora Auto Generator")
+        self.title = QLabel("123")
+        self.title.setObjectName("TitleBar_title")
 
-        btn_size = 24
+        self.logo = QLabel("")
+        self.logo.setObjectName("TitleBar_logo")
+        self.logo.setParent(self.title)
+        offset_x = (self.w - self.logo_w)/2
+        offset_y = (self.h - self.logo_h)/2
+        self.logo.setGeometry(offset_x,offset_y,self.logo_w,self.logo_h)
 
-        self.btn_close = QPushButton("x")
+        btn_size = 16
+        padding = 4
+        self.btn_close = QPushButton()
+        self.btn_close.setObjectName("TitleBar_btn_close")
         self.btn_close.clicked.connect(self.btn_close_clicked)
-        self.btn_close.setFixedSize(btn_size, btn_size)
-        self.btn_close.setStyleSheet("background-color: red;")
+        self.btn_close.setParent(self.title)
+        self.btn_close.setGeometry((self.w-btn_size-padding), padding, btn_size, btn_size)
 
-        self.title.setFixedHeight(50)
+        self.title.setFixedHeight(self.h)
         self.title.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.title)
-        # self.layout.addWidget(self.btn_min)
-        # self.layout.addWidget(self.btn_max)
-        self.layout.addWidget(self.btn_close)
+        # self.layout.addWidget(self.btn_close)
 
-        self.title.setStyleSheet("""
-            background-color: black;
-            color: white;
-        """)
         self.setLayout(self.layout)
 
         self.start = QPoint(0, 0)
         self.pressing = False
+        with open('APG.qss', "r") as qss:
+            self.setStyleSheet(qss.read())
+
 
     def resizeEvent(self, QResizeEvent):
         super(TitleBar, self).resizeEvent(QResizeEvent)
@@ -167,7 +177,8 @@ class FootagesPanel(QWidget):
                 """)
         self.setLayout(self.layout)
         self.start = QPoint(0, 0)
-        print('FootagesPanel height:', self.height())
+        with open('APG.qss', "r") as qss:
+            self.setStyleSheet(qss.read())
 
 
 class MusicPanel(QWidget):
@@ -203,7 +214,8 @@ class MusicPanel(QWidget):
                 """)
         self.setLayout(self.layout)
         self.start = QPoint(0, 0)
-        print('MusicPanel height:', self.height())
+        with open('APG.qss', "r") as qss:
+            self.setStyleSheet(qss.read())
 
 
 class ExportPanel(QWidget):
@@ -248,27 +260,6 @@ class ExportPanel(QWidget):
         self.vLayout.addStretch(1)
         self.setLayout(self.vLayout)
 
-
-
-        # self.hlayout = QHBoxLayout()
-        # self.vlayout = QVBoxLayout()
-        # self.vlayout.setContentsMargins(0, 0, 0, 0)
-        # self.vlayout.setSpacing(0)
-        # # self.title = QLabel(self.label)
-        # # self.title.setFixedHeight(self.label_h)
-        # self.content = QLabel()
-        # self.content.setFixedHeight(self.h)
-        #
-        # self.export = QPushButton("Export")
-        # self.export.setParent(self.content)
-        # # self.title.setAlignment(Qt.AlignCenter)
-        #
-        # self.vlayout.addWidget(self.content)
-        # self.content.setStyleSheet("""
-        #             background-color: green;
-        #             color: white;
-        #         """)
-        # self.setLayout(self.vlayout)
         self.start = QPoint(0, 0)
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
