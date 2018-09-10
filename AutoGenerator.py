@@ -63,7 +63,6 @@ class MainWindow(QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setFixedSize(360,720)
-
         self.layout = QVBoxLayout()
         self.layout.addWidget(TitleBar(self))
         self.layout.addWidget(FootagesPanel(self))
@@ -73,10 +72,8 @@ class MainWindow(QWidget):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
         self.layout.addStretch(1)
-
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.pressing = False
-
         self.show()
 
 
@@ -194,6 +191,7 @@ class FootagesPanel(QWidget):
         self.layout.addWidget(self.content)
         self.setLayout(self.layout)
         self.start = QPoint(0, 0)
+        self.importBox.setVisible(False)
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
 
@@ -241,6 +239,7 @@ class MusicPanel(QWidget):
         self.layout.addWidget(self.content)
         self.setLayout(self.layout)
         self.start = QPoint(0, 0)
+        self.importBox.setVisible(False)
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
 
