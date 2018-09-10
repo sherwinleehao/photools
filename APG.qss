@@ -3,6 +3,12 @@ QPushButton{font-family: "Lato";font-size: 20px;color:white}
 QPushButton:hover{}
 QPushButton:pressed{}
 
+QLabel{
+
+    font-size: 12px;
+    color:rgb(220, 220, 220);
+    }
+
 #TitleBar_title{ background-color:rgb(48,61,71);}
 
 #TitleBar_logo{image:url(./GUI/filmora-n.png);}
@@ -12,11 +18,75 @@ QPushButton:pressed{}
 #TitleBar_btn_close:pressed{ image:url(./GUI/close-p.png);}
 
 
-#Export{        background-color:rgb(255,0,0);border:none;}
-#Export:hover  {background-color:rgb(128,128,255);}
-#Export:pressed {background-color:rgb(45,54,255);}
+#FootagesPanel_title{
+    background-color:rgb(48,61,71);
+    }
+
+#FootagesPanel_content{
+    background-color:rgb(48,61,71);
+    }
+
+#FootagesPanel_icon{ image:url(./GUI/video-n.png);}
+#FootagesPanel_icon:hover{ image:url(./GUI/video-h.png);}
+
+#FootagesPanel_importBox{
+    background-color: transparent;
+    border-width:4px;
+    border-color:rgb(86, 217, 202);
+    border-style: dashed;
+    border-radius:12px;
+    }
 
 
-#Setting{background-color:rgb(0,0,0);image:url(./GUI/setting-n.png); border:none; padding: 4px}
-#Setting:hover  {background-color:rgb(32,128,32);image:url(./GUI/setting-h.png)}
-#Setting:pressed{background-color:rgb(128,0,0);image:url(./GUI/setting-p.png)}
+#MusicPanel_title{
+    background-color:rgb(48,61,71);
+    }
+
+#MusicPanel_content{
+    background-color:rgb(48,61,71);
+    }
+
+#MusicPanel_icon{ image:url(./GUI/music-n.png);}
+#MusicPanel_icon:hover{ image:url(./GUI/music-h.png);}
+
+#MusicPanel_importBox{
+    background-color: transparent;
+    border-width:4px;
+    border-color:rgb(86, 217, 202);
+    border-style: dashed;
+    border-radius:12px;
+    }
+
+
+#ExportPanel_content{
+    background-color:rgb(48,61,71);
+    }
+#ExportPanel_Export{
+    font-family: "Lato";
+    font-size: 18px;
+    color:rgb(255,255,255);
+    background-color:rgb(79, 199, 186);
+    border:none;
+    }
+#ExportPanel_Export:hover {
+    background-color:rgb(86, 217, 202);
+    }
+#ExportPanel_Export:pressed {
+    background-color:rgb(79, 199, 186);
+    }
+
+
+#ExportPanel_Setting{
+    background-color:rgb(32,32,32);
+    image:url(./GUI/setting-n.png);
+    border:none;
+    padding: 4px
+    }
+#ExportPanel_Setting:hover{
+    background-color:rgb(125, 125, 125);
+    image:url(./GUI/setting-h.png)
+    }
+#ExportPanel_Setting:pressed{
+    background-color:rgb(20, 25, 30);
+    image:url(./GUI/setting-p.png)
+    }

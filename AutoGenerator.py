@@ -6,7 +6,7 @@ Image Tool Library
 
 Author: Sherwin Lee
 Website: Sherwinleehao.com
-Last edited: 20180908
+Last edited: 20180910
 
 Task:
 
@@ -41,6 +41,10 @@ Task:
 
 
 
+
+拖拽素材进UI可以根据文件类型激活导入边框，松手瞬间打印路径
+拖入音频的时候就后台开始解码，松手瞬间开始绘制。
+
 """
 
 import sys
@@ -58,7 +62,6 @@ import photools as pt
 class MainWindow(QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
-        # self.setMinimumSize(360, 720)
         self.setFixedSize(360,720)
 
         self.layout = QVBoxLayout()
@@ -71,9 +74,9 @@ class MainWindow(QWidget):
         self.layout.setSpacing(0)
         self.layout.addStretch(1)
 
-
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.pressing = False
+
         self.show()
 
 
@@ -98,8 +101,8 @@ class TitleBar(QWidget):
         offset_y = (self.h - self.logo_h)/2
         self.logo.setGeometry(offset_x,offset_y,self.logo_w,self.logo_h)
 
-        btn_size = 16
-        padding = 4
+        btn_size = 12
+        padding = 6
         self.btn_close = QPushButton()
         self.btn_close.setObjectName("TitleBar_btn_close")
         self.btn_close.clicked.connect(self.btn_close_clicked)
@@ -149,6 +152,8 @@ class FootagesPanel(QWidget):
     h = 470
     label = "Footages"
     label_h = 30
+    icon_w = 85
+    icon_h =64
 
     def __init__(self, parent):
         super(FootagesPanel, self).__init__()
@@ -160,21 +165,33 @@ class FootagesPanel(QWidget):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
         self.title = QLabel(self.label)
+        self.title.setObjectName("FootagesPanel_title")
         self.title.setFixedHeight(self.label_h)
         self.content = QLabel()
         self.content.setFixedHeight(self.h - self.label_h)
+        self.content.setObjectName("FootagesPanel_content")
+
+        offset_y = 10
+        self.icon = QLabel()
+        self.icon.setObjectName("FootagesPanel_icon")
+        self.icon.setParent(self.content)
+        self.icon.setGeometry((self.w-self.icon_w)/2,((self.h - self.label_h)-self.icon_h)/2-offset_y,self.icon_w,self.icon_h)
+
+        self.icon_info = QLabel("Drag and Drop to Import your Footages")
+        self.icon_info.setObjectName("FootagesPanel_icon_info")
+        self.icon_info.setParent(self.content)
+        self.icon_info.setGeometry(0,((self.h - self.label_h)-self.icon_h)/2+self.icon_h+offset_y,self.w,30)
+        self.icon_info.setAlignment(Qt.AlignCenter)
+
+        importBox_padding = 20
+        self.importBox = QLabel()
+        self.importBox.setObjectName("FootagesPanel_importBox")
+        self.importBox.setParent(self.content)
+        self.importBox.setGeometry(importBox_padding,0,(self.w-2*importBox_padding),(self.h - self.label_h-importBox_padding))
 
         self.title.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.title)
         self.layout.addWidget(self.content)
-        self.title.setStyleSheet("""
-                    background-color: blue;
-                    color: white;
-                """)
-        self.content.setStyleSheet("""
-                    background-color: red;
-                    color: white;
-                """)
         self.setLayout(self.layout)
         self.start = QPoint(0, 0)
         with open('APG.qss', "r") as qss:
@@ -186,6 +203,8 @@ class MusicPanel(QWidget):
     h = 120
     label = "Background Music"
     label_h = 30
+    icon_w = 64
+    icon_h = 64
 
     def __init__(self, parent):
         super(MusicPanel, self).__init__()
@@ -198,20 +217,28 @@ class MusicPanel(QWidget):
         self.layout.setSpacing(0)
         self.title = QLabel(self.label)
         self.title.setFixedHeight(self.label_h)
+        self.title.setObjectName("MusicPanel_title")
         self.content = QLabel()
         self.content.setFixedHeight(self.h - self.label_h)
+        self.content.setObjectName("MusicPanel_content")
+
+        self.icon = QLabel()
+        self.icon.setObjectName("MusicPanel_icon")
+        self.icon.setParent(self.content)
+        self.icon.setGeometry((self.w-self.icon_w)/2,((self.h - self.label_h)-self.icon_h)/2,self.icon_w,self.icon_h)
+        print('self.h',self.h)
+        print('self.h',self.h)
+
+        importBox_padding = 20
+        self.importBox = QLabel()
+        self.importBox.setObjectName("MusicPanel_importBox")
+        self.importBox.setParent(self.content)
+        self.importBox.setGeometry(importBox_padding,importBox_padding/2,(self.w-2*importBox_padding),(self.h - self.label_h-importBox_padding))
+
 
         self.title.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.title)
         self.layout.addWidget(self.content)
-        self.title.setStyleSheet("""
-                    background-color: blue;
-                    color: white;
-                """)
-        self.content.setStyleSheet("""
-                    background-color: red;
-                    color: white;
-                """)
         self.setLayout(self.layout)
         self.start = QPoint(0, 0)
         with open('APG.qss', "r") as qss:
@@ -227,39 +254,29 @@ class ExportPanel(QWidget):
         super(ExportPanel, self).__init__()
         self.parent = parent
         self.w = self.parent.width()
-        # self.setBaseSize(self.w, self.h)
         self.setFixedSize(self.w, self.h)
+        self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(0)
 
-        # self.content= QLabel('123456789')
-        # self.content.setFixedHeight(self.h)
-        # self.content.setStyleSheet('background-color: green;')
-        # self.content.setFixedSize(self.w, self.h)
-        self.hLayout = QHBoxLayout()
-        self.hLayout.setSpacing(0)
-        #
-        self.export = QPushButton("Export", self)
-        self.export.setObjectName("Export")
-        self.export.setFixedHeight(self.label_h)
-        self.export.setFixedWidth(self.w-(self.h-self.label_h)-self.label_h)
-        # self.export.setAlignment(Qt.AlignCenter)
+        self.content = QLabel()
+        self.content.setGeometry(0,0,self.w,self.h)
+        self.content.setObjectName("ExportPanel_content")
+
+
+        self.export = QPushButton("      Export", self)
+        self.export.setObjectName("ExportPanel_Export")
+        self.export.setParent(self.content)
+        self.export.setGeometry((self.h-self.label_h)/2,(self.h-self.label_h)/2,(self.w-self.h),self.label_h)
+
 
         self.setting = QPushButton("", self)
-        self.setting.setObjectName("Setting")
-        self.setting.setFixedHeight(self.label_h)
-        self.setting.setFixedWidth(self.label_h)
-        # self.setting.setAlignment(Qt.AlignCenter)
+        self.setting.setObjectName("ExportPanel_Setting")
+        self.setting.setParent(self.content)
+        self.setting.setGeometry((self.w-self.h/2-self.label_h/2), (self.h - self.label_h) / 2,self.label_h,self.label_h)
 
-        self.hLayout.addStretch(1)
-        self.hLayout.addWidget(self.export)
-        self.hLayout.addWidget(self.setting)
-        self.hLayout.addStretch(1)
-        self.vLayout = QVBoxLayout()
-        self.vLayout.setSpacing(0)
-        self.vLayout.addStretch(1)
-        self.vLayout.addLayout(self.hLayout)
-        self.vLayout.addStretch(1)
-        self.setLayout(self.vLayout)
-
+        self.layout.addWidget(self.content)
+        self.setLayout(self.layout)
         self.start = QPoint(0, 0)
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
@@ -267,5 +284,9 @@ class ExportPanel(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setStyle("fusion")
+    app.setAttribute(Qt.AA_EnableHighDpiScaling)
+    if hasattr(QStyleFactory, 'AA_UseHighDpiPixmaps'):
+        app.setAttribute(Qt.AA_UseHighDpiPixmaps)
     mw = MainWindow()
     sys.exit(app.exec_())
