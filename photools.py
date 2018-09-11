@@ -30,7 +30,7 @@ import subprocess
 import numpy
 import zipfile
 import hashlib
-
+from pydub import AudioSegment
 
 def getPhotoROIs(path, level, size):
     blockSize = size
@@ -265,6 +265,23 @@ def getVideoFrames(filePath, frameSize, frameCount):
     return frames
 
 
+def getWaveform(filePath,width,height):
+    sound = AudioSegment.from_file(filePath, format="mp3")
+    step = len(sound)/width
+    wave = []
+    for i in range(0, width):
+        segment = sound[i*step:(i+1)*step]
+        wave.append(segment.max)
+    waveform = Image.new('RGB',(width,height),(21, 96, 67))
+    draw = ImageDraw.Draw(waveform)
+    for i in range(len(wave)):
+        value = height*(wave[i]/32768)
+        sp = (height-value)/2
+        draw.line((i,sp,i,value+sp),fill=(37, 208, 141))
+    del draw
+    return waveform
+
+
 def saveRaw2IMG(RawPath, IMGPath):
     path = RawPath
     with rawpy.imread(path) as raw:
@@ -294,6 +311,10 @@ def saveThumbnail(filePath, frameSize, thumbPath):
     thumb.save(thumbPath)
     thumb.close()
 
+def saveWaveform(filePath,tgaPath,width,height):
+    waveform = getWaveform(filePath,width,height)
+    waveform.save(tgaPath)
+    waveform.close()
 
 def mkdir(path):
     import os
@@ -395,6 +416,15 @@ def findThumb(filePath, cachePath):
                 saveThumbnail(errorPath, 144, tga)
                 return tga
 
+
+def findWaveform(filePath):
+    MD5 = getDraftMD5(filePath)
+    tgaPath = os.path.join(r'/Users/ws/Python/photools/Temp/Cache/%s.png'%str(MD5))
+    if os.path.exists(tgaPath):
+        return tgaPath
+    else:
+        saveWaveform(filePath,tgaPath,512,128)
+        return tgaPath
 
 # def findMediaInfo(filePath, cachePath):
 #     MD5 = getDraftMD5(filePath)

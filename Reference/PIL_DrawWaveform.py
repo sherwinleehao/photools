@@ -34,7 +34,6 @@ def getWaveform(filePath,width,height):
     for i in range(0, width):
         segment = sound[i*step:(i+1)*step]
         wave.append(segment.max)
-
     waveform = Image.new('RGB',(width,height),(21, 96, 67))
     draw = ImageDraw.Draw(waveform)
     for i in range(len(wave)):
@@ -42,7 +41,6 @@ def getWaveform(filePath,width,height):
         sp = (height-value)/2
         draw.line((i,sp,i,value+sp),fill=(37, 208, 141))
     del draw
-
     return waveform
 
 
@@ -71,7 +69,8 @@ if __name__ == '__main__':
 
         if ".mp3" in i:
             print(i)
-            findWaveform(i)
+            print(findWaveform(i))
+
 
     et = time.time()
     print("Used time :",(et-st))

@@ -57,7 +57,7 @@ from PyQt5.QtGui import *
 import os, random, time
 import uuid, shutil
 import photools as pt
-
+import cv2
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -240,6 +240,27 @@ class MusicPanel(QWidget):
         self.setLayout(self.layout)
         self.start = QPoint(0, 0)
         self.importBox.setVisible(False)
+
+        self.waveform = QLabel()
+        self.waveform.setObjectName("MusicPanel_waveform")
+        self.waveform.setParent(self.content)
+        self.waveform.setGeometry(importBox_padding,0,self.w-2*importBox_padding, 80)
+        self.waveform.setStyleSheet('image:url(./GUI/music-loading.png)')
+        # self.waveform.setMask(QRegion(0,0,self.w-2*importBox_padding,80,QRegion.Ellipse))
+
+        self.waveform.setMask(QPixmap("GUI/music-mask.png").scaledToWidth(self.w-2*importBox_padding).mask())
+
+
+
+
+
+        # self.waveform.setStyleSheet('background-image:url(./GUI/music-loading.png)')
+
+        # self.IMG = cv2.imread('´´GUI/music-loading.png')
+        # pixmap = self.getResizeQpixmap(self.IMG,self.w-2*importBox_padding, 80)
+        # self.waveform.setPixmap(pixmap)
+        print('waveform:',self.w, self.h)
+
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
 
@@ -258,6 +279,19 @@ class MusicPanel(QWidget):
                                                 "All Files (*);;Media Files (*.mp3,*.wav,*.m4a)", options=options)
         if files:
             return files
+
+    def getResizeQpixmap(self, IMG,width,height):
+        st = time.time()
+        img_h, img_w, _ = IMG.shape
+        IMG = cv2.resize(IMG, None, fx=(height/img_h), fy=(width/img_w), interpolation=cv2.INTER_CUBIC)
+        et = time.time()
+        print("Resize Time:",et-st)
+        cv2.cvtColor(IMG, cv2.COLOR_BGR2RGB, IMG)
+        img_h, img_w, bytesPerComponent = IMG.shape
+        bytesPerLine = bytesPerComponent * img_w
+        qmap = QImage(IMG.data, img_w, img_h, bytesPerLine, QImage.Format_RGB888)
+        pixmap = QPixmap.fromImage(qmap)
+        return pixmap
 
 
 class ExportPanel(QWidget):

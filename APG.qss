@@ -64,6 +64,13 @@ QLabel{
     }
 
 
+#MusicPanel_waveform{
+    border-radius:40px;
+    background-color:rgb(233,61,71);
+
+}
+
+
 #ExportPanel_content{
     background-color:rgb(48,61,71);
     }
