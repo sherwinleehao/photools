@@ -309,6 +309,7 @@ class BackendThread(QThread):
             self.update_date.emit(filePath, iconPath, mediaInfo)
         et = time.time()
         print("Use Time to Load: %.4f\n"%(et-st))
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     ex = Example()

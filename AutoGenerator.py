@@ -179,6 +179,7 @@ class FootagesPanel(QWidget):
         self.icon_info.setParent(self.content)
         self.icon_info.setGeometry(0,((self.h - self.label_h)-self.icon_h)/2+self.icon_h+offset_y,self.w,30)
         self.icon_info.setAlignment(Qt.AlignCenter)
+        self.icon.setCursor(Qt.PointingHandCursor)
 
         importBox_padding = 20
         self.importBox = QLabel()
@@ -203,7 +204,7 @@ class MusicPanel(QWidget):
     label_h = 30
     icon_w = 64
     icon_h = 64
-
+    musicPath = 'rawPath'
     def __init__(self, parent):
         super(MusicPanel, self).__init__()
         self.parent = parent
@@ -224,9 +225,7 @@ class MusicPanel(QWidget):
         self.icon.setObjectName("MusicPanel_icon")
         self.icon.setParent(self.content)
         self.icon.setGeometry((self.w-self.icon_w)/2,((self.h - self.label_h)-self.icon_h)/2,self.icon_w,self.icon_h)
-        print('self.h',self.h)
-        print('self.h',self.h)
-
+        self.icon.setCursor(Qt.PointingHandCursor)
         importBox_padding = 20
         self.importBox = QLabel()
         self.importBox.setObjectName("MusicPanel_importBox")
@@ -247,30 +246,40 @@ class MusicPanel(QWidget):
         self.waveform.setGeometry(importBox_padding,0,self.w-2*importBox_padding, 80)
         self.waveform.setStyleSheet('image:url(./GUI/music-loading.png)')
         # self.waveform.setMask(QRegion(0,0,self.w-2*importBox_padding,80,QRegion.Ellipse))
-
-        self.waveform.setMask(QPixmap("GUI/music-mask.png").scaledToWidth(self.w-2*importBox_padding).mask())
-
-
-
+        # self.waveform.setMask(QPixmap("GUI/music-mask.png").scaledToWidth(self.w-2*importBox_padding).mask())
+        self.waveform.setVisible(False)
 
 
         # self.waveform.setStyleSheet('background-image:url(./GUI/music-loading.png)')
-
         # self.IMG = cv2.imread('´´GUI/music-loading.png')
         # pixmap = self.getResizeQpixmap(self.IMG,self.w-2*importBox_padding, 80)
         # self.waveform.setPixmap(pixmap)
         print('waveform:',self.w, self.h)
-
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
-
         self.icon.clicked.connect(self.importMusic)
 
     def importMusic(self):
-        print("hello world!")
-        files = self.openFileNamesDialog()
-        musicFile = files[0]
-        print(files)
+        file = self.openFileNamesDialog()[0]
+        try:
+            if '.mp3' not in file:
+                QMessageBox.about(self, 'Not Supported Format','This Version We Just Support .MP3 files, Please Check.')
+            else:
+                MusicPanel.musicPath = file
+                ##Here need to fix if the file is not only one will crash
+        except:
+            pass
+
+        if MusicPanel.musicPath is not "rawPath":
+            musicName = os.path.basename(MusicPanel.musicPath)
+            self.waveform.setVisible(True)
+            self.title.setText(musicName)
+            self.waveform.setStyleSheet('image:url(./GUI/music-loading.png)')
+            print('Start BackendLoadWaveformThread')
+            self.backend = BackendLoadWaveformThread()
+            self.backend.update_date.connect(self.updateWaveform)
+            self.backend.start()
+
 
     def openFileNamesDialog(self):
         options = QFileDialog.Options()
@@ -293,6 +302,30 @@ class MusicPanel(QWidget):
         pixmap = QPixmap.fromImage(qmap)
         return pixmap
 
+    def updateWaveform(self,waveformPath):
+        print(waveformPath)
+        self.waveform.setStyleSheet('image:url(%s)'%waveformPath)
+        pass
+
+    def removeWaveform(self):
+        self.title.setText("Background Music")
+        MusicPanel.musicPath = 'rawPath'
+        self.waveform.setVisible(False)
+
+    def contextMenuEvent(self, event):
+        cmenu = QMenu(self)
+        changeAct = cmenu.addAction("Change Music")
+        removeAct = cmenu.addAction("Remove Music")
+        quitAct = cmenu.addAction("Quit")
+        action = cmenu.exec_(self.mapToGlobal(event.pos()))
+
+        cmenu.setStyleSheet('background-color:rgb(148,61,71);')
+        if action == changeAct:
+            self.importMusic()
+        elif action == removeAct:
+            self.removeWaveform()
+        elif action == quitAct:
+            qApp.quit()
 
 class ExportPanel(QWidget):
     w = 0
@@ -317,18 +350,36 @@ class ExportPanel(QWidget):
         self.export.setObjectName("ExportPanel_Export")
         self.export.setParent(self.content)
         self.export.setGeometry((self.h-self.label_h)/2,(self.h-self.label_h)/2,(self.w-self.h),self.label_h)
-
+        self.export.clicked.connect(self.exportData)
+        self.export.setCursor(Qt.PointingHandCursor)
 
         self.setting = QPushButton("", self)
         self.setting.setObjectName("ExportPanel_Setting")
         self.setting.setParent(self.content)
         self.setting.setGeometry((self.w-self.h/2-self.label_h/2), (self.h - self.label_h) / 2,self.label_h,self.label_h)
+        self.setting.setCursor(Qt.PointingHandCursor)
 
         self.layout.addWidget(self.content)
         self.setLayout(self.layout)
         self.start = QPoint(0, 0)
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
+
+    def exportData(self):
+        print("This is Export!")
+        print(MusicPanel.musicPath)
+        print()
+
+class BackendLoadWaveformThread(QThread):
+    print('Backend Load Waveform Thread')
+    update_date = pyqtSignal(str)
+    def run(self):
+        st = time.time()
+        print(MusicPanel.musicPath)
+        waveformPath = pt.findWaveform(MusicPanel.musicPath)
+        self.update_date.emit(waveformPath)
+        et = time.time()
+        print("Use Time to Load Waveform: %.4f\n"%(et-st))
 
 
 if __name__ == "__main__":

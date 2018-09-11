@@ -32,6 +32,7 @@ import zipfile
 import hashlib
 from pydub import AudioSegment
 
+
 def getPhotoROIs(path, level, size):
     blockSize = size
     im = cv2.imread(path)
@@ -101,6 +102,7 @@ def getAllFiles(path):
         else:
             tempfiles += getAllFiles(tempPath)
     return tempfiles
+
 
 def getAllImgs(path):
     files = getAllFiles(path)
@@ -265,19 +267,35 @@ def getVideoFrames(filePath, frameSize, frameCount):
     return frames
 
 
-def getWaveform(filePath,width,height):
+def getWaveform(filePath, width, height):
     sound = AudioSegment.from_file(filePath, format="mp3")
-    step = len(sound)/width
+    # step = len(sound) / width
+    # wave = []
+    # for i in range(0, width):
+    #     segment = sound[i * step:(i + 1) * step]
+    #     wave.append(segment.max)
+
+    sample = 4
+    step = len(sound) / (width*sample)
+    rawwave = []
     wave = []
+
+    for i in range(0, (width*sample)):
+        segment = sound[i * step:(i + 1) * step]
+        rawwave.append(segment.max)
+
     for i in range(0, width):
-        segment = sound[i*step:(i+1)*step]
-        wave.append(segment.max)
-    waveform = Image.new('RGB',(width,height),(21, 96, 67))
+        segment = rawwave[i * sample:(i + 1) * sample]
+        wave.append(sum(segment)/sample)
+
+
+
+    waveform = Image.new('RGB', (width, height), (21, 96, 67))
     draw = ImageDraw.Draw(waveform)
     for i in range(len(wave)):
-        value = height*(wave[i]/32768)
-        sp = (height-value)/2
-        draw.line((i,sp,i,value+sp),fill=(37, 208, 141))
+        value = height * (wave[i] / 32768)
+        sp = (height - value) / 2
+        draw.line((i, sp, i, value + sp), fill=(37, 208, 141))
     del draw
     return waveform
 
@@ -311,10 +329,12 @@ def saveThumbnail(filePath, frameSize, thumbPath):
     thumb.save(thumbPath)
     thumb.close()
 
-def saveWaveform(filePath,tgaPath,width,height):
-    waveform = getWaveform(filePath,width,height)
+
+def saveWaveform(filePath, tgaPath, width, height):
+    waveform = getWaveform(filePath, width, height)
     waveform.save(tgaPath)
     waveform.close()
+
 
 def mkdir(path):
     import os
@@ -419,12 +439,15 @@ def findThumb(filePath, cachePath):
 
 def findWaveform(filePath):
     MD5 = getDraftMD5(filePath)
-    tgaPath = os.path.join(r'/Users/ws/Python/photools/Temp/Cache/%s.png'%str(MD5))
+    print(filePath," \nMD5 is :",MD5)
+    tgaPath = os.path.join(r'Temp/Cache/%s.png' % str(MD5))
+    # saveWaveform(filePath, tgaPath, 512, 128)
     if os.path.exists(tgaPath):
         return tgaPath
     else:
-        saveWaveform(filePath,tgaPath,512,128)
+        saveWaveform(filePath, tgaPath, 512, 128)
         return tgaPath
+
 
 # def findMediaInfo(filePath, cachePath):
 #     MD5 = getDraftMD5(filePath)
@@ -471,15 +494,15 @@ def findMediaInfo(filePath, cachePath):
             mediaInfo = json.loads(open(tga, 'r').read())
             width = mediaInfo['width']
             height = mediaInfo['height']
-            return width,height,0.0,"——"
+            return width, height, 0.0, "——"
         else:
-            width,height = getImgSize(filePath)
-            mediaInfo = {'width':width,'height':height}
+            width, height = getImgSize(filePath)
+            mediaInfo = {'width': width, 'height': height}
             mediaInfoJson = json.dumps(mediaInfo, sort_keys=True, indent=4, separators=(',', ': '))
             f = open(tga, 'w')
             f.write(mediaInfoJson)
             f.close()
-            return width,height,0.0,"——"
+            return width, height, 0.0, "——"
 
 
 ################################################################
@@ -660,7 +683,6 @@ if __name__ == '__main__':
     st = time.time()
 
     # main3()
-    ttt = findMediaInfo('/Users/ws/Desktop/comparation/export_test/03.MOV', 'Temp/Cache')
-    print(ttt)
+    findWaveform(r'D:/CloudMusic/C AllStar - 天光.mp3')
     et = time.time() - st
     print("All Use time: ", et)

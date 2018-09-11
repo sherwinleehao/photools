@@ -4,10 +4,14 @@ QPushButton:hover{}
 QPushButton:pressed{}
 
 QLabel{
-
-    font-size: 12px;
+    font-size: 14px;
     color:rgb(220, 220, 220);
     }
+
+QMessage{
+    font-size: 24px;
+    color:rgb(0, 0, 0);
+}
 
 #TitleBar_title{ background-color:rgb(48,61,71);}
 
@@ -27,7 +31,7 @@ QLabel{
     }
 
 #FootagesPanel_icon{ image:url(./GUI/video-n.png);}
-#FootagesPanel_icon:hover{ image:url(./GUI/video-h.png);}
+#FootagesPanel_icon:hover{ image:url(./GUI/video-n.png);}
 
 #FootagesPanel_importBox{
     background-color: transparent;
@@ -47,11 +51,13 @@ QLabel{
     }
 
 #MusicPanel_icon{
+    cursor:hand;
     border:none;
     background-color: transparent;
     image:url(./GUI/music-n.png);
     }
 #MusicPanel_icon:hover{
+    cursor:hand;
     image:url(./GUI/music-n.png);
     }
 
@@ -90,6 +96,7 @@ QLabel{
 
 
 #ExportPanel_Setting{
+    cursor:move;
     background-color:rgb(32,32,32);
     image:url(./GUI/setting-n.png);
     border:none;
