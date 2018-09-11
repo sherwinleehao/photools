@@ -1,5 +1,5 @@
 
-QPushButton{font-family: "Lato";font-size: 20px;color:white}
+QPushButton{font-family: "Lato";}
 QPushButton:hover{}
 QPushButton:pressed{}
 
@@ -46,8 +46,14 @@ QLabel{
     background-color:rgb(48,61,71);
     }
 
-#MusicPanel_icon{ image:url(./GUI/music-n.png);}
-#MusicPanel_icon:hover{ image:url(./GUI/music-h.png);}
+#MusicPanel_icon{
+    border:none;
+    background-color: transparent;
+    image:url(./GUI/music-n.png);
+    }
+#MusicPanel_icon:hover{
+    image:url(./GUI/music-n.png);
+    }
 
 #MusicPanel_importBox{
     background-color: transparent;

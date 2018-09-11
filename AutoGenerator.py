@@ -220,7 +220,7 @@ class MusicPanel(QWidget):
         self.content.setFixedHeight(self.h - self.label_h)
         self.content.setObjectName("MusicPanel_content")
 
-        self.icon = QLabel()
+        self.icon = QPushButton()
         self.icon.setObjectName("MusicPanel_icon")
         self.icon.setParent(self.content)
         self.icon.setGeometry((self.w-self.icon_w)/2,((self.h - self.label_h)-self.icon_h)/2,self.icon_w,self.icon_h)
@@ -242,6 +242,22 @@ class MusicPanel(QWidget):
         self.importBox.setVisible(False)
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
+
+        self.icon.clicked.connect(self.importMusic)
+
+    def importMusic(self):
+        print("hello world!")
+        files = self.openFileNamesDialog()
+        musicFile = files[0]
+        print(files)
+
+    def openFileNamesDialog(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        files, _ = QFileDialog.getOpenFileNames(self, "Please Select Your Footages", "",
+                                                "All Files (*);;Media Files (*.mp3,*.wav,*.m4a)", options=options)
+        if files:
+            return files
 
 
 class ExportPanel(QWidget):

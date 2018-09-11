@@ -1,7 +1,7 @@
 import time
 from pydub import AudioSegment
 # sound = AudioSegment.from_file("D:/python/photools/Footages/test.mp3", format="mp3")
-sound = AudioSegment.from_file("/Users/ws/Python/photools/Footages/test.mp3", format="mp3")
+sound = AudioSegment.from_file("/Users/ws/Music/网易云音乐/Kolor - 过客.mp3", format="mp3")
 peak_amplitude = sound.max
 loudness = sound.dBFS
 print(loudness)
