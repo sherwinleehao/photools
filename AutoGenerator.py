@@ -6,7 +6,7 @@ Image Tool Library
 
 Author: Sherwin Lee
 Website: Sherwinleehao.com
-Last edited: 20180910
+Last edited: 20180912
 
 Task:
 
@@ -74,8 +74,52 @@ class MainWindow(QWidget):
         self.layout.addStretch(1)
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.pressing = False
-        self.show()
 
+        padding = ExportPanel.padding
+
+
+        self.settingPanel = QLabel('', self)
+        self.settingPanel.setObjectName("settingPanel")
+        self.settingPanel.setStyleSheet('background-color:rgba(255,0,0,220);')
+        self.settingPanel.setGeometry(padding, padding*2, self.width()-2*padding, self.height()-padding*5)
+        self.settingPanelTitle = QLabel('Setting', self)
+        self.settingPanelTitle.setObjectName("settingPanel_title")
+        self.settingPanelTitle.setStyleSheet('background-color:rgba(0,255,0,220);')
+        self.settingPanelTitle.setParent(self.settingPanel)
+        self.settingPanelTitle.setFixedWidth(self.settingPanel.width())
+        self.settingPanelTitle.setFixedHeight(padding)
+        self.settingPanelTitle.setAlignment(Qt.AlignCenter)
+        self.sphl = QHBoxLayout()
+
+        productCount = 4
+        productSize = 48
+        gap = (self.settingPanel.width()-2*padding-productCount*productSize)/(productCount-1)
+
+        self.product0 = QPushButton("0")
+        self.product0.setParent(self.settingPanel)
+        self.product0.setGeometry(padding+0*(productSize+gap),padding,productSize,productSize)
+        self.product1 = QPushButton("1")
+        self.product1.setParent(self.settingPanel)
+        self.product1.setGeometry(padding+1*(productSize+gap), padding, productSize, productSize)
+        self.product2 = QPushButton("2")
+        self.product2.setParent(self.settingPanel)
+        self.product2.setGeometry(padding+2*(productSize+gap), padding, productSize, productSize)
+        self.product3 = QPushButton("3")
+        self.product3.setParent(self.settingPanel)
+        self.product3.setGeometry(padding+3*(productSize+gap), padding, productSize, productSize)
+
+        self.exportProjectPathLabel = QLabel("Export Project Path:")
+        self.exportProjectPathLabel.setParent(self.settingPanel)
+        self.exportProjectPathLabel.setGeometry(padding, productSize+2*padding, (self.settingPanel.width()/2)-padding, 20)
+        self.exportProjectPathLabel.setStyleSheet('background-color:rgb(0,0,255);')
+
+
+
+
+
+        self.show()
+        # self.setWindowOpacity(0.9)  # 设置窗口透明度
+        # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
 
 class TitleBar(QWidget):
     logo_w = 120
@@ -331,6 +375,7 @@ class ExportPanel(QWidget):
     w = 0
     h = 80
     label_h = 32
+    padding = 0
 
     def __init__(self, parent):
         super(ExportPanel, self).__init__()
@@ -345,11 +390,11 @@ class ExportPanel(QWidget):
         self.content.setGeometry(0,0,self.w,self.h)
         self.content.setObjectName("ExportPanel_content")
 
-
+        ExportPanel.padding = (self.h-self.label_h)/2
         self.export = QPushButton("      Export", self)
         self.export.setObjectName("ExportPanel_Export")
         self.export.setParent(self.content)
-        self.export.setGeometry((self.h-self.label_h)/2,(self.h-self.label_h)/2,(self.w-self.h),self.label_h)
+        self.export.setGeometry(ExportPanel.padding,ExportPanel.padding,(self.w-self.h),self.label_h)
         self.export.clicked.connect(self.exportData)
         self.export.setCursor(Qt.PointingHandCursor)
 
@@ -358,6 +403,8 @@ class ExportPanel(QWidget):
         self.setting.setParent(self.content)
         self.setting.setGeometry((self.w-self.h/2-self.label_h/2), (self.h - self.label_h) / 2,self.label_h,self.label_h)
         self.setting.setCursor(Qt.PointingHandCursor)
+
+
 
         self.layout.addWidget(self.content)
         self.setLayout(self.layout)
@@ -369,6 +416,8 @@ class ExportPanel(QWidget):
         print("This is Export!")
         print(MusicPanel.musicPath)
         print()
+
+
 
 class BackendLoadWaveformThread(QThread):
     print('Backend Load Waveform Thread')

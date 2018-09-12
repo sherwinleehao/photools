@@ -31,7 +31,7 @@ QMessage{
     }
 
 #FootagesPanel_icon{ image:url(./GUI/video-n.png);}
-#FootagesPanel_icon:hover{ image:url(./GUI/video-n.png);}
+#FootagesPanel_icon:hover{ image:url(./GUI/video-h.png);}
 
 #FootagesPanel_importBox{
     background-color: transparent;
@@ -58,7 +58,7 @@ QMessage{
     }
 #MusicPanel_icon:hover{
     cursor:hand;
-    image:url(./GUI/music-n.png);
+    image:url(./GUI/music-h.png);
     }
 
 #MusicPanel_importBox{
