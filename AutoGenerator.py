@@ -66,6 +66,7 @@ class MainWindow(QWidget):
         self.layout = QVBoxLayout()
         self.layout.addWidget(TitleBar(self))
         self.layout.addWidget(FootagesPanel(self))
+
         self.layout.addWidget(MusicPanel(self))
         self.layout.addWidget(ExportPanel(self))
         self.setLayout(self.layout)
@@ -75,51 +76,113 @@ class MainWindow(QWidget):
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.pressing = False
 
-        padding = ExportPanel.padding
+        self.settingPanel = SettingPanel(self)
+        self.settingPanel.setParent(self)
 
 
-        self.settingPanel = QLabel('', self)
-        self.settingPanel.setObjectName("settingPanel")
-        self.settingPanel.setStyleSheet('background-color:rgba(255,0,0,220);')
-        self.settingPanel.setGeometry(padding, padding*2, self.width()-2*padding, self.height()-padding*5)
-        self.settingPanelTitle = QLabel('Setting', self)
-        self.settingPanelTitle.setObjectName("settingPanel_title")
-        self.settingPanelTitle.setStyleSheet('background-color:rgba(0,255,0,220);')
-        self.settingPanelTitle.setParent(self.settingPanel)
-        self.settingPanelTitle.setFixedWidth(self.settingPanel.width())
-        self.settingPanelTitle.setFixedHeight(padding)
-        self.settingPanelTitle.setAlignment(Qt.AlignCenter)
-        self.sphl = QHBoxLayout()
+        # padding = ExportPanel.padding
+        #
+        # self.settingPanel = QLabel('', self)
+        # self.settingPanel.setObjectName("settingPanel")
+        # self.settingPanel.setStyleSheet('background-color:rgba(255,0,0,220);')
+        # self.settingPanel.setGeometry(padding, padding*2, self.width()-2*padding, self.height()-padding*5)
+        # self.settingPanelTitle = QLabel('Setting', self)
+        # self.settingPanelTitle.setObjectName("settingPanel_title")
+        # self.settingPanelTitle.setStyleSheet('background-color:rgba(0,255,0,220);')
+        # self.settingPanelTitle.setParent(self.settingPanel)
+        # self.settingPanelTitle.setFixedWidth(self.settingPanel.width())
+        # self.settingPanelTitle.setFixedHeight(padding)
+        # self.settingPanelTitle.setAlignment(Qt.AlignCenter)
+        # self.sphl = QHBoxLayout()
+        #
+        # productCount = 4
+        # productSize = 48
+        # gap = (self.settingPanel.width()-2*padding-productCount*productSize)/(productCount-1)
+        #
+        # self.product0 = QPushButton("0")
+        # self.product0.setParent(self.settingPanel)
+        # self.product0.setGeometry(padding+0*(productSize+gap),padding,productSize,productSize)
+        # self.product1 = QPushButton("1")
+        # self.product1.setParent(self.settingPanel)
+        # self.product1.setGeometry(padding+1*(productSize+gap), padding, productSize, productSize)
+        # self.product2 = QPushButton("2")
+        # self.product2.setParent(self.settingPanel)
+        # self.product2.setGeometry(padding+2*(productSize+gap), padding, productSize, productSize)
+        # self.product3 = QPushButton("3")
+        # self.product3.setParent(self.settingPanel)
+        # self.product3.setGeometry(padding+3*(productSize+gap), padding, productSize, productSize)
+        #
+        # self.exportProjectPathLabel = QLabel("Export Project Path:")
+        # self.exportProjectPathLabel.setParent(self.settingPanel)
+        # self.exportProjectPathLabel.setGeometry(padding, productSize+2*padding, (self.settingPanel.width()/2)-padding, 20)
+        # self.exportProjectPathLabel.setStyleSheet('background-color:rgb(0,0,255);')
 
-        productCount = 4
-        productSize = 48
-        gap = (self.settingPanel.width()-2*padding-productCount*productSize)/(productCount-1)
-
-        self.product0 = QPushButton("0")
-        self.product0.setParent(self.settingPanel)
-        self.product0.setGeometry(padding+0*(productSize+gap),padding,productSize,productSize)
-        self.product1 = QPushButton("1")
-        self.product1.setParent(self.settingPanel)
-        self.product1.setGeometry(padding+1*(productSize+gap), padding, productSize, productSize)
-        self.product2 = QPushButton("2")
-        self.product2.setParent(self.settingPanel)
-        self.product2.setGeometry(padding+2*(productSize+gap), padding, productSize, productSize)
-        self.product3 = QPushButton("3")
-        self.product3.setParent(self.settingPanel)
-        self.product3.setGeometry(padding+3*(productSize+gap), padding, productSize, productSize)
-
-        self.exportProjectPathLabel = QLabel("Export Project Path:")
-        self.exportProjectPathLabel.setParent(self.settingPanel)
-        self.exportProjectPathLabel.setGeometry(padding, productSize+2*padding, (self.settingPanel.width()/2)-padding, 20)
-        self.exportProjectPathLabel.setStyleSheet('background-color:rgb(0,0,255);')
-
-
-
-
-
+        self.setGeometry(-500,700,360,720)
         self.show()
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
+
+class SettingPanel(QWidget):
+    w = 0
+    h = 0
+    label = "Setting"
+    label_h = 30
+    padding = 0
+
+    def __init__(self, parent):
+        super(SettingPanel, self).__init__()
+        self.parent = parent
+        self.w = self.parent.width()
+        self.h = self.parent.height()
+        padding = ExportPanel.padding
+
+        # self.setFixedSize(self.w-2*padding, self.h-5*padding)
+        self.setGeometry(padding,2*padding,self.w-2*padding, self.h-5*padding)
+        self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(0)
+
+        self.title = QLabel(self.label)
+        self.title.setFixedHeight(self.label_h)
+        self.title.setStyleSheet('background-color:rgba(12,233,12,220);')
+        self.content = QLabel("BBBBasdfasdfasdf")
+        self.content.setFixedHeight(self.h - self.label_h)
+        self.content.setStyleSheet('background-color:rgba(255,0,0,220);')
+
+        self.title.setAlignment(Qt.AlignCenter)
+        self.layout.addWidget(self.title)
+        self.layout.addWidget(self.content)
+        self.setLayout(self.layout)
+        # self.start = QPoint(0, 0)
+
+        # self.widgetlayout = QVBoxLayout()
+
+        productCount = 4
+        productSize = 48
+        gap = (self.w-2*padding-productCount*productSize)/(productCount-1)
+
+        self.productLayout = QHBoxLayout()
+        self.product0 = QPushButton("0")
+        self.product1 = QPushButton("1")
+        self.product2 = QPushButton("2")
+        self.product3 = QPushButton("3")
+        self.product4 = QPushButton("4")
+        self.product0.setFixedSize(productSize,productSize)
+        self.product1.setFixedSize(productSize,productSize)
+        self.product2.setFixedSize(productSize,productSize)
+        self.product3.setFixedSize(productSize,productSize)
+        self.product4.setFixedSize(productSize,productSize)
+        self.productLayout.addWidget(self.product0)
+        self.productLayout.addStretch(1)
+        self.productLayout.addWidget(self.product1)
+        self.productLayout.addStretch(1)
+        self.productLayout.addWidget(self.product2)
+        self.productLayout.addStretch(1)
+        self.productLayout.addWidget(self.product3)
+        self.productLayout.addStretch(1)
+        self.productLayout.addWidget(self.product4)
+
+        self.content.setLayout(self.productLayout)
 
 class TitleBar(QWidget):
     logo_w = 120
