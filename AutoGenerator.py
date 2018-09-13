@@ -59,10 +59,11 @@ import uuid, shutil
 import photools as pt
 import cv2
 
+
 class MainWindow(QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.setFixedSize(360,720)
+        self.setFixedSize(360, 720)
         self.layout = QVBoxLayout()
         self.layout.addWidget(TitleBar(self))
         self.layout.addWidget(FootagesPanel(self))
@@ -79,48 +80,11 @@ class MainWindow(QWidget):
         self.settingPanel = SettingPanel(self)
         self.settingPanel.setParent(self)
 
-
-        # padding = ExportPanel.padding
-        #
-        # self.settingPanel = QLabel('', self)
-        # self.settingPanel.setObjectName("settingPanel")
-        # self.settingPanel.setStyleSheet('background-color:rgba(255,0,0,220);')
-        # self.settingPanel.setGeometry(padding, padding*2, self.width()-2*padding, self.height()-padding*5)
-        # self.settingPanelTitle = QLabel('Setting', self)
-        # self.settingPanelTitle.setObjectName("settingPanel_title")
-        # self.settingPanelTitle.setStyleSheet('background-color:rgba(0,255,0,220);')
-        # self.settingPanelTitle.setParent(self.settingPanel)
-        # self.settingPanelTitle.setFixedWidth(self.settingPanel.width())
-        # self.settingPanelTitle.setFixedHeight(padding)
-        # self.settingPanelTitle.setAlignment(Qt.AlignCenter)
-        # self.sphl = QHBoxLayout()
-        #
-        # productCount = 4
-        # productSize = 48
-        # gap = (self.settingPanel.width()-2*padding-productCount*productSize)/(productCount-1)
-        #
-        # self.product0 = QPushButton("0")
-        # self.product0.setParent(self.settingPanel)
-        # self.product0.setGeometry(padding+0*(productSize+gap),padding,productSize,productSize)
-        # self.product1 = QPushButton("1")
-        # self.product1.setParent(self.settingPanel)
-        # self.product1.setGeometry(padding+1*(productSize+gap), padding, productSize, productSize)
-        # self.product2 = QPushButton("2")
-        # self.product2.setParent(self.settingPanel)
-        # self.product2.setGeometry(padding+2*(productSize+gap), padding, productSize, productSize)
-        # self.product3 = QPushButton("3")
-        # self.product3.setParent(self.settingPanel)
-        # self.product3.setGeometry(padding+3*(productSize+gap), padding, productSize, productSize)
-        #
-        # self.exportProjectPathLabel = QLabel("Export Project Path:")
-        # self.exportProjectPathLabel.setParent(self.settingPanel)
-        # self.exportProjectPathLabel.setGeometry(padding, productSize+2*padding, (self.settingPanel.width()/2)-padding, 20)
-        # self.exportProjectPathLabel.setStyleSheet('background-color:rgb(0,0,255);')
-
-        self.setGeometry(-500,700,360,720)
+        self.setGeometry(1500, 250, 360, 720)
         self.show()
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
+
 
 class SettingPanel(QWidget):
     w = 0
@@ -137,7 +101,7 @@ class SettingPanel(QWidget):
         padding = ExportPanel.padding
 
         # self.setFixedSize(self.w-2*padding, self.h-5*padding)
-        self.setGeometry(padding,2*padding,self.w-2*padding, self.h-5*padding)
+        self.setGeometry(padding, 2 * padding, self.w - 2 * padding, self.h - 5 * padding)
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
@@ -145,7 +109,7 @@ class SettingPanel(QWidget):
         self.title = QLabel(self.label)
         self.title.setFixedHeight(self.label_h)
         self.title.setStyleSheet('background-color:rgba(12,233,12,220);')
-        self.content = QLabel("BBBBasdfasdfasdf")
+        self.content = QLabel("")
         self.content.setFixedHeight(self.h - self.label_h)
         self.content.setStyleSheet('background-color:rgba(255,0,0,220);')
 
@@ -159,7 +123,7 @@ class SettingPanel(QWidget):
 
         productCount = 4
         productSize = 48
-        gap = (self.w-2*padding-productCount*productSize)/(productCount-1)
+        gap = (self.w - 2 * padding - productCount * productSize) / (productCount - 1)
 
         self.productLayout = QHBoxLayout()
         self.product0 = QPushButton("0")
@@ -167,11 +131,11 @@ class SettingPanel(QWidget):
         self.product2 = QPushButton("2")
         self.product3 = QPushButton("3")
         self.product4 = QPushButton("4")
-        self.product0.setFixedSize(productSize,productSize)
-        self.product1.setFixedSize(productSize,productSize)
-        self.product2.setFixedSize(productSize,productSize)
-        self.product3.setFixedSize(productSize,productSize)
-        self.product4.setFixedSize(productSize,productSize)
+        self.product0.setFixedSize(productSize, productSize)
+        self.product1.setFixedSize(productSize, productSize)
+        self.product2.setFixedSize(productSize, productSize)
+        self.product3.setFixedSize(productSize, productSize)
+        self.product4.setFixedSize(productSize, productSize)
         self.productLayout.addWidget(self.product0)
         self.productLayout.addStretch(1)
         self.productLayout.addWidget(self.product1)
@@ -182,13 +146,116 @@ class SettingPanel(QWidget):
         self.productLayout.addStretch(1)
         self.productLayout.addWidget(self.product4)
 
-        self.content.setLayout(self.productLayout)
+        self.contentLayout = QVBoxLayout()
+        self.content.setLayout(self.contentLayout)
+        self.contentLayout.addLayout(self.productLayout)
+        # self.contentLayout.addStretch(1)
+
+        self.exportProjectPathLabel = QLabel('Export Project Path:')
+        self.exportProjectPathLabel.setStyleSheet('background-color:rgb(255,123,0);')
+        self.contentLayout.addWidget(self.exportProjectPathLabel)
+        # self.contentLayout.addStretch(1)
+
+        self.exportProjectPathLayout = QHBoxLayout()
+        self.exportProjectPathButton = QPushButton("5")
+        self.exportProjectPathButton.setFixedSize(20, 20)
+        self.exportProjectPath = QLineEdit('Export path here', self)
+        self.exportProjectPath.setGeometry(0, 0, 250, 20)
+        self.exportProjectPathLayout.addWidget(self.exportProjectPath)
+        self.exportProjectPathLayout.addWidget(self.exportProjectPathButton)
+        self.contentLayout.addLayout(self.exportProjectPathLayout)
+        # self.contentLayout.addStretch(1)
+
+        self.AttributesLayout = QHBoxLayout()
+
+        self.resolutionLayout = QVBoxLayout()
+        self.resolutionLabel = QLabel(" Resolution")
+        self.resolutionCombo = QComboBox(self)
+        self.resolutionCombo.addItem("3840 x 2160")
+        self.resolutionCombo.addItem("2560 x 1440")
+        self.resolutionCombo.addItem("1920 x 1080")
+        self.resolutionCombo.addItem("1280 x 720")
+        self.resolutionCombo.addItem("960 x 540")
+        self.resolutionLayout.addWidget(self.resolutionLabel)
+        self.resolutionLayout.addWidget(self.resolutionCombo)
+
+        self.frameRateLayout = QVBoxLayout()
+        self.frameRateLabel = QLabel(" Frame Rate:")
+        self.frameRateCombo = QComboBox(self)
+        self.frameRateCombo.addItem("60 FPS")
+        self.frameRateCombo.addItem("50 FPS")
+        self.frameRateCombo.addItem("30 FPS")
+        self.frameRateCombo.addItem("25 FPS")
+        self.frameRateCombo.addItem("24 FPS")
+        self.frameRateLayout.addWidget(self.frameRateLabel)
+        self.frameRateLayout.addWidget(self.frameRateCombo)
+
+        self.AttributesLayout.addLayout(self.resolutionLayout)
+        # self.AttributesLayout.addStretch(1)
+        self.AttributesLayout.addLayout(self.frameRateLayout)
+        self.contentLayout.addLayout(self.AttributesLayout)
+
+        self.analysisCheckbox = QCheckBox("Analysis", self)
+        self.contentLayout.addWidget(self.analysisCheckbox)
+        self.analysisContent = QLabel("", self)
+        self.analysisContent.setStyleSheet("background-color:rgb(0,123,255);")
+        self.analysisContent.setFixedHeight(300)
+
+        self.analysisLayout = QVBoxLayout()
+        self.analysisContent.setLayout(self.analysisLayout)
+
+        self.analysisLabel = QLabel("In Order to get a better result\nThese data can let us know more about your shot\nWhile needs more time.")
+        self.analysisLabel.setStyleSheet("background-color:rgb(123,123,0);")
+        self.analysisLayout.addWidget(self.analysisLabel)
+
+        self.analysisLayout.addStretch(1)
+
+        self.analysisMultiCore = QCheckBox("Multi-Core Enhance", self)
+        self.analysisLayout.addWidget(self.analysisMultiCore)
+
+        self.analysisLayout.addStretch(1)
+
+        self.analysisSampleFrameLayout = QHBoxLayout()
+        self.analysisSampleFrameLabel = QLabel("Sample:")
+        self.analysisSampleFrameLabel.setFixedWidth(3 * padding)
+        self.analysisSampleFrameLabel.setStyleSheet("background-color:rgb(233,123,222);")
+        self.analysisSampleFrameCombo = QComboBox(self)
+        self.analysisSampleFrameCombo.addItem("Smart Sample")
+        self.analysisSampleFrameCombo.addItem("Every Frame")
+        self.analysisSampleFrameCombo.addItem("Every 2 Frame")
+        self.analysisSampleFrameCombo.addItem("Every 5 Frame")
+        self.analysisSampleFrameCombo.addItem("Every 10 Frame")
+        self.analysisSampleFrameLayout.addWidget(self.analysisSampleFrameLabel)
+        self.analysisSampleFrameLayout.addWidget(self.analysisSampleFrameCombo)
+        self.analysisLayout.addLayout(self.analysisSampleFrameLayout)
+
+        self.analysisLayout.addStretch(1)
+
+        self.analysisFaceDetect= QCheckBox("Face Detect", self)
+        self.analysisBlurDetect= QCheckBox("Blur Detect", self)
+        self.analysisHistogramDetect= QCheckBox("Histogram Detect", self)
+        self.analysisMotionDetect= QCheckBox("Motion Detect", self)
+        self.analysisVoiceDetect= QCheckBox("Voice Detect", self)
+        self.analysisLayout.addWidget(self.analysisFaceDetect)
+        self.analysisLayout.addWidget(self.analysisBlurDetect)
+        self.analysisLayout.addWidget(self.analysisHistogramDetect)
+        self.analysisLayout.addWidget(self.analysisMotionDetect)
+        self.analysisLayout.addWidget(self.analysisVoiceDetect)
+
+
+
+        # self.analysisLayout.addStretch(1)
+        self.contentLayout.addWidget(self.analysisContent)
+
+        self.contentLayout.addStretch(1)
+
 
 class TitleBar(QWidget):
     logo_w = 120
     logo_h = 30
     w = 0
     h = 50
+
     def __init__(self, parent):
         super(TitleBar, self).__init__()
         self.parent = parent
@@ -201,9 +268,9 @@ class TitleBar(QWidget):
         self.logo = QLabel("")
         self.logo.setObjectName("TitleBar_logo")
         self.logo.setParent(self.title)
-        offset_x = (self.w - self.logo_w)/2
-        offset_y = (self.h - self.logo_h)/2
-        self.logo.setGeometry(offset_x,offset_y,self.logo_w,self.logo_h)
+        offset_x = (self.w - self.logo_w) / 2
+        offset_y = (self.h - self.logo_h) / 2
+        self.logo.setGeometry(offset_x, offset_y, self.logo_w, self.logo_h)
 
         btn_size = 12
         padding = 6
@@ -211,7 +278,7 @@ class TitleBar(QWidget):
         self.btn_close.setObjectName("TitleBar_btn_close")
         self.btn_close.clicked.connect(self.btn_close_clicked)
         self.btn_close.setParent(self.title)
-        self.btn_close.setGeometry((self.w-btn_size-padding), padding, btn_size, btn_size)
+        self.btn_close.setGeometry((self.w - btn_size - padding), padding, btn_size, btn_size)
 
         self.title.setFixedHeight(self.h)
         self.title.setAlignment(Qt.AlignCenter)
@@ -224,7 +291,6 @@ class TitleBar(QWidget):
         self.pressing = False
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
-
 
     def resizeEvent(self, QResizeEvent):
         super(TitleBar, self).resizeEvent(QResizeEvent)
@@ -257,7 +323,7 @@ class FootagesPanel(QWidget):
     label = "Footages"
     label_h = 30
     icon_w = 85
-    icon_h =64
+    icon_h = 64
 
     def __init__(self, parent):
         super(FootagesPanel, self).__init__()
@@ -279,12 +345,13 @@ class FootagesPanel(QWidget):
         self.icon = QLabel()
         self.icon.setObjectName("FootagesPanel_icon")
         self.icon.setParent(self.content)
-        self.icon.setGeometry((self.w-self.icon_w)/2,((self.h - self.label_h)-self.icon_h)/2-offset_y,self.icon_w,self.icon_h)
+        self.icon.setGeometry((self.w - self.icon_w) / 2, ((self.h - self.label_h) - self.icon_h) / 2 - offset_y,
+                              self.icon_w, self.icon_h)
 
         self.icon_info = QLabel("Drag and Drop to Import your Footages")
         self.icon_info.setObjectName("FootagesPanel_icon_info")
         self.icon_info.setParent(self.content)
-        self.icon_info.setGeometry(0,((self.h - self.label_h)-self.icon_h)/2+self.icon_h+offset_y,self.w,30)
+        self.icon_info.setGeometry(0, ((self.h - self.label_h) - self.icon_h) / 2 + self.icon_h + offset_y, self.w, 30)
         self.icon_info.setAlignment(Qt.AlignCenter)
         self.icon.setCursor(Qt.PointingHandCursor)
 
@@ -292,7 +359,8 @@ class FootagesPanel(QWidget):
         self.importBox = QLabel()
         self.importBox.setObjectName("FootagesPanel_importBox")
         self.importBox.setParent(self.content)
-        self.importBox.setGeometry(importBox_padding,0,(self.w-2*importBox_padding),(self.h - self.label_h-importBox_padding))
+        self.importBox.setGeometry(importBox_padding, 0, (self.w - 2 * importBox_padding),
+                                   (self.h - self.label_h - importBox_padding))
 
         self.title.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.title)
@@ -312,6 +380,7 @@ class MusicPanel(QWidget):
     icon_w = 64
     icon_h = 64
     musicPath = 'rawPath'
+
     def __init__(self, parent):
         super(MusicPanel, self).__init__()
         self.parent = parent
@@ -331,14 +400,15 @@ class MusicPanel(QWidget):
         self.icon = QPushButton()
         self.icon.setObjectName("MusicPanel_icon")
         self.icon.setParent(self.content)
-        self.icon.setGeometry((self.w-self.icon_w)/2,((self.h - self.label_h)-self.icon_h)/2,self.icon_w,self.icon_h)
+        self.icon.setGeometry((self.w - self.icon_w) / 2, ((self.h - self.label_h) - self.icon_h) / 2, self.icon_w,
+                              self.icon_h)
         self.icon.setCursor(Qt.PointingHandCursor)
         importBox_padding = 20
         self.importBox = QLabel()
         self.importBox.setObjectName("MusicPanel_importBox")
         self.importBox.setParent(self.content)
-        self.importBox.setGeometry(importBox_padding,importBox_padding/2,(self.w-2*importBox_padding),(self.h - self.label_h-importBox_padding))
-
+        self.importBox.setGeometry(importBox_padding, importBox_padding / 2, (self.w - 2 * importBox_padding),
+                                   (self.h - self.label_h - importBox_padding))
 
         self.title.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.title)
@@ -350,18 +420,17 @@ class MusicPanel(QWidget):
         self.waveform = QLabel()
         self.waveform.setObjectName("MusicPanel_waveform")
         self.waveform.setParent(self.content)
-        self.waveform.setGeometry(importBox_padding,0,self.w-2*importBox_padding, 80)
+        self.waveform.setGeometry(importBox_padding, 0, self.w - 2 * importBox_padding, 80)
         self.waveform.setStyleSheet('image:url(./GUI/music-loading.png)')
         # self.waveform.setMask(QRegion(0,0,self.w-2*importBox_padding,80,QRegion.Ellipse))
         # self.waveform.setMask(QPixmap("GUI/music-mask.png").scaledToWidth(self.w-2*importBox_padding).mask())
         self.waveform.setVisible(False)
 
-
         # self.waveform.setStyleSheet('background-image:url(./GUI/music-loading.png)')
         # self.IMG = cv2.imread('´´GUI/music-loading.png')
         # pixmap = self.getResizeQpixmap(self.IMG,self.w-2*importBox_padding, 80)
         # self.waveform.setPixmap(pixmap)
-        print('waveform:',self.w, self.h)
+        print('waveform:', self.w, self.h)
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
         self.icon.clicked.connect(self.importMusic)
@@ -370,7 +439,8 @@ class MusicPanel(QWidget):
         file = self.openFileNamesDialog()[0]
         try:
             if '.mp3' not in file:
-                QMessageBox.about(self, 'Not Supported Format','This Version We Just Support .MP3 files, Please Check.')
+                QMessageBox.about(self, 'Not Supported Format',
+                                  'This Version We Just Support .MP3 files, Please Check.')
             else:
                 MusicPanel.musicPath = file
                 ##Here need to fix if the file is not only one will crash
@@ -387,7 +457,6 @@ class MusicPanel(QWidget):
             self.backend.update_date.connect(self.updateWaveform)
             self.backend.start()
 
-
     def openFileNamesDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -396,12 +465,12 @@ class MusicPanel(QWidget):
         if files:
             return files
 
-    def getResizeQpixmap(self, IMG,width,height):
+    def getResizeQpixmap(self, IMG, width, height):
         st = time.time()
         img_h, img_w, _ = IMG.shape
-        IMG = cv2.resize(IMG, None, fx=(height/img_h), fy=(width/img_w), interpolation=cv2.INTER_CUBIC)
+        IMG = cv2.resize(IMG, None, fx=(height / img_h), fy=(width / img_w), interpolation=cv2.INTER_CUBIC)
         et = time.time()
-        print("Resize Time:",et-st)
+        print("Resize Time:", et - st)
         cv2.cvtColor(IMG, cv2.COLOR_BGR2RGB, IMG)
         img_h, img_w, bytesPerComponent = IMG.shape
         bytesPerLine = bytesPerComponent * img_w
@@ -409,9 +478,9 @@ class MusicPanel(QWidget):
         pixmap = QPixmap.fromImage(qmap)
         return pixmap
 
-    def updateWaveform(self,waveformPath):
+    def updateWaveform(self, waveformPath):
         print(waveformPath)
-        self.waveform.setStyleSheet('image:url(%s)'%waveformPath)
+        self.waveform.setStyleSheet('image:url(%s)' % waveformPath)
         pass
 
     def removeWaveform(self):
@@ -434,6 +503,7 @@ class MusicPanel(QWidget):
         elif action == quitAct:
             qApp.quit()
 
+
 class ExportPanel(QWidget):
     w = 0
     h = 80
@@ -450,24 +520,23 @@ class ExportPanel(QWidget):
         self.layout.setSpacing(0)
 
         self.content = QLabel()
-        self.content.setGeometry(0,0,self.w,self.h)
+        self.content.setGeometry(0, 0, self.w, self.h)
         self.content.setObjectName("ExportPanel_content")
 
-        ExportPanel.padding = (self.h-self.label_h)/2
+        ExportPanel.padding = (self.h - self.label_h) / 2
         self.export = QPushButton("      Export", self)
         self.export.setObjectName("ExportPanel_Export")
         self.export.setParent(self.content)
-        self.export.setGeometry(ExportPanel.padding,ExportPanel.padding,(self.w-self.h),self.label_h)
+        self.export.setGeometry(ExportPanel.padding, ExportPanel.padding, (self.w - self.h), self.label_h)
         self.export.clicked.connect(self.exportData)
         self.export.setCursor(Qt.PointingHandCursor)
 
         self.setting = QPushButton("", self)
         self.setting.setObjectName("ExportPanel_Setting")
         self.setting.setParent(self.content)
-        self.setting.setGeometry((self.w-self.h/2-self.label_h/2), (self.h - self.label_h) / 2,self.label_h,self.label_h)
+        self.setting.setGeometry((self.w - self.h / 2 - self.label_h / 2), (self.h - self.label_h) / 2, self.label_h,
+                                 self.label_h)
         self.setting.setCursor(Qt.PointingHandCursor)
-
-
 
         self.layout.addWidget(self.content)
         self.setLayout(self.layout)
@@ -481,17 +550,17 @@ class ExportPanel(QWidget):
         print()
 
 
-
 class BackendLoadWaveformThread(QThread):
     print('Backend Load Waveform Thread')
     update_date = pyqtSignal(str)
+
     def run(self):
         st = time.time()
         print(MusicPanel.musicPath)
         waveformPath = pt.findWaveform(MusicPanel.musicPath)
         self.update_date.emit(waveformPath)
         et = time.time()
-        print("Use Time to Load Waveform: %.4f\n"%(et-st))
+        print("Use Time to Load Waveform: %.4f\n" % (et - st))
 
 
 if __name__ == "__main__":
