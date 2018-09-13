@@ -79,8 +79,10 @@ class MainWindow(QWidget):
 
         self.settingPanel = SettingPanel(self)
         self.settingPanel.setParent(self)
+        # self.settingPanel.setVisible(False)
 
-        self.setGeometry(1500, 250, 360, 720)
+        # self.setGeometry(1500, 250, 360, 720)
+        self.setGeometry(-450, 850, 360, 720)
         self.show()
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
@@ -99,31 +101,33 @@ class SettingPanel(QWidget):
         self.w = self.parent.width()
         self.h = self.parent.height()
         padding = ExportPanel.padding
-
-        # self.setFixedSize(self.w-2*padding, self.h-5*padding)
+        #
+        # self.setFixedSize(self.w - 2 * padding, self.h - 5 * padding)
+        # self.move(padding, 2 * padding)
         self.setGeometry(padding, 2 * padding, self.w - 2 * padding, self.h - 5 * padding)
+
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
 
         self.title = QLabel(self.label)
         self.title.setFixedHeight(self.label_h)
-        self.title.setStyleSheet('background-color:rgba(12,233,12,220);')
+        self.title.setObjectName("SettingPanel_title")
         self.content = QLabel("")
         self.content.setFixedHeight(self.h - self.label_h)
-        self.content.setStyleSheet('background-color:rgba(255,0,0,220);')
+        self.content.setObjectName("SettingPanel_content")
+
 
         self.title.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.title)
         self.layout.addWidget(self.content)
         self.setLayout(self.layout)
         # self.start = QPoint(0, 0)
-
         # self.widgetlayout = QVBoxLayout()
+
 
         productCount = 4
         productSize = 48
-        gap = (self.w - 2 * padding - productCount * productSize) / (productCount - 1)
 
         self.productLayout = QHBoxLayout()
         self.product0 = QPushButton("0")
@@ -131,6 +135,12 @@ class SettingPanel(QWidget):
         self.product2 = QPushButton("2")
         self.product3 = QPushButton("3")
         self.product4 = QPushButton("4")
+        self.product0.setObjectName("SettingPanel_product0")
+        self.product1.setObjectName("SettingPanel_product1")
+        self.product2.setObjectName("SettingPanel_product2")
+        self.product3.setObjectName("SettingPanel_product3")
+        self.product4.setObjectName("SettingPanel_product4")
+
         self.product0.setFixedSize(productSize, productSize)
         self.product1.setFixedSize(productSize, productSize)
         self.product2.setFixedSize(productSize, productSize)
@@ -149,26 +159,30 @@ class SettingPanel(QWidget):
         self.contentLayout = QVBoxLayout()
         self.content.setLayout(self.contentLayout)
         self.contentLayout.addLayout(self.productLayout)
-        # self.contentLayout.addStretch(1)
+        self.contentLayout.addStretch(1)
 
         self.exportProjectPathLabel = QLabel('Export Project Path:')
-        self.exportProjectPathLabel.setStyleSheet('background-color:rgb(255,123,0);')
+        self.exportProjectPathLabel.setObjectName("SettingPanel_exportProjectPathLabel")
         self.contentLayout.addWidget(self.exportProjectPathLabel)
-        # self.contentLayout.addStretch(1)
 
         self.exportProjectPathLayout = QHBoxLayout()
         self.exportProjectPathButton = QPushButton("5")
-        self.exportProjectPathButton.setFixedSize(20, 20)
-        self.exportProjectPath = QLineEdit('Export path here', self)
+        self.exportProjectPathButton.setObjectName("SettingPanel_exportProjectPathButton")
+        self.exportProjectPathButton.setFixedSize(self.label_h, self.label_h)
+        self.exportProjectPath = QLineEdit('D:/Test/Export/Untitle.FMP', self)
+        self.exportProjectPath.setObjectName("SettingPanel_exportProjectPath")
+        self.exportProjectPath.setFixedHeight(self.label_h)
         self.exportProjectPath.setGeometry(0, 0, 250, 20)
         self.exportProjectPathLayout.addWidget(self.exportProjectPath)
         self.exportProjectPathLayout.addWidget(self.exportProjectPathButton)
+        self.exportProjectPathLayout.setSpacing(0)
         self.contentLayout.addLayout(self.exportProjectPathLayout)
-        # self.contentLayout.addStretch(1)
+        self.contentLayout.addStretch(1)
 
         self.AttributesLayout = QHBoxLayout()
 
         self.resolutionLayout = QVBoxLayout()
+        self.resolutionLayout.setSpacing(2)
         self.resolutionLabel = QLabel(" Resolution")
         self.resolutionCombo = QComboBox(self)
         self.resolutionCombo.addItem("3840 x 2160")
@@ -180,6 +194,7 @@ class SettingPanel(QWidget):
         self.resolutionLayout.addWidget(self.resolutionCombo)
 
         self.frameRateLayout = QVBoxLayout()
+        self.frameRateLayout.setSpacing(2)
         self.frameRateLabel = QLabel(" Frame Rate:")
         self.frameRateCombo = QComboBox(self)
         self.frameRateCombo.addItem("60 FPS")
@@ -191,20 +206,22 @@ class SettingPanel(QWidget):
         self.frameRateLayout.addWidget(self.frameRateCombo)
 
         self.AttributesLayout.addLayout(self.resolutionLayout)
-        # self.AttributesLayout.addStretch(1)
         self.AttributesLayout.addLayout(self.frameRateLayout)
+        self.AttributesLayout.setSpacing(20)
         self.contentLayout.addLayout(self.AttributesLayout)
+        self.contentLayout.addStretch(1)
 
         self.analysisCheckbox = QCheckBox("Analysis", self)
         self.contentLayout.addWidget(self.analysisCheckbox)
         self.analysisContent = QLabel("", self)
         self.analysisContent.setStyleSheet("background-color:rgb(0,123,255);")
-        self.analysisContent.setFixedHeight(300)
+        self.analysisContent.setFixedHeight(290)
 
         self.analysisLayout = QVBoxLayout()
         self.analysisContent.setLayout(self.analysisLayout)
 
-        self.analysisLabel = QLabel("In Order to get a better result\nThese data can let us know more about your shot\nWhile needs more time.")
+        self.analysisLabel = QLabel(
+            "In Order to get a better result\nThese data can let us know more about your shot\nWhile needs more time.")
         self.analysisLabel.setStyleSheet("background-color:rgb(123,123,0);")
         self.analysisLayout.addWidget(self.analysisLabel)
 
@@ -231,23 +248,34 @@ class SettingPanel(QWidget):
 
         self.analysisLayout.addStretch(1)
 
-        self.analysisFaceDetect= QCheckBox("Face Detect", self)
-        self.analysisBlurDetect= QCheckBox("Blur Detect", self)
-        self.analysisHistogramDetect= QCheckBox("Histogram Detect", self)
-        self.analysisMotionDetect= QCheckBox("Motion Detect", self)
-        self.analysisVoiceDetect= QCheckBox("Voice Detect", self)
+        self.analysisFaceDetect = QCheckBox("Face Detect", self)
+        self.analysisBlurDetect = QCheckBox("Blur Detect", self)
+        self.analysisHistogramDetect = QCheckBox("Histogram Detect", self)
+        self.analysisMotionDetect = QCheckBox("Motion Detect", self)
+        self.analysisVoiceDetect = QCheckBox("Voice Detect", self)
         self.analysisLayout.addWidget(self.analysisFaceDetect)
         self.analysisLayout.addWidget(self.analysisBlurDetect)
         self.analysisLayout.addWidget(self.analysisHistogramDetect)
         self.analysisLayout.addWidget(self.analysisMotionDetect)
         self.analysisLayout.addWidget(self.analysisVoiceDetect)
-
-
-
-        # self.analysisLayout.addStretch(1)
         self.contentLayout.addWidget(self.analysisContent)
 
-        self.contentLayout.addStretch(1)
+        # self.contentLayout.addStretch(1)
+
+        self.analysisSaveLayout = QHBoxLayout()
+        self.analysisSaveLayout.setSpacing(0)
+        self.analysisSaveButton = QPushButton("Save Settings", self)
+        self.analysisResetButton = QPushButton("R", self)
+        self.analysisSaveButton.setFixedHeight(self.label_h)
+        self.analysisResetButton.setFixedSize(self.label_h, self.label_h)
+        self.analysisSaveLayout.addWidget(self.analysisSaveButton)
+        self.analysisSaveLayout.addWidget(self.analysisResetButton)
+        self.contentLayout.addLayout(self.analysisSaveLayout)
+
+        self.contentLayout.addStretch(20)
+
+        with open('APG.qss', "r") as qss:
+            self.setStyleSheet(qss.read())
 
 
 class TitleBar(QWidget):

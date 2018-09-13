@@ -1,11 +1,12 @@
 
-QPushButton{font-family: "Lato";}
+QPushButton{}
 QPushButton:hover{}
 QPushButton:pressed{}
 
 QLabel{
+    font-family: "Open Sans Light";
     font-size: 14px;
-    color:rgb(220, 220, 220);
+    color:rgb(32, 32, 32);
     }
 
 QMessage{
@@ -23,15 +24,25 @@ QMessage{
 
 
 #FootagesPanel_title{
+    color:rgb(220,220,220);
     background-color:rgb(48,61,71);
     }
 
 #FootagesPanel_content{
+    color:rgb(220,220,220);
     background-color:rgb(48,61,71);
     }
 
-#FootagesPanel_icon{ image:url(./GUI/video-n.png);}
-#FootagesPanel_icon:hover{ image:url(./GUI/video-h.png);}
+#FootagesPanel_icon{
+    color:rgb(220,220,220);
+    image:url(./GUI/video-n.png);
+    }
+#FootagesPanel_icon:hover{
+    image:url(./GUI/video-h.png);
+    }
+#FootagesPanel_icon_info{
+    color:rgb(220,220,220);
+    }
 
 #FootagesPanel_importBox{
     background-color: transparent;
@@ -43,6 +54,7 @@ QMessage{
 
 
 #MusicPanel_title{
+    color:rgb(220,220,220);
     background-color:rgb(48,61,71);
     }
 
@@ -109,4 +121,47 @@ QMessage{
 #ExportPanel_Setting:pressed{
     background-color:rgb(20, 25, 30);
     image:url(./GUI/setting-p.png)
+    }
+
+
+#SettingPanel_title{
+    font-size: 16px;
+    color:rgb(0, 0, 0);
+    background-color:rgba(220, 220, 220,255);
+    }
+
+#SettingPanel_content{
+    font-size: 14px;
+    color:rgb(0, 0, 0);
+    background-color:rgba(128, 128, 128,250);
+    }
+
+#SettingPanel_product0{
+    background-color:rgba(255, 0, 0,255);
+    }
+
+
+#SettingPanel_exportProjectPathLabel{
+    color:rgb(220,220,220)
+    }
+
+#SettingPanel_exportProjectPath{
+    font-family: "Open Sans Light";
+    font-size: 14px;
+    border:0px solid rgb(0,0,0);
+    background: rgb(96,96,96);
+    selection-background-color:rgb(220,0,0);
+    color:rgb(220,220,220)
+    }
+
+#SettingPanel_exportProjectPathButton{
+    cursor:move;
+    background-color:rgb(32,32,32);
+    image:url(./GUI/openPath.png);
+    border:none;
+    padding: 6px
+    }
+#SettingPanel_exportProjectPathButton:hover{
+    cursor:move;
+    background-color:rgb(64,64,64);
     }
