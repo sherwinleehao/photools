@@ -225,7 +225,7 @@ class SettingPanel(QWidget):
         self.analysisContent.setLayout(self.analysisLayout)
 
         self.analysisLabel = QLabel(
-            "In Order to get a better result\nThese data can let us know more about your shot\nWhile needs more time.")
+            "In Order to get a better result\nAnalysis your footages will be necessary\nThese data can let us know more about your shot\nWhile needs more time.")
         self.analysisLabel.setObjectName("SettingPanel_analysisLabel")
         self.analysisLayout.addWidget(self.analysisLabel)
 

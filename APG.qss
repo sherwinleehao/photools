@@ -18,6 +18,18 @@ QCheckBox{
     font-size: 14px;
     color:rgb(220, 220, 220);
 }
+QCheckBox:indicator{
+    width: 18px;
+    height: 18px;
+}
+QCheckBox:indicator:unchecked{
+    image:url(./GUI/check-box-blank-n.png);
+}
+QCheckBox:indicator:checked{
+    image:url(./GUI/check-box-n.png);
+}
+
+
 
 #TitleBar_title{ background-color:rgb(48,61,71);}
 
@@ -196,7 +208,7 @@ QCheckBox{
     }
 
 #SettingPanel_analysisLabel{
-    font-size:6 px;
+    font-size:10px;
     color:rgb(160,160,160);
     }
 
@@ -209,11 +221,24 @@ QCheckBox{
 #SettingPanel_analysisSaveButton{
     color:rgb(220,220,220);
     border:none;
+    border-top-left-radius:8px;
+    border-bottom-left-radius:8px;
     background-color:rgb(48,48,48);
     }
+#SettingPanel_analysisSaveButton:hover{
+    background-color:rgb(64,64,64);
+    }
+
+
+
 
 #SettingPanel_analysisResetButton{
     color:rgb(220,220,220);
     border:none;
+    border-top-right-radius:8px;
+    border-bottom-right-radius:8px;
     background-color:rgb(32,32,32);
+    }
+#SettingPanel_analysisResetButton:hover{
+    background-color:rgb(64,64,64);
     }
