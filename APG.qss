@@ -15,6 +15,7 @@ QMessage{
 }
 
 QCheckBox{
+    font-family: "Open Sans Light";
     font-size: 14px;
     color:rgb(220, 220, 220);
 }
@@ -142,24 +143,92 @@ QCheckBox:indicator:checked{
 
 
 #SettingPanel_title{
+    border-top-right-radius:8px;
+    border-top-left-radius:8px;
     font-size: 16px;
     color:rgb(0, 0, 0);
     background-color:rgba(220, 220, 220,255);
     }
 
 #SettingPanel_content{
+    border-bottom-right-radius:8px;
+    border-bottom-left-radius:8px;
     font-size: 14px;
     color:rgb(0, 0, 0);
-    background-color:rgba(128, 128, 128,250);
+    background-color:rgba(128, 128, 128,255);
     }
 
 #SettingPanel_product0{
-    background-color:rgba(255, 0, 233,255);
+    }
+#SettingPanel_product0:indicator{
+    width: 48px;
+    height: 48px;
+    }
+#SettingPanel_product0:indicator:unchecked{
+    image:url(./GUI/app-premiere-n.png)
+    }
+#SettingPanel_product0:indicator:checked{
+    image:url(./GUI/app-premiere-p.png)
     }
 
+
 #SettingPanel_product1{
-    background-color:rgba(0, 123, 233,255);
     }
+#SettingPanel_product1:indicator{
+    width: 48px;
+    height: 48px;
+    }
+#SettingPanel_product1:indicator:unchecked{
+    image:url(./GUI/app-premiere-n.png)
+    }
+#SettingPanel_product1:indicator:checked{
+    image:url(./GUI/app-premiere-p.png)
+    }
+
+
+#SettingPanel_product2{
+    }
+#SettingPanel_product2:indicator{
+    width: 48px;
+    height: 48px;
+    }
+#SettingPanel_product2:indicator:unchecked{
+    image:url(./GUI/app-premiere-n.png)
+    }
+#SettingPanel_product2:indicator:checked{
+    image:url(./GUI/app-premiere-p.png)
+    }
+
+
+#SettingPanel_product3{
+    }
+#SettingPanel_product3:indicator{
+    width: 48px;
+    height: 48px;
+    }
+#SettingPanel_product3:indicator:unchecked{
+    image:url(./GUI/app-premiere-n.png)
+    }
+#SettingPanel_product3:indicator:checked{
+    image:url(./GUI/app-premiere-p.png)
+    }
+
+
+#SettingPanel_product4{
+    }
+#SettingPanel_product4:indicator{
+    width: 48px;
+    height: 48px;
+    }
+#SettingPanel_product4:indicator:unchecked{
+    image:url(./GUI/app-premiere-n.png)
+    }
+#SettingPanel_product4:indicator:checked{
+    image:url(./GUI/app-premiere-p.png)
+    }
+
+
+
 
 #SettingPanel_exportProjectPathLabel{
     color:rgb(220,220,220);
@@ -217,9 +286,35 @@ QCheckBox:indicator:checked{
     }
 
 
+#SettingPanel_analysisSampleFrameCombo{
+    font-family: "Open Sans Light";
+    font-size:14px;
+    }
+#SettingPanel_analysisSampleFrameCombo:item {
+    font-family: "Open Sans Light";
+    font-size:14px;
+    }
+#SettingPanel_analysisSampleFrameCombo:item:hover {
+    background-color:rgb(248,48,48);
+}
+
+
+
+
+
+
+#SettingPanel_analysisCover{
+    border-radius:8px;
+    background-color:rgba(128,128,128,192);
+    }
+
+
+
 
 #SettingPanel_analysisSaveButton{
+    font-size:14px;
     color:rgb(220,220,220);
+    font-family: "Open Sans Light";
     border:none;
     border-top-left-radius:8px;
     border-bottom-left-radius:8px;
@@ -228,17 +323,25 @@ QCheckBox:indicator:checked{
 #SettingPanel_analysisSaveButton:hover{
     background-color:rgb(64,64,64);
     }
+#SettingPanel_analysisSaveButton:pressed{
+    background-color:rgb(164,64,64);
+    }
+
 
 
 
 
 #SettingPanel_analysisResetButton{
-    color:rgb(220,220,220);
+    image:url(./GUI/reset-n.png);
     border:none;
     border-top-right-radius:8px;
     border-bottom-right-radius:8px;
-    background-color:rgb(32,32,32);
+    background-color:rgb(0,0,0);
+    padding: 6px;
     }
 #SettingPanel_analysisResetButton:hover{
     background-color:rgb(64,64,64);
+    }
+#SettingPanel_analysisResetButton:pressed{
+    background-color:rgb(164,64,64);
     }

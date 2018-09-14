@@ -39,11 +39,17 @@ Task:
     列表名称及进度
     暂停 停止
 
-
-
-
 拖拽素材进UI可以根据文件类型激活导入边框，松手瞬间打印路径
 拖入音频的时候就后台开始解码，松手瞬间开始绘制。
+
+
+
+
+
+
+
+
+
 
 """
 
@@ -81,8 +87,8 @@ class MainWindow(QWidget):
         self.settingPanel.setParent(self)
         # self.settingPanel.setVisible(False)
 
-        self.setGeometry(1500, 250, 360, 720)
-        # self.setGeometry(-450, 850, 360, 720)
+        # self.setGeometry(1500, 250, 360, 720)
+        self.setGeometry(-450, 850, 360, 720)
         self.show()
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
@@ -114,7 +120,7 @@ class SettingPanel(QWidget):
         self.title.setFixedHeight(self.label_h)
         self.title.setObjectName("SettingPanel_title")
         self.content = QLabel("")
-        self.content.setFixedHeight(self.h - self.label_h)
+        self.content.setFixedHeight(self.h - 5 * padding - self.label_h)
         self.content.setObjectName("SettingPanel_content")
 
 
@@ -122,19 +128,17 @@ class SettingPanel(QWidget):
         self.layout.addWidget(self.title)
         self.layout.addWidget(self.content)
         self.setLayout(self.layout)
-        # self.start = QPoint(0, 0)
-        # self.widgetlayout = QVBoxLayout()
-
-
+        self.start = QPoint(0, 0)
+        print(self.w - 2 * padding, self.h - 5 * padding)
         productCount = 4
         productSize = 48
 
         self.productLayout = QHBoxLayout()
-        self.product0 = QPushButton("0")
-        self.product1 = QPushButton("1")
-        self.product2 = QPushButton("2")
-        self.product3 = QPushButton("3")
-        self.product4 = QPushButton("4")
+        self.product0 = QCheckBox("")
+        self.product1 = QCheckBox("")
+        self.product2 = QCheckBox("")
+        self.product3 = QCheckBox("")
+        self.product4 = QCheckBox("")
         self.product0.setObjectName("SettingPanel_product0")
         self.product1.setObjectName("SettingPanel_product1")
         self.product2.setObjectName("SettingPanel_product2")
@@ -166,7 +170,7 @@ class SettingPanel(QWidget):
         self.contentLayout.addWidget(self.exportProjectPathLabel)
 
         self.exportProjectPathLayout = QHBoxLayout()
-        self.exportProjectPathButton = QPushButton("5")
+        self.exportProjectPathButton = QPushButton("")
         self.exportProjectPathButton.setObjectName("SettingPanel_exportProjectPathButton")
         self.exportProjectPathButton.setFixedSize(self.label_h, self.label_h)
         self.exportProjectPath = QLineEdit('D:/Test/Export/Untitle.FMP', self)
@@ -218,8 +222,8 @@ class SettingPanel(QWidget):
         self.contentLayout.addWidget(self.analysisCheckbox)
         self.analysisContent = QLabel("", self)
         self.analysisContent.setObjectName("SettingPanel_analysisContent")
-        # self.analysisContent.setStyleSheet("background-color:rgb(0,123,255);")
         self.analysisContent.setFixedHeight(290)
+        self.analysisContent.setFixedWidth(286)
 
         self.analysisLayout = QVBoxLayout()
         self.analysisContent.setLayout(self.analysisLayout)
@@ -241,6 +245,7 @@ class SettingPanel(QWidget):
         self.analysisSampleFrameLabel.setObjectName("SettingPanel_analysisSampleFrameLabel")
         self.analysisSampleFrameLabel.setFixedWidth(2.5 * padding)
         self.analysisSampleFrameCombo = QComboBox(self)
+        self.analysisSampleFrameCombo.setObjectName("SettingPanel_analysisSampleFrameCombo")
         self.analysisSampleFrameCombo.addItem("Smart Sample")
         self.analysisSampleFrameCombo.addItem("Every Frame")
         self.analysisSampleFrameCombo.addItem("Every 2 Frame")
@@ -270,7 +275,7 @@ class SettingPanel(QWidget):
         self.analysisSaveLayout.setSpacing(0)
         self.analysisSaveButton = QPushButton("Save Settings", self)
         self.analysisSaveButton.setObjectName("SettingPanel_analysisSaveButton")
-        self.analysisResetButton = QPushButton("R", self)
+        self.analysisResetButton = QPushButton("", self)
         self.analysisResetButton.setObjectName("SettingPanel_analysisResetButton")
         self.analysisSaveButton.setFixedHeight(self.label_h)
         self.analysisResetButton.setFixedSize(self.label_h, self.label_h)
@@ -278,11 +283,34 @@ class SettingPanel(QWidget):
         self.analysisSaveLayout.addWidget(self.analysisResetButton)
         self.contentLayout.addLayout(self.analysisSaveLayout)
 
-        self.contentLayout.addStretch(20)
+        self.contentLayout.addStretch(1)
+
+        self.analysisCover = QLabel()
+        self.analysisCover.setObjectName("SettingPanel_analysisCover")
+        self.analysisCover.setParent(self.analysisContent)
+        self.analysisCover.setFixedSize(self.analysisContent.width(),self.analysisContent.height())
+        self.analysisCover.setVisible(False)
+
+        self.analysisCheckbox.setChecked(True)
+        self.analysisCheckbox.stateChanged.connect(self.togglenalysisCover)
+
 
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
 
+    def togglenalysisCover(self, state):
+        if state == Qt.Checked:
+            print('Checked')
+            self.analysisCover.setVisible(False)
+        else:
+            print('UnChecked')
+            self.analysisCover.setVisible(True)
+
+    def resetSetting(self):
+        pass
+
+    def saveSetting(self):
+        pass
 
 class TitleBar(QWidget):
     logo_w = 120
