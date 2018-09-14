@@ -14,6 +14,11 @@ QMessage{
     color:rgb(0, 0, 0);
 }
 
+QCheckBox{
+    font-size: 14px;
+    color:rgb(220, 220, 220);
+}
+
 #TitleBar_title{ background-color:rgb(48,61,71);}
 
 #TitleBar_logo{image:url(./GUI/filmora-n.png);}
@@ -137,12 +142,15 @@ QMessage{
     }
 
 #SettingPanel_product0{
-    background-color:rgba(255, 0, 0,255);
+    background-color:rgba(255, 0, 233,255);
     }
 
+#SettingPanel_product1{
+    background-color:rgba(0, 123, 233,255);
+    }
 
 #SettingPanel_exportProjectPathLabel{
-    color:rgb(220,220,220)
+    color:rgb(220,220,220);
     }
 
 #SettingPanel_exportProjectPath{
@@ -159,9 +167,53 @@ QMessage{
     background-color:rgb(32,32,32);
     image:url(./GUI/openPath.png);
     border:none;
-    padding: 6px
+    padding: 6px;
     }
+
 #SettingPanel_exportProjectPathButton:hover{
     cursor:move;
     background-color:rgb(64,64,64);
+    }
+
+#SettingPanel_resolutionLabel{
+    color:rgb(220,220,220);
+    }
+
+#SettingPanel_frameRateLabel{
+    color:rgb(220,220,220);
+    }
+
+
+#SettingPanel_analysisCheckbox{
+    color:rgb(220, 220, 220);
+    }
+
+#SettingPanel_analysisContent{
+    font-size:10 px;
+    color:rgb(220,220,220);
+    background-color:rgb(96,95,96);
+    border-radius:8px
+    }
+
+#SettingPanel_analysisLabel{
+    font-size:6 px;
+    color:rgb(160,160,160);
+    }
+
+#SettingPanel_analysisSampleFrameLabel{
+    color:rgb(220,220,220);
+    }
+
+
+
+#SettingPanel_analysisSaveButton{
+    color:rgb(220,220,220);
+    border:none;
+    background-color:rgb(48,48,48);
+    }
+
+#SettingPanel_analysisResetButton{
+    color:rgb(220,220,220);
+    border:none;
+    background-color:rgb(32,32,32);
     }

@@ -81,8 +81,8 @@ class MainWindow(QWidget):
         self.settingPanel.setParent(self)
         # self.settingPanel.setVisible(False)
 
-        # self.setGeometry(1500, 250, 360, 720)
-        self.setGeometry(-450, 850, 360, 720)
+        self.setGeometry(1500, 250, 360, 720)
+        # self.setGeometry(-450, 850, 360, 720)
         self.show()
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
@@ -184,6 +184,7 @@ class SettingPanel(QWidget):
         self.resolutionLayout = QVBoxLayout()
         self.resolutionLayout.setSpacing(2)
         self.resolutionLabel = QLabel(" Resolution")
+        self.resolutionLabel.setObjectName("SettingPanel_resolutionLabel")
         self.resolutionCombo = QComboBox(self)
         self.resolutionCombo.addItem("3840 x 2160")
         self.resolutionCombo.addItem("2560 x 1440")
@@ -196,6 +197,7 @@ class SettingPanel(QWidget):
         self.frameRateLayout = QVBoxLayout()
         self.frameRateLayout.setSpacing(2)
         self.frameRateLabel = QLabel(" Frame Rate:")
+        self.frameRateLabel.setObjectName("SettingPanel_frameRateLabel")
         self.frameRateCombo = QComboBox(self)
         self.frameRateCombo.addItem("60 FPS")
         self.frameRateCombo.addItem("50 FPS")
@@ -212,9 +214,11 @@ class SettingPanel(QWidget):
         self.contentLayout.addStretch(1)
 
         self.analysisCheckbox = QCheckBox("Analysis", self)
+        self.analysisCheckbox.setObjectName("SettingPanel_analysisCheckbox")
         self.contentLayout.addWidget(self.analysisCheckbox)
         self.analysisContent = QLabel("", self)
-        self.analysisContent.setStyleSheet("background-color:rgb(0,123,255);")
+        self.analysisContent.setObjectName("SettingPanel_analysisContent")
+        # self.analysisContent.setStyleSheet("background-color:rgb(0,123,255);")
         self.analysisContent.setFixedHeight(290)
 
         self.analysisLayout = QVBoxLayout()
@@ -222,7 +226,7 @@ class SettingPanel(QWidget):
 
         self.analysisLabel = QLabel(
             "In Order to get a better result\nThese data can let us know more about your shot\nWhile needs more time.")
-        self.analysisLabel.setStyleSheet("background-color:rgb(123,123,0);")
+        self.analysisLabel.setObjectName("SettingPanel_analysisLabel")
         self.analysisLayout.addWidget(self.analysisLabel)
 
         self.analysisLayout.addStretch(1)
@@ -234,8 +238,8 @@ class SettingPanel(QWidget):
 
         self.analysisSampleFrameLayout = QHBoxLayout()
         self.analysisSampleFrameLabel = QLabel("Sample:")
-        self.analysisSampleFrameLabel.setFixedWidth(3 * padding)
-        self.analysisSampleFrameLabel.setStyleSheet("background-color:rgb(233,123,222);")
+        self.analysisSampleFrameLabel.setObjectName("SettingPanel_analysisSampleFrameLabel")
+        self.analysisSampleFrameLabel.setFixedWidth(2.5 * padding)
         self.analysisSampleFrameCombo = QComboBox(self)
         self.analysisSampleFrameCombo.addItem("Smart Sample")
         self.analysisSampleFrameCombo.addItem("Every Frame")
@@ -260,12 +264,14 @@ class SettingPanel(QWidget):
         self.analysisLayout.addWidget(self.analysisVoiceDetect)
         self.contentLayout.addWidget(self.analysisContent)
 
-        # self.contentLayout.addStretch(1)
+        self.contentLayout.addStretch(1)
 
         self.analysisSaveLayout = QHBoxLayout()
         self.analysisSaveLayout.setSpacing(0)
         self.analysisSaveButton = QPushButton("Save Settings", self)
+        self.analysisSaveButton.setObjectName("SettingPanel_analysisSaveButton")
         self.analysisResetButton = QPushButton("R", self)
+        self.analysisResetButton.setObjectName("SettingPanel_analysisResetButton")
         self.analysisSaveButton.setFixedHeight(self.label_h)
         self.analysisResetButton.setFixedSize(self.label_h, self.label_h)
         self.analysisSaveLayout.addWidget(self.analysisSaveButton)
