@@ -1,0 +1,38 @@
+{
+    "custom": {
+        "Analysis": false,
+        "BlurDetect": true,
+        "ExportProjectPath": "D:/Test/Export/HelloWorld.FMP",
+        "FaceDetect": true,
+        "FrameRate": 4,
+        "HistogramDetect": false,
+        "MotionDetect": false,
+        "MutiCore": true,
+        "Resolution": 4,
+        "Sample": 0,
+        "VoiceDetect": false,
+        "product0": false,
+        "product1": false,
+        "product2": true,
+        "product3": false,
+        "product4": true
+    },
+    "default": {
+        "Analysis": true,
+        "BlurDetect": true,
+        "ExportProjectPath": "D:/Test/Export/HelloWorld.FMP",
+        "FaceDetect": true,
+        "FrameRate": 2,
+        "HistogramDetect": false,
+        "MotionDetect": false,
+        "MutiCore": true,
+        "Resolution": 2,
+        "Sample": 0,
+        "VoiceDetect": false,
+        "product0": true,
+        "product1": true,
+        "product2": false,
+        "product3": false,
+        "product4": true
+    }
+}

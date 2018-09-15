@@ -44,13 +44,6 @@ Task:
 
 
 
-
-
-
-
-
-
-
 """
 
 import sys
@@ -64,18 +57,26 @@ import os, random, time
 import uuid, shutil
 import photools as pt
 import cv2
-
+import json
 
 class MainWindow(QWidget):
+
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.settingPanelVisible = False
+        self.settings = {}
+
+
         self.setFixedSize(360, 720)
         self.layout = QVBoxLayout()
         self.layout.addWidget(TitleBar(self))
         self.layout.addWidget(FootagesPanel(self))
 
         self.layout.addWidget(MusicPanel(self))
-        self.layout.addWidget(ExportPanel(self))
+
+        self.exportPanel = ExportPanel(self)
+        self.layout.addWidget(self.exportPanel)
+        # self.layout.addWidget(ExportPanel(self))
         self.setLayout(self.layout)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
@@ -85,13 +86,69 @@ class MainWindow(QWidget):
 
         self.settingPanel = SettingPanel(self)
         self.settingPanel.setParent(self)
-        # self.settingPanel.setVisible(False)
+        self.settingPanel.setVisible(self.settingPanelVisible)
+
+        self.exportPanel.setting.clicked.connect(self.toggleSettingPanel)
+        self.settingPanel.analysisResetButton.clicked.connect(self.loadSettings)
+        self.settingPanel.analysisSaveButton.clicked.connect(self.saveSettings)
 
         # self.setGeometry(1500, 250, 360, 720)
         self.setGeometry(-450, 850, 360, 720)
+        self.loadSettings()
         self.show()
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
+
+
+    def toggleSettingPanel(self):
+        print('toggleSettingPanel')
+        self.settingPanelVisible = not self.settingPanelVisible
+        self.settingPanel.setVisible(self.settingPanelVisible)
+    def loadSettings(self):
+        path = 'Temp/Settings.json'
+        self.settings = json.loads(open(path,'r').read())
+
+        self.settingPanel.product0.setChecked(self.settings['default']['product0'])
+        self.settingPanel.product1.setChecked(self.settings['default']['product1'])
+        self.settingPanel.product2.setChecked(self.settings['default']['product2'])
+        self.settingPanel.product3.setChecked(self.settings['default']['product3'])
+        self.settingPanel.product4.setChecked(self.settings['default']['product4'])
+        self.settingPanel.exportProjectPath.setText(self.settings['default']['ExportProjectPath'])
+        self.settingPanel.resolutionCombo.setCurrentIndex(self.settings['default']['Resolution'])
+        self.settingPanel.frameRateCombo.setCurrentIndex(self.settings['default']['FrameRate'])
+        self.settingPanel.analysisCheckbox.setChecked(self.settings['default']['Analysis'])
+        self.settingPanel.analysisMultiCore.setChecked(self.settings['default']['MutiCore'])
+        self.settingPanel.analysisSampleFrameCombo.setCurrentIndex(self.settings['default']['Sample'])
+        self.settingPanel.analysisFaceDetect.setChecked(self.settings['default']['FaceDetect'])
+        self.settingPanel.analysisBlurDetect.setChecked(self.settings['default']['BlurDetect'])
+        self.settingPanel.analysisHistogramDetect.setChecked(self.settings['default']['HistogramDetect'])
+        self.settingPanel.analysisMotionDetect.setChecked(self.settings['default']['MotionDetect'])
+        self.settingPanel.analysisVoiceDetect.setChecked(self.settings['default']['VoiceDetect'])
+
+    def saveSettings(self):
+        path = 'Temp/Settings.json'
+        self.settings['custom']['product0'] =self.settingPanel.product0.isChecked()
+        self.settings['custom']['product1'] =self.settingPanel.product1.isChecked()
+        self.settings['custom']['product2'] =self.settingPanel.product2.isChecked()
+        self.settings['custom']['product3'] =self.settingPanel.product3.isChecked()
+        self.settings['custom']['product4'] =self.settingPanel.product4.isChecked()
+        self.settings['custom']['ExportProjectPath'] =self.settingPanel.exportProjectPath.text()
+        self.settings['custom']['Resolution'] =self.settingPanel.resolutionCombo.currentIndex()
+        self.settings['custom']['FrameRate'] =self.settingPanel.frameRateCombo.currentIndex()
+        self.settings['custom']['Analysis'] =self.settingPanel.analysisCheckbox.isChecked()
+        self.settings['custom']['MutiCore'] =self.settingPanel.analysisMultiCore.isChecked()
+        self.settings['custom']['Sample'] =self.settingPanel.analysisSampleFrameCombo.currentIndex()
+        self.settings['custom']['FaceDetect'] =self.settingPanel.analysisFaceDetect.isChecked()
+        self.settings['custom']['BlurDetect'] =self.settingPanel.analysisBlurDetect.isChecked()
+        self.settings['custom']['HistogramDetect'] =self.settingPanel.analysisHistogramDetect.isChecked()
+        self.settings['custom']['MotionDetect'] =self.settingPanel.analysisMotionDetect.isChecked()
+        self.settings['custom']['VoiceDetect'] =self.settingPanel.analysisVoiceDetect.isChecked()
+
+        jsonStr = json.dumps(self.settings, sort_keys=True, indent=4, separators=(',', ': '))
+        foo = open(path,'w')
+        foo.write(jsonStr)
+        foo.close()
+        self.toggleSettingPanel()
 
 
 class SettingPanel(QWidget):
@@ -311,6 +368,8 @@ class SettingPanel(QWidget):
 
     def saveSetting(self):
         pass
+
+
 
 class TitleBar(QWidget):
     logo_w = 120
@@ -598,6 +657,8 @@ class ExportPanel(QWidget):
         self.setting.setParent(self.content)
         self.setting.setGeometry((self.w - self.h / 2 - self.label_h / 2), (self.h - self.label_h) / 2, self.label_h,
                                  self.label_h)
+
+        # self.setting.clicked.connect(self.toggleSettingPanel)
         self.setting.setCursor(Qt.PointingHandCursor)
 
         self.layout.addWidget(self.content)
@@ -610,6 +671,10 @@ class ExportPanel(QWidget):
         print("This is Export!")
         print(MusicPanel.musicPath)
         print()
+    # def toggleSettingPanel(self):
+    #     print('toggleSettingPanel')
+    #     print('SettingPanel.isVisible()',self.SettingPanel.h)
+    #     pass
 
 
 class BackendLoadWaveformThread(QThread):
