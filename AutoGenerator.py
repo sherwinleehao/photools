@@ -59,13 +59,12 @@ import photools as pt
 import cv2
 import json
 
-class MainWindow(QWidget):
 
+class MainWindow(QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.settingPanelVisible = False
         self.settings = {}
-
 
         self.setFixedSize(360, 720)
         self.layout = QVBoxLayout()
@@ -99,14 +98,14 @@ class MainWindow(QWidget):
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
 
-
     def toggleSettingPanel(self):
         print('toggleSettingPanel')
         self.settingPanelVisible = not self.settingPanelVisible
         self.settingPanel.setVisible(self.settingPanelVisible)
+
     def loadSettings(self):
         path = 'Temp/Settings.json'
-        self.settings = json.loads(open(path,'r').read())
+        self.settings = json.loads(open(path, 'r').read())
 
         self.settingPanel.product0.setChecked(self.settings['default']['product0'])
         self.settingPanel.product1.setChecked(self.settings['default']['product1'])
@@ -127,25 +126,25 @@ class MainWindow(QWidget):
 
     def saveSettings(self):
         path = 'Temp/Settings.json'
-        self.settings['custom']['product0'] =self.settingPanel.product0.isChecked()
-        self.settings['custom']['product1'] =self.settingPanel.product1.isChecked()
-        self.settings['custom']['product2'] =self.settingPanel.product2.isChecked()
-        self.settings['custom']['product3'] =self.settingPanel.product3.isChecked()
-        self.settings['custom']['product4'] =self.settingPanel.product4.isChecked()
-        self.settings['custom']['ExportProjectPath'] =self.settingPanel.exportProjectPath.text()
-        self.settings['custom']['Resolution'] =self.settingPanel.resolutionCombo.currentIndex()
-        self.settings['custom']['FrameRate'] =self.settingPanel.frameRateCombo.currentIndex()
-        self.settings['custom']['Analysis'] =self.settingPanel.analysisCheckbox.isChecked()
-        self.settings['custom']['MutiCore'] =self.settingPanel.analysisMultiCore.isChecked()
-        self.settings['custom']['Sample'] =self.settingPanel.analysisSampleFrameCombo.currentIndex()
-        self.settings['custom']['FaceDetect'] =self.settingPanel.analysisFaceDetect.isChecked()
-        self.settings['custom']['BlurDetect'] =self.settingPanel.analysisBlurDetect.isChecked()
-        self.settings['custom']['HistogramDetect'] =self.settingPanel.analysisHistogramDetect.isChecked()
-        self.settings['custom']['MotionDetect'] =self.settingPanel.analysisMotionDetect.isChecked()
-        self.settings['custom']['VoiceDetect'] =self.settingPanel.analysisVoiceDetect.isChecked()
+        self.settings['custom']['product0'] = self.settingPanel.product0.isChecked()
+        self.settings['custom']['product1'] = self.settingPanel.product1.isChecked()
+        self.settings['custom']['product2'] = self.settingPanel.product2.isChecked()
+        self.settings['custom']['product3'] = self.settingPanel.product3.isChecked()
+        self.settings['custom']['product4'] = self.settingPanel.product4.isChecked()
+        self.settings['custom']['ExportProjectPath'] = self.settingPanel.exportProjectPath.text()
+        self.settings['custom']['Resolution'] = self.settingPanel.resolutionCombo.currentIndex()
+        self.settings['custom']['FrameRate'] = self.settingPanel.frameRateCombo.currentIndex()
+        self.settings['custom']['Analysis'] = self.settingPanel.analysisCheckbox.isChecked()
+        self.settings['custom']['MutiCore'] = self.settingPanel.analysisMultiCore.isChecked()
+        self.settings['custom']['Sample'] = self.settingPanel.analysisSampleFrameCombo.currentIndex()
+        self.settings['custom']['FaceDetect'] = self.settingPanel.analysisFaceDetect.isChecked()
+        self.settings['custom']['BlurDetect'] = self.settingPanel.analysisBlurDetect.isChecked()
+        self.settings['custom']['HistogramDetect'] = self.settingPanel.analysisHistogramDetect.isChecked()
+        self.settings['custom']['MotionDetect'] = self.settingPanel.analysisMotionDetect.isChecked()
+        self.settings['custom']['VoiceDetect'] = self.settingPanel.analysisVoiceDetect.isChecked()
 
         jsonStr = json.dumps(self.settings, sort_keys=True, indent=4, separators=(',', ': '))
-        foo = open(path,'w')
+        foo = open(path, 'w')
         foo.write(jsonStr)
         foo.close()
         self.toggleSettingPanel()
@@ -179,7 +178,6 @@ class SettingPanel(QWidget):
         self.content = QLabel("")
         self.content.setFixedHeight(self.h - 5 * padding - self.label_h)
         self.content.setObjectName("SettingPanel_content")
-
 
         self.title.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.title)
@@ -345,12 +343,11 @@ class SettingPanel(QWidget):
         self.analysisCover = QLabel()
         self.analysisCover.setObjectName("SettingPanel_analysisCover")
         self.analysisCover.setParent(self.analysisContent)
-        self.analysisCover.setFixedSize(self.analysisContent.width(),self.analysisContent.height())
+        self.analysisCover.setFixedSize(self.analysisContent.width(), self.analysisContent.height())
         self.analysisCover.setVisible(False)
 
         self.analysisCheckbox.setChecked(True)
         self.analysisCheckbox.stateChanged.connect(self.togglenalysisCover)
-
 
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
@@ -368,7 +365,6 @@ class SettingPanel(QWidget):
 
     def saveSetting(self):
         pass
-
 
 
 class TitleBar(QWidget):
@@ -671,10 +667,10 @@ class ExportPanel(QWidget):
         print("This is Export!")
         print(MusicPanel.musicPath)
         print()
-    # def toggleSettingPanel(self):
-    #     print('toggleSettingPanel')
-    #     print('SettingPanel.isVisible()',self.SettingPanel.h)
-    #     pass
+        # def toggleSettingPanel(self):
+        #     print('toggleSettingPanel')
+        #     print('SettingPanel.isVisible()',self.SettingPanel.h)
+        #     pass
 
 
 class BackendLoadWaveformThread(QThread):
@@ -692,9 +688,9 @@ class BackendLoadWaveformThread(QThread):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setStyle("fusion")
-    app.setAttribute(Qt.AA_EnableHighDpiScaling)
-    if hasattr(QStyleFactory, 'AA_UseHighDpiPixmaps'):
-        app.setAttribute(Qt.AA_UseHighDpiPixmaps)
+    # app.setStyle("fusion")
+    # app.setAttribute(Qt.AA_EnableHighDpiScaling)
+    # if hasattr(QStyleFactory, 'AA_UseHighDpiPixmaps'):
+    #     app.setAttribute(Qt.AA_UseHighDpiPixmaps)
     mw = MainWindow()
     sys.exit(app.exec_())
