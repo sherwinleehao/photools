@@ -163,7 +163,6 @@ class Example(QWidget):
         super().__init__()
         self.initUI()
 
-
     def initUI(self):
         self.pListView = ListView()
         self.pListView.setViewMode(QListView.ListMode)
