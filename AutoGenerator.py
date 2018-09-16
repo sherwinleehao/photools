@@ -61,6 +61,11 @@ import json
 
 
 class MainWindow(QWidget):
+    padding = 24
+    m_w = 360
+    m_h = 720
+    f_h = 470
+
     def __init__(self):
         super(MainWindow, self).__init__()
         self.settingPanelVisible = False
@@ -88,12 +93,7 @@ class MainWindow(QWidget):
 
         self.listView = Example()
         self.listView.setParent(self.footagesPanel)
-
-
-
-
-
-
+        self.listView.setVisible(False)
 
 
 
@@ -103,14 +103,19 @@ class MainWindow(QWidget):
         self.settingPanel.setParent(self)
         self.settingPanel.setVisible(self.settingPanelVisible)
 
+        self.footagesPanel.icon.clicked.connect(self.importFootages)
+        self.footagesPanel.icon.clicked.connect(self.listView.addmore)
+        self.listView.btn_removeall.clicked.connect(self.removeAllFootages)
+
         self.exportPanel.setting.clicked.connect(self.toggleSettingPanel)
         self.settingPanel.analysisResetButton.clicked.connect(self.loadSettings)
         self.settingPanel.analysisSaveButton.clicked.connect(self.saveSettings)
 
-        # self.setGeometry(1500, 250, 360, 720)
-        self.setGeometry(-450, 850, 360, 720)
+        # self.setGeometry(1500, 250, self.m_w, self.m_h)
+        self.setGeometry(-450, 850, self.m_w, self.m_h)
         self.loadSettings()
         self.show()
+
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
 
@@ -165,6 +170,12 @@ class MainWindow(QWidget):
         foo.close()
         self.toggleSettingPanel()
 
+    def importFootages(self):
+        self.listView.setVisible(True)
+        pass
+    def removeAllFootages(self):
+        self.listView.setVisible(False)
+        pass
 
 class SettingPanel(QWidget):
     w = 0
@@ -451,8 +462,6 @@ class TitleBar(QWidget):
 
 
 class FootagesPanel(QWidget):
-    w = 0
-    h = 470
     label = "Footages"
     label_h = 30
     icon_w = 85
@@ -462,6 +471,7 @@ class FootagesPanel(QWidget):
         super(FootagesPanel, self).__init__()
         self.parent = parent
         self.w = self.parent.width()
+        self.h = MainWindow.f_h
         self.setBaseSize(self.w, self.h)
 
         self.layout = QVBoxLayout()
@@ -474,8 +484,8 @@ class FootagesPanel(QWidget):
         self.content.setFixedHeight(self.h - self.label_h)
         self.content.setObjectName("FootagesPanel_content")
 
-        offset_y = 10
-        self.icon = QLabel()
+        offset_y = 30
+        self.icon = QPushButton()
         self.icon.setObjectName("FootagesPanel_icon")
         self.icon.setParent(self.content)
         self.icon.setGeometry((self.w - self.icon_w) / 2, ((self.h - self.label_h) - self.icon_h) / 2 - offset_y,
@@ -484,7 +494,7 @@ class FootagesPanel(QWidget):
         self.icon_info = QLabel("Drag and Drop to Import your Footages")
         self.icon_info.setObjectName("FootagesPanel_icon_info")
         self.icon_info.setParent(self.content)
-        self.icon_info.setGeometry(0, ((self.h - self.label_h) - self.icon_h) / 2 + self.icon_h + offset_y, self.w, 30)
+        self.icon_info.setGeometry(0, ((self.h - self.label_h) - self.icon_h) / 2 + self.icon_h, self.w, 30)
         self.icon_info.setAlignment(Qt.AlignCenter)
         self.icon.setCursor(Qt.PointingHandCursor)
 
@@ -810,36 +820,38 @@ class Example(QWidget):
         self.initUI()
 
     def initUI(self):
+        self.bg = QLabel("", self)
+        self.bg.setObjectName("ListView_BG")
+        self.bg.setFixedSize(MainWindow.m_w, MainWindow.m_h)
+
         self.pListView = ListView()
         self.pListView.setViewMode(QListView.ListMode)
         self.pListView.setStyleSheet("QListView{icon-size:120px}")
 
-        self.btn_tester = QPushButton("tester", self)
         self.btn_addmore = QPushButton("Add More", self)
-        # self.btn_remove = QPushButton("Remove", self)
+        self.btn_addmore.setObjectName("ListView_btn_addmore")
         self.btn_removeall = QPushButton("Remove All", self)
+        self.btn_removeall.setObjectName("ListView_btn_removeall")
+        self.btn_addmore.setFixedSize(4*MainWindow.padding,MainWindow.padding)
+        self.btn_removeall.setFixedSize(4*MainWindow.padding,MainWindow.padding)
 
         Hbox = QHBoxLayout()
         Hbox.addWidget(self.btn_addmore)
         Hbox.addStretch(1)
-        # Hbox.addWidget(self.btn_remove)
         Hbox.addWidget(self.btn_removeall)
 
         Vbox = QVBoxLayout()
         Vbox.addLayout(Hbox)
         Vbox.addWidget(self.pListView)
-        Vbox.addWidget(self.btn_tester)
+
         self.setLayout(Vbox)
-        # self.setGeometry(300, 300, 360, 720)
-        self.setFixedSize(300,400)
-        self.setWindowTitle("Pre-Research")
-        self.setWindowIcon(QIcon('GUI/icon_32.png'))
-        # self.title.setFixedHeight(35)
-        self.btn_tester.clicked.connect(self.tester)
+
+        Vbox.setContentsMargins(0, 0, 0, 0)
+        Vbox.setSpacing(0)
+
+        self.setGeometry(MainWindow.padding, 0, MainWindow.m_w - 2 * MainWindow.padding, MainWindow.f_h)
         self.btn_addmore.clicked.connect(self.addmore)
-        # self.btn_remove.clicked.connect(self.remove)
         self.btn_removeall.clicked.connect(self.removeall)
-        # self.show()
 
     def addmore(self):
         print("This is addmore!")
@@ -933,10 +945,6 @@ class Example(QWidget):
             except:
                 pass
         return filePaths
-
-    def tester(self):
-        print("This is Tester!")
-        print(self.pListView.m_pModel.ListItemData)
 
 
 class BackendThread(QThread):
