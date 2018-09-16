@@ -438,6 +438,17 @@ QScrollBar::sub-line:Horizontal {
     background-color:rgb(86, 217, 202);
     }
 
+#ListView_btn_Mode{
+    font-size:14px;
+    color:rgb(220,220,220);
+    font-family: "Open Sans Light";
+    border:none;
+    background-color:rgb(64,64,64);
+    }
+#ListView_btn_Mode:hover{
+    background-color:rgb(57,70,84);
+    }
+
 
 
 #ListView_btn_removeall{

@@ -6,7 +6,7 @@ Image Tool Library
 
 Author: Sherwin Lee
 Website: Sherwinleehao.com
-Last edited: 20180912
+Last edited: 20180917
 
 Task:
 
@@ -120,9 +120,13 @@ class MainWindow(QWidget):
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
 
     def toggleSettingPanel(self):
-        print('toggleSettingPanel')
-        self.settingPanelVisible = not self.settingPanelVisible
-        self.settingPanel.setVisible(self.settingPanelVisible)
+        if self.settingPanelVisible:
+            self.settingPanel.animation()
+            self.settingPanel.setVisible(False)
+        else:
+            self.settingPanel.setVisible(True)
+            self.settingPanel.animation()
+
 
     def loadSettings(self):
         path = 'Temp/Settings.json'
@@ -393,6 +397,20 @@ class SettingPanel(QWidget):
     def saveSetting(self):
         pass
 
+    def animation(self):
+        self.anim = QPropertyAnimation(self, b"pos")
+        self.anim.setDuration(300)
+        self.anim.setStartValue(QPointF(self.pos().x()+MainWindow.m_w, self.pos().y()))
+        self.anim.setEndValue(self.pos())
+        self.anim.setEasingCurve(QEasingCurve.OutCubic)
+        self.anim.start()
+
+        self.anim_analysisContent = QPropertyAnimation(self.analysisContent, b"pos")
+        self.anim_analysisContent.setDuration(500)
+        self.anim_analysisContent.setStartValue(QPointF(self.analysisContent.pos().x() + MainWindow.m_w, self.analysisContent.pos().y()))
+        self.anim_analysisContent.setEndValue(self.analysisContent.pos())
+        self.anim_analysisContent.setEasingCurve(QEasingCurve.OutCubic)
+        self.anim_analysisContent.start()
 
 class TitleBar(QWidget):
     logo_w = 120
@@ -834,12 +852,18 @@ class Example(QWidget):
         self.btn_addmore.setObjectName("ListView_btn_addmore")
         self.btn_removeall = QPushButton("Remove All", self)
         self.btn_removeall.setObjectName("ListView_btn_removeall")
+        self.btn_Mode = QPushButton("Mode",self)
+        self.btn_Mode.setObjectName("ListView_btn_Mode")
+
         self.btn_addmore.setFixedSize(4*MainWindow.padding,MainWindow.padding)
         self.btn_removeall.setFixedSize(4*MainWindow.padding,MainWindow.padding)
+        self.btn_Mode.setFixedSize(2*MainWindow.padding,MainWindow.padding)
+
 
         Hbox = QHBoxLayout()
         Hbox.addWidget(self.btn_addmore)
         Hbox.addStretch(1)
+        Hbox.addWidget(self.btn_Mode)
         Hbox.addWidget(self.btn_removeall)
 
         Vbox = QVBoxLayout()
@@ -854,6 +878,7 @@ class Example(QWidget):
         self.setGeometry(MainWindow.padding, 0, MainWindow.m_w - 2 * MainWindow.padding, MainWindow.f_h-MainWindow.padding)
         self.btn_addmore.clicked.connect(self.addmore)
         self.btn_removeall.clicked.connect(self.removeall)
+        self.btn_Mode.clicked.connect(self.toggleViewMode)
 
     def addmore(self):
         print("This is addmore!")
@@ -948,6 +973,12 @@ class Example(QWidget):
                 pass
         return filePaths
 
+    def toggleViewMode(self):
+        print(self.pListView.viewMode())
+        if self.pListView.viewMode() == QListView.ListMode:
+            self.pListView.setViewMode(QListView.IconMode)
+        else:
+            self.pListView.setViewMode(QListView.ListMode)
 
 class BackendThread(QThread):
     print('BackendThread')
