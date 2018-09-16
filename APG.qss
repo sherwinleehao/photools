@@ -30,6 +30,76 @@ QCheckBox:indicator:checked{
     image:url(./GUI/check-box-n.png);
 }
 
+QScrollBar:vertical {
+            border: none;
+             background: none;
+            width:4px;
+            margin: 0px 0px 0px 0px;
+        }
+QScrollBar::handle:vertical {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+            stop: 0 rgb(79, 199, 186), stop: 0.5 rgb(79, 199, 186), stop:1 rgb(79, 199, 186));
+            min-height: 0px;
+        }
+QScrollBar::add-line:vertical {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+            stop: 0 rgb(79, 199, 186), stop: 0.5 rgb(79, 199, 186),  stop:1 rgb(79, 199, 186));
+            height: 0px;
+            subcontrol-position: bottom;
+            subcontrol-origin: margin;
+        }
+QScrollBar::sub-line:vertical {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+            stop: 0  rgb(79, 199, 186), stop: 0.5 rgb(79, 199, 186),  stop:1 rgb(79, 199, 186));
+            height: 0 px;
+            subcontrol-position: top;
+            subcontrol-origin: margin;
+        }
+
+
+QScrollBar:Horizontal {
+            border: none;
+            background:black;
+            width:4px;
+            margin: 0px 0px 0px 0px;
+        }
+QScrollBar::handle:Horizontal {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+            stop: 0 rgb(79, 199, 186), stop: 0.5 rgb(79, 199, 186), stop:1 rgb(79, 199, 186));
+            min-height: 0px;
+        }
+QScrollBar::add-line:Horizontal {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+            stop: 0 rgb(79, 199, 186), stop: 0.5 rgb(79, 199, 186),  stop:1 rgb(79, 199, 186));
+            height: 0px;
+            subcontrol-position: bottom;
+            subcontrol-origin: margin;
+        }
+QScrollBar::sub-line:Horizontal {
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+            stop: 0  rgb(79, 199, 186), stop: 0.5 rgb(79, 199, 186),  stop:1 rgb(79, 199, 186));
+            height: 0 px;
+            subcontrol-position: top;
+            subcontrol-origin: margin;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #TitleBar_title{ background-color:rgb(48,61,71);}
@@ -167,10 +237,10 @@ QCheckBox:indicator:checked{
     height: 48px;
     }
 #SettingPanel_product0:indicator:unchecked{
-    image:url(./GUI/app-premiere-n.png)
+    image:url(./GUI/ae-d.png)
     }
 #SettingPanel_product0:indicator:checked{
-    image:url(./GUI/app-premiere-p.png)
+    image:url(./GUI/ae-n.png)
     }
 
 
@@ -181,10 +251,10 @@ QCheckBox:indicator:checked{
     height: 48px;
     }
 #SettingPanel_product1:indicator:unchecked{
-    image:url(./GUI/app-premiere-n.png)
+    image:url(./GUI/pr-d.png)
     }
 #SettingPanel_product1:indicator:checked{
-    image:url(./GUI/app-premiere-p.png)
+    image:url(./GUI/pr-n.png)
     }
 
 
@@ -195,10 +265,10 @@ QCheckBox:indicator:checked{
     height: 48px;
     }
 #SettingPanel_product2:indicator:unchecked{
-    image:url(./GUI/app-premiere-n.png)
+    image:url(./GUI/lr-d.png)
     }
 #SettingPanel_product2:indicator:checked{
-    image:url(./GUI/app-premiere-p.png)
+    image:url(./GUI/lr-n.png)
     }
 
 
@@ -209,10 +279,10 @@ QCheckBox:indicator:checked{
     height: 48px;
     }
 #SettingPanel_product3:indicator:unchecked{
-    image:url(./GUI/app-premiere-n.png)
+    image:url(./GUI/ps-d.png)
     }
 #SettingPanel_product3:indicator:checked{
-    image:url(./GUI/app-premiere-p.png)
+    image:url(./GUI/ps-n.png)
     }
 
 
@@ -223,10 +293,10 @@ QCheckBox:indicator:checked{
     height: 48px;
     }
 #SettingPanel_product4:indicator:unchecked{
-    image:url(./GUI/app-premiere-n.png)
+    image:url(./GUI/ai-d.png)
     }
 #SettingPanel_product4:indicator:checked{
-    image:url(./GUI/app-premiere-p.png)
+    image:url(./GUI/ai-n.png)
     }
 
 
@@ -353,7 +423,8 @@ QCheckBox:indicator:checked{
 
 
 #ListView_BG{
-    background-color:rgb(48,61,71);
+
+     background-color:rgb(48,61,71);
     }
 
 #ListView_btn_addmore{
@@ -381,12 +452,11 @@ QCheckBox:indicator:checked{
     }
 
 
+#ListView_pListView{
+    border:none;
+    background-color:rgb(57,70,84);
+    font-size:18px;
+    color:rgb(220,220,220);
 
-
-
-
-
-
-
-
+}
 

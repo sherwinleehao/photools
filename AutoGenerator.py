@@ -826,6 +826,8 @@ class Example(QWidget):
 
         self.pListView = ListView()
         self.pListView.setViewMode(QListView.ListMode)
+        # self.pListView.setViewMode(QListView.IconMode)
+        self.pListView.setObjectName("ListView_pListView")
         self.pListView.setStyleSheet("QListView{icon-size:120px}")
 
         self.btn_addmore = QPushButton("Add More", self)
@@ -849,7 +851,7 @@ class Example(QWidget):
         Vbox.setContentsMargins(0, 0, 0, 0)
         Vbox.setSpacing(0)
 
-        self.setGeometry(MainWindow.padding, 0, MainWindow.m_w - 2 * MainWindow.padding, MainWindow.f_h)
+        self.setGeometry(MainWindow.padding, 0, MainWindow.m_w - 2 * MainWindow.padding, MainWindow.f_h-MainWindow.padding)
         self.btn_addmore.clicked.connect(self.addmore)
         self.btn_removeall.clicked.connect(self.removeall)
 
