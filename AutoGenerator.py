@@ -68,7 +68,6 @@ class MainWindow(QWidget):
 
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.settingPanelVisible = False
         self.settings = {}
 
         self.setFixedSize(360, 720)
@@ -101,7 +100,7 @@ class MainWindow(QWidget):
 
         self.settingPanel = SettingPanel(self)
         self.settingPanel.setParent(self)
-        self.settingPanel.setVisible(self.settingPanelVisible)
+        self.settingPanel.setVisible(False)
 
         self.footagesPanel.icon.clicked.connect(self.importFootages)
         self.footagesPanel.icon.clicked.connect(self.listView.addmore)
@@ -120,12 +119,12 @@ class MainWindow(QWidget):
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
 
     def toggleSettingPanel(self):
-        if self.settingPanelVisible:
-            self.settingPanel.animation()
+        if self.settingPanel.isVisible():
+            # self.settingPanel.animationOut()
             self.settingPanel.setVisible(False)
         else:
             self.settingPanel.setVisible(True)
-            self.settingPanel.animation()
+            self.settingPanel.animationIn()
 
 
     def loadSettings(self):
@@ -190,6 +189,7 @@ class SettingPanel(QWidget):
 
     def __init__(self, parent):
         super(SettingPanel, self).__init__()
+        self.attributes = {}
         self.parent = parent
         self.w = self.parent.width()
         self.h = self.parent.height()
@@ -380,8 +380,13 @@ class SettingPanel(QWidget):
         self.analysisCheckbox.setChecked(True)
         self.analysisCheckbox.stateChanged.connect(self.togglenalysisCover)
 
+        self.initAttributes()
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
+
+    def initAttributes(self):
+        self.attributes['self_pos'] = self.pos()
+        self.attributes['product0_pos'] = self.product0.pos()
 
     def togglenalysisCover(self, state):
         if state == Qt.Checked:
@@ -397,20 +402,28 @@ class SettingPanel(QWidget):
     def saveSetting(self):
         pass
 
-    def animation(self):
+    def animationIn(self):
         self.anim = QPropertyAnimation(self, b"pos")
-        self.anim.setDuration(300)
-        self.anim.setStartValue(QPointF(self.pos().x()+MainWindow.m_w, self.pos().y()))
-        self.anim.setEndValue(self.pos())
+        self.anim.setDuration(1000)
+        self.anim.setStartValue(QPointF(self.attributes['self_pos'].x()+MainWindow.m_w, self.attributes['self_pos'].y()))
+        self.anim.setEndValue(self.attributes['self_pos'])
         self.anim.setEasingCurve(QEasingCurve.OutCubic)
         self.anim.start()
+        #
+        # self.anim_product0 = QPropertyAnimation(self, b"pos")
+        # self.anim_product0.setDuration(1000)
+        # self.anim_product0.setStartValue(QPointF(self.attributes['product0_pos'].x()+MainWindow.m_w, self.attributes['product0_pos'].y()))
+        # self.anim_product0.setEndValue(self.attributes['product0_pos'])
+        # self.anim_product0.setEasingCurve(QEasingCurve.OutCubic)
+        # self.anim_product0.start()
 
-        self.anim_analysisContent = QPropertyAnimation(self.analysisContent, b"pos")
-        self.anim_analysisContent.setDuration(500)
-        self.anim_analysisContent.setStartValue(QPointF(self.analysisContent.pos().x() + MainWindow.m_w, self.analysisContent.pos().y()))
-        self.anim_analysisContent.setEndValue(self.analysisContent.pos())
-        self.anim_analysisContent.setEasingCurve(QEasingCurve.OutCubic)
-        self.anim_analysisContent.start()
+
+        # self.anim_analysisContent = QPropertyAnimation(self.analysisContent, b"pos")
+        # self.anim_analysisContent.setDuration(3000)
+        # self.anim_analysisContent.setStartValue(QPointF(self.analysisContent.pos().x() + MainWindow.m_w, self.analysisContent.pos().y()))
+        # self.anim_analysisContent.setEndValue(self.analysisContent.pos())
+        # self.anim_analysisContent.setEasingCurve(QEasingCurve.OutCubic)
+        # self.anim_analysisContent.start()
 
 class TitleBar(QWidget):
     logo_w = 120
@@ -663,7 +676,6 @@ class MusicPanel(QWidget):
             self.removeWaveform()
         elif action == quitAct:
             qApp.quit()
-
 
 class ExportPanel(QWidget):
     w = 0
