@@ -100,13 +100,14 @@ class MainWindow(QWidget):
 
         self.settingPanel = SettingPanel(self)
         self.settingPanel.setParent(self)
-        self.settingPanel.setVisible(False)
+        # self.settingPanel.setVisible(False)
 
         self.footagesPanel.icon.clicked.connect(self.importFootages)
         self.footagesPanel.icon.clicked.connect(self.listView.addmore)
         self.listView.btn_removeall.clicked.connect(self.removeAllFootages)
 
         self.exportPanel.setting.clicked.connect(self.toggleSettingPanel)
+        self.exportPanel.export.clicked.connect(self.dosomething)
         self.settingPanel.analysisResetButton.clicked.connect(self.loadSettings)
         self.settingPanel.analysisSaveButton.clicked.connect(self.saveSettings)
 
@@ -117,6 +118,9 @@ class MainWindow(QWidget):
 
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
+
+    def dosomething(self):
+        self.settingPanel.animationIn()
 
     def toggleSettingPanel(self):
         if self.settingPanel.isVisible():
@@ -190,6 +194,10 @@ class SettingPanel(QWidget):
     def __init__(self, parent):
         super(SettingPanel, self).__init__()
         self.attributes = {}
+        self.attributeList = []
+        self.animList = []
+
+
         self.parent = parent
         self.w = self.parent.width()
         self.h = self.parent.height()
@@ -385,8 +393,22 @@ class SettingPanel(QWidget):
             self.setStyleSheet(qss.read())
 
     def initAttributes(self):
-        self.attributes['self_pos'] = self.pos()
-        self.attributes['product0_pos'] = self.product0.pos()
+        # self.attributes['self_pos'] = self.pos()
+        # self.attributes['analysisFaceDetect_pos'] = self.analysisFaceDetect.pos()
+        # self.attributes['analysisBlurDetect_pos'] = self.analysisBlurDetect.pos()
+        # self.attributes['analysisHistogramDetect_pos'] = self.analysisHistogramDetect.pos()
+        # self.attributes['analysisMotionDetect_pos'] = self.analysisMotionDetect.pos()
+        # self.attributes['analysisVoiceDetect_pos'] = self.analysisVoiceDetect.pos()
+
+        # self.attributeList.append(self)
+        self.attributeList.append(self.analysisFaceDetect)
+        # self.attributeList.append(self.analysisBlurDetect)
+        # self.attributeList.append(self.analysisHistogramDetect)
+        # self.attributeList.append(self.analysisMotionDetect)
+        # self.attributeList.append(self.analysisVoiceDetect)
+
+        print(self.attributeList)
+
 
     def togglenalysisCover(self, state):
         if state == Qt.Checked:
@@ -403,19 +425,36 @@ class SettingPanel(QWidget):
         pass
 
     def animationIn(self):
-        self.anim = QPropertyAnimation(self, b"pos")
-        self.anim.setDuration(1000)
-        self.anim.setStartValue(QPointF(self.attributes['self_pos'].x()+MainWindow.m_w, self.attributes['self_pos'].y()))
-        self.anim.setEndValue(self.attributes['self_pos'])
-        self.anim.setEasingCurve(QEasingCurve.OutCubic)
-        self.anim.start()
-        #
-        # self.anim_product0 = QPropertyAnimation(self, b"pos")
-        # self.anim_product0.setDuration(1000)
-        # self.anim_product0.setStartValue(QPointF(self.attributes['product0_pos'].x()+MainWindow.m_w, self.attributes['product0_pos'].y()))
-        # self.anim_product0.setEndValue(self.attributes['product0_pos'])
+        # self.anim = QPropertyAnimation(self, b"pos")
+        # self.anim.setDuration(1000)
+        # self.anim.setStartValue(QPointF(self.attributes['self_pos'].x()+MainWindow.m_w, self.attributes['self_pos'].y()))
+        # self.anim.setEndValue(self.attributes['self_pos'])
+        # self.anim.setEasingCurve(QEasingCurve.OutCubic)
+        # self.anim.start()
+
+        # self.anim_product0 = QPropertyAnimation(self.analysisFaceDetect, b"pos")
+        # self.anim_product0.setDuration(300)
+        # self.anim_product0.setStartValue(QPointF(0,0))
+        # self.anim_product0.setEndValue(self.analysisFaceDetect.pos())
         # self.anim_product0.setEasingCurve(QEasingCurve.OutCubic)
         # self.anim_product0.start()
+
+        # self.anim_product0 = QPropertyAnimation(self.attributeList[0], b"pos")
+        # self.anim_product0.setDuration(300)
+        # self.anim_product0.setStartValue(QPointF(0,0))
+        # self.anim_product0.setEndValue(self.attributeList[0].pos())
+        # self.anim_product0.setEasingCurve(QEasingCurve.OutCubic)
+        # self.anim_product0.start()
+
+        print("XXXXX")
+        for i in len(self.attributeList):
+            locals()['anim_' + str(i)] = QPropertyAnimation(self.attributeList[i], b"pos")
+            locals()['anim_' + str(i)].setDuration(1000)
+            locals()['anim_' + str(i)].setStartValue(QPointF(0,0))
+            locals()['anim_' + str(i)].setEndValue(self.attributeList[i].pos())
+            locals()['anim_' + str(i)].setEasingCurve(QEasingCurve.OutCubic)
+            locals()['anim_' + str(i)].start()
+            print(locals()['anim_' + str(i)])
 
 
         # self.anim_analysisContent = QPropertyAnimation(self.analysisContent, b"pos")
@@ -424,6 +463,8 @@ class SettingPanel(QWidget):
         # self.anim_analysisContent.setEndValue(self.analysisContent.pos())
         # self.anim_analysisContent.setEasingCurve(QEasingCurve.OutCubic)
         # self.anim_analysisContent.start()
+
+
 
 class TitleBar(QWidget):
     logo_w = 120
