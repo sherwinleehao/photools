@@ -114,6 +114,8 @@ class MainWindow(QWidget):
         # self.setGeometry(1500, 250, self.m_w, self.m_h)
         self.setGeometry(-450, 850, self.m_w, self.m_h)
         self.loadSettings()
+
+
         self.show()
 
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
@@ -388,26 +390,20 @@ class SettingPanel(QWidget):
         self.analysisCheckbox.setChecked(True)
         self.analysisCheckbox.stateChanged.connect(self.togglenalysisCover)
 
-        self.initAttributes()
+        self.initAnimation()
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
 
-    def initAttributes(self):
-        # self.attributes['self_pos'] = self.pos()
-        # self.attributes['analysisFaceDetect_pos'] = self.analysisFaceDetect.pos()
-        # self.attributes['analysisBlurDetect_pos'] = self.analysisBlurDetect.pos()
-        # self.attributes['analysisHistogramDetect_pos'] = self.analysisHistogramDetect.pos()
-        # self.attributes['analysisMotionDetect_pos'] = self.analysisMotionDetect.pos()
-        # self.attributes['analysisVoiceDetect_pos'] = self.analysisVoiceDetect.pos()
+    def initAnimation(self):
+        print('initAnimation')
 
-        # self.attributeList.append(self)
+
         self.attributeList.append(self.analysisFaceDetect)
-        # self.attributeList.append(self.analysisBlurDetect)
-        # self.attributeList.append(self.analysisHistogramDetect)
-        # self.attributeList.append(self.analysisMotionDetect)
-        # self.attributeList.append(self.analysisVoiceDetect)
+        self.attributeList.append(self.analysisBlurDetect)
+        self.attributeList.append(self.analysisHistogramDetect)
+        self.attributeList.append(self.analysisMotionDetect)
+        self.attributeList.append(self.analysisVoiceDetect)
 
-        print(self.attributeList)
 
 
     def togglenalysisCover(self, state):
@@ -425,44 +421,17 @@ class SettingPanel(QWidget):
         pass
 
     def animationIn(self):
-        # self.anim = QPropertyAnimation(self, b"pos")
-        # self.anim.setDuration(1000)
-        # self.anim.setStartValue(QPointF(self.attributes['self_pos'].x()+MainWindow.m_w, self.attributes['self_pos'].y()))
-        # self.anim.setEndValue(self.attributes['self_pos'])
-        # self.anim.setEasingCurve(QEasingCurve.OutCubic)
-        # self.anim.start()
+        self.group = QParallelAnimationGroup()
 
-        # self.anim_product0 = QPropertyAnimation(self.analysisFaceDetect, b"pos")
-        # self.anim_product0.setDuration(300)
-        # self.anim_product0.setStartValue(QPointF(0,0))
-        # self.anim_product0.setEndValue(self.analysisFaceDetect.pos())
-        # self.anim_product0.setEasingCurve(QEasingCurve.OutCubic)
-        # self.anim_product0.start()
-
-        # self.anim_product0 = QPropertyAnimation(self.attributeList[0], b"pos")
-        # self.anim_product0.setDuration(300)
-        # self.anim_product0.setStartValue(QPointF(0,0))
-        # self.anim_product0.setEndValue(self.attributeList[0].pos())
-        # self.anim_product0.setEasingCurve(QEasingCurve.OutCubic)
-        # self.anim_product0.start()
-
-        print("XXXXX")
-        for i in len(self.attributeList):
+        for i in range(len(self.attributeList)):
             locals()['anim_' + str(i)] = QPropertyAnimation(self.attributeList[i], b"pos")
-            locals()['anim_' + str(i)].setDuration(1000)
-            locals()['anim_' + str(i)].setStartValue(QPointF(0,0))
+            locals()['anim_' + str(i)].setDuration(100+i*50)
+            locals()['anim_' + str(i)].setStartValue(QPointF(self.attributeList[i].pos().x()+200,self.attributeList[i].pos().y()))
             locals()['anim_' + str(i)].setEndValue(self.attributeList[i].pos())
             locals()['anim_' + str(i)].setEasingCurve(QEasingCurve.OutCubic)
-            locals()['anim_' + str(i)].start()
-            print(locals()['anim_' + str(i)])
+            self.group.addAnimation(locals()['anim_' + str(i)])
 
-
-        # self.anim_analysisContent = QPropertyAnimation(self.analysisContent, b"pos")
-        # self.anim_analysisContent.setDuration(3000)
-        # self.anim_analysisContent.setStartValue(QPointF(self.analysisContent.pos().x() + MainWindow.m_w, self.analysisContent.pos().y()))
-        # self.anim_analysisContent.setEndValue(self.analysisContent.pos())
-        # self.anim_analysisContent.setEasingCurve(QEasingCurve.OutCubic)
-        # self.anim_analysisContent.start()
+        self.group.start()
 
 
 
