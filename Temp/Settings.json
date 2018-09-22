@@ -1,21 +1,21 @@
 {
     "custom": {
-        "Analysis": true,
-        "BlurDetect": true,
+        "Analysis": false,
+        "BlurDetect": false,
         "ExportProjectPath": "D:/Test/Export/HelloWorld.FMP",
-        "FaceDetect": true,
-        "FrameRate": 2,
-        "HistogramDetect": false,
+        "FaceDetect": false,
+        "FrameRate": 0,
+        "HistogramDetect": true,
         "MotionDetect": false,
         "MutiCore": true,
         "Resolution": 2,
         "Sample": 0,
         "VoiceDetect": false,
         "product0": true,
-        "product1": true,
-        "product2": false,
-        "product3": false,
-        "product4": true
+        "product1": false,
+        "product2": true,
+        "product3": true,
+        "product4": false
     },
     "default": {
         "Analysis": true,

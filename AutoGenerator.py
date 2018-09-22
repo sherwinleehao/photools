@@ -94,12 +94,9 @@ class MainWindow(QWidget):
         self.listView.setParent(self.footagesPanel)
         self.listView.setVisible(False)
 
-
-
-
-
         self.settingPanel = SettingPanel(self)
         self.settingPanel.setParent(self)
+
         # self.settingPanel.setVisible(False)
 
         self.footagesPanel.icon.clicked.connect(self.importFootages)
@@ -115,8 +112,8 @@ class MainWindow(QWidget):
         self.setGeometry(-450, 850, self.m_w, self.m_h)
         self.loadSettings()
 
-
         self.show()
+        self.settingPanel.initAnimation()  # 需要在显示完窗口瞬间初始化元件位置
 
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
@@ -125,13 +122,11 @@ class MainWindow(QWidget):
         self.settingPanel.animationIn()
 
     def toggleSettingPanel(self):
-        if self.settingPanel.isVisible():
-            # self.settingPanel.animationOut()
-            self.settingPanel.setVisible(False)
+        if self.settingPanel.status:
+            self.settingPanel.animationOut()
+            # self.settingPanel.setVisible(False)
         else:
-            self.settingPanel.setVisible(True)
             self.settingPanel.animationIn()
-
 
     def loadSettings(self):
         path = 'Temp/Settings.json'
@@ -182,9 +177,11 @@ class MainWindow(QWidget):
     def importFootages(self):
         self.listView.setVisible(True)
         pass
+
     def removeAllFootages(self):
         self.listView.setVisible(False)
         pass
+
 
 class SettingPanel(QWidget):
     w = 0
@@ -192,21 +189,18 @@ class SettingPanel(QWidget):
     label = "Setting"
     label_h = 30
     padding = 0
+    status = True
 
     def __init__(self, parent):
         super(SettingPanel, self).__init__()
         self.attributes = {}
-        self.attributeList = []
-        self.animList = []
-
+        self.animMainObjectList = []
+        self.animSubObjectList = []
 
         self.parent = parent
         self.w = self.parent.width()
         self.h = self.parent.height()
         padding = ExportPanel.padding
-        #
-        # self.setFixedSize(self.w - 2 * padding, self.h - 5 * padding)
-        # self.move(padding, 2 * padding)
         self.setGeometry(padding, 2 * padding, self.w - 2 * padding, self.h - 5 * padding)
 
         self.layout = QVBoxLayout()
@@ -390,21 +384,61 @@ class SettingPanel(QWidget):
         self.analysisCheckbox.setChecked(True)
         self.analysisCheckbox.stateChanged.connect(self.togglenalysisCover)
 
-        self.initAnimation()
+        # self.initAnimation()
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
 
     def initAnimation(self):
         print('initAnimation')
+        group0 = []
+        group0.append([0, self.title])
+        group0.append([0, self.content])
+        self.animSubObjectList.append(group0)
 
+        group1 = []
+        group1.append([1, self.product0])
+        group1.append([1, self.product1])
+        group1.append([1, self.product2])
+        group1.append([1, self.product3])
+        group1.append([1, self.product4])
+        self.animSubObjectList.append(group1)
 
-        self.attributeList.append(self.analysisFaceDetect)
-        self.attributeList.append(self.analysisBlurDetect)
-        self.attributeList.append(self.analysisHistogramDetect)
-        self.attributeList.append(self.analysisMotionDetect)
-        self.attributeList.append(self.analysisVoiceDetect)
+        group2 = []
+        group2.append([2, self.exportProjectPathLabel])
+        group2.append([2, self.exportProjectPath])
+        group2.append([2, self.exportProjectPathButton])
+        group2.append([2, self.resolutionLabel])
+        group2.append([2, self.resolutionCombo])
+        group2.append([2, self.frameRateLabel])
+        group2.append([2, self.frameRateCombo])
+        self.animSubObjectList.append(group2)
 
+        group3 = []
+        group3.append([3, self.analysisCheckbox])
+        group3.append([3, self.analysisContent])
+        group3.append([3, self.analysisLabel])
+        group3.append([3, self.analysisMultiCore])
+        group3.append([3, self.analysisSampleFrameLabel])
+        group3.append([3, self.analysisSampleFrameCombo])
+        group3.append([3, self.analysisFaceDetect])
+        group3.append([3, self.analysisBlurDetect])
+        group3.append([3, self.analysisHistogramDetect])
+        group3.append([3, self.analysisMotionDetect])
+        group3.append([3, self.analysisVoiceDetect])
+        self.animSubObjectList.append(group3)
 
+        group4 = []
+        group4.append([4, self.analysisSaveButton])
+        group4.append([4, self.analysisResetButton])
+        self.animSubObjectList.append(group4)
+
+        for group in self.animSubObjectList:
+            for obj in group:
+                obj.append(obj[1].pos())
+
+        print(self.animSubObjectList)
+        for x in self.animSubObjectList:
+            print(x)
 
     def togglenalysisCover(self, state):
         if state == Qt.Checked:
@@ -421,18 +455,65 @@ class SettingPanel(QWidget):
         pass
 
     def animationIn(self):
+        print("animationIn")
+        self.status = True
+        self.setVisible(True)
         self.group = QParallelAnimationGroup()
+        Duration = 1000
+        m_w = MainWindow.m_w
+        groupID = 0
+        for group in self.animSubObjectList:
+            groupID += 1
+            objID = 0
+            for obj in group:
+                objID += 1
+                locals()['anim_' + str(groupID) + str(objID)] = QPropertyAnimation(obj[1], b"pos")
+                locals()['anim_' + str(groupID) + str(objID)].setDuration(objID * Duration/len(group))
+                locals()['anim_' + str(groupID) + str(objID)].setStartValue(QPointF(obj[2].x() + m_w, obj[2].y()))
+                locals()['anim_' + str(groupID) + str(objID)].setEndValue(obj[2])
+                # locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.OutExpo)
+                locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.OutBack)
 
-        for i in range(len(self.attributeList)):
-            locals()['anim_' + str(i)] = QPropertyAnimation(self.attributeList[i], b"pos")
-            locals()['anim_' + str(i)].setDuration(100+i*50)
-            locals()['anim_' + str(i)].setStartValue(QPointF(self.attributeList[i].pos().x()+200,self.attributeList[i].pos().y()))
-            locals()['anim_' + str(i)].setEndValue(self.attributeList[i].pos())
-            locals()['anim_' + str(i)].setEasingCurve(QEasingCurve.OutCubic)
-            self.group.addAnimation(locals()['anim_' + str(i)])
+                if groupID == 1 :
+                    locals()['anim_' + str(groupID) + str(objID)].setDuration(800)
+                    locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.OutExpo)
+                elif groupID == 5 :
+                    locals()['anim_' + str(groupID) + str(objID)].setDuration(500)
+
+                self.group.addAnimation(locals()['anim_' + str(groupID) + str(objID)])
 
         self.group.start()
 
+    def animationOut(self):
+        print("animationOut")
+        self.status = False
+        self.group = QParallelAnimationGroup()
+        Duration = 1000
+        m_w = MainWindow.m_w
+        groupID = 0
+        for group in self.animSubObjectList:
+            groupID += 1
+            objID = 0
+            for obj in group:
+                objID += 1
+                locals()['anim_' + str(groupID) + str(objID)] = QPropertyAnimation(obj[1], b"pos")
+                locals()['anim_' + str(groupID) + str(objID)].setDuration(objID * Duration/len(group))
+                locals()['anim_' + str(groupID) + str(objID)].setStartValue(obj[2])
+                locals()['anim_' + str(groupID) + str(objID)].setEndValue(QPointF(obj[2].x() +m_w, obj[2].y()))
+                locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.InExpo)
+
+                if groupID == 1 :
+                    locals()['anim_' + str(groupID) + str(objID)].setDuration(500)
+                    locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.InExpo)
+                elif groupID == 5 :
+                    locals()['anim_' + str(groupID) + str(objID)].setDuration(500)
+
+                self.group.addAnimation(locals()['anim_' + str(groupID) + str(objID)])
+        self.group.start()
+        self.group.finished.connect(self.disVisible)
+
+    def disVisible(self):
+        self.setVisible(False)
 
 
 class TitleBar(QWidget):
@@ -687,6 +768,7 @@ class MusicPanel(QWidget):
         elif action == quitAct:
             qApp.quit()
 
+
 class ExportPanel(QWidget):
     w = 0
     h = 80
@@ -874,13 +956,12 @@ class Example(QWidget):
         self.btn_addmore.setObjectName("ListView_btn_addmore")
         self.btn_removeall = QPushButton("Remove All", self)
         self.btn_removeall.setObjectName("ListView_btn_removeall")
-        self.btn_Mode = QPushButton("Mode",self)
+        self.btn_Mode = QPushButton("Mode", self)
         self.btn_Mode.setObjectName("ListView_btn_Mode")
 
-        self.btn_addmore.setFixedSize(4*MainWindow.padding,MainWindow.padding)
-        self.btn_removeall.setFixedSize(4*MainWindow.padding,MainWindow.padding)
-        self.btn_Mode.setFixedSize(2*MainWindow.padding,MainWindow.padding)
-
+        self.btn_addmore.setFixedSize(4 * MainWindow.padding, MainWindow.padding)
+        self.btn_removeall.setFixedSize(4 * MainWindow.padding, MainWindow.padding)
+        self.btn_Mode.setFixedSize(2 * MainWindow.padding, MainWindow.padding)
 
         Hbox = QHBoxLayout()
         Hbox.addWidget(self.btn_addmore)
@@ -897,7 +978,8 @@ class Example(QWidget):
         Vbox.setContentsMargins(0, 0, 0, 0)
         Vbox.setSpacing(0)
 
-        self.setGeometry(MainWindow.padding, 0, MainWindow.m_w - 2 * MainWindow.padding, MainWindow.f_h-MainWindow.padding)
+        self.setGeometry(MainWindow.padding, 0, MainWindow.m_w - 2 * MainWindow.padding,
+                         MainWindow.f_h - MainWindow.padding)
         self.btn_addmore.clicked.connect(self.addmore)
         self.btn_removeall.clicked.connect(self.removeall)
         self.btn_Mode.clicked.connect(self.toggleViewMode)
@@ -1001,6 +1083,7 @@ class Example(QWidget):
             self.pListView.setViewMode(QListView.IconMode)
         else:
             self.pListView.setViewMode(QListView.ListMode)
+
 
 class BackendThread(QThread):
     print('BackendThread')
