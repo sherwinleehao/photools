@@ -96,8 +96,10 @@ class MainWindow(QWidget):
 
         self.settingPanel = SettingPanel(self)
         self.settingPanel.setParent(self)
-
         # self.settingPanel.setVisible(False)
+
+        self.exportingPanel = ExportingPanel(self)
+        self.exportingPanel.setParent(self)
 
         self.footagesPanel.icon.clicked.connect(self.importFootages)
         self.footagesPanel.icon.clicked.connect(self.listView.addmore)
@@ -119,7 +121,7 @@ class MainWindow(QWidget):
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
 
     def dosomething(self):
-        self.settingPanel.animationIn()
+        self.settingPanel.animationOut()
 
     def toggleSettingPanel(self):
         if self.settingPanel.status:
@@ -219,7 +221,6 @@ class SettingPanel(QWidget):
         self.layout.addWidget(self.content)
         self.setLayout(self.layout)
         self.start = QPoint(0, 0)
-        print(self.w - 2 * padding, self.h - 5 * padding)
         productCount = 4
         productSize = 48
 
@@ -514,6 +515,45 @@ class SettingPanel(QWidget):
 
     def disVisible(self):
         self.setVisible(False)
+
+
+class ExportingPanel(QWidget):
+    w = 0
+    h = 0
+    padding = 0
+    label = "Analysising..."
+    label_h = 30
+    def __init__(self, parent):
+        super(ExportingPanel, self).__init__()
+        self.attributes = {}
+        self.animMainObjectList = []
+        self.animSubObjectList = []
+
+        self.parent = parent
+        self.w = self.parent.width()
+        self.h = self.parent.height()
+        padding = ExportPanel.padding
+        self.setGeometry(padding, 2 * padding, self.w - 2 * padding, self.h - 5 * padding)
+
+        self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(0)
+
+        self.title = QLabel(self.label)
+        self.title.setFixedHeight(self.label_h)
+        self.title.setObjectName("ExportingPanel_title")
+        self.content = QLabel("")
+        self.content.setFixedHeight(self.h - 5 * padding - self.label_h)
+        self.content.setObjectName("ExportingPanel_content")
+
+        self.title.setAlignment(Qt.AlignCenter)
+        self.layout.addWidget(self.title)
+        self.layout.addWidget(self.content)
+        self.setLayout(self.layout)
+        self.start = QPoint(0, 0)
+
+        with open('APG.qss', "r") as qss:
+            self.setStyleSheet(qss.read())
 
 
 class TitleBar(QWidget):

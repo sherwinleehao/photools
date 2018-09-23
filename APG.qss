@@ -471,3 +471,30 @@ QScrollBar::sub-line:Horizontal {
 
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+#ExportingPanel_title{
+    border-top-right-radius:8px;
+    border-top-left-radius:8px;
+    font-size: 16px;
+    color:rgb(0, 0, 0);
+    background-color:rgba(220, 220, 220,255);
+    }
+
+#ExportingPanel_content{
+    border-bottom-right-radius:8px;
+    border-bottom-left-radius:8px;
+    font-size: 14px;
+    color:rgb(0, 0, 0);
+    background-color:rgba(128, 128, 128,255);
+    }
