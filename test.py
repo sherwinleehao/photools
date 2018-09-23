@@ -1,4 +1,11 @@
 import random
+import cv2
+
+# def getData(url)
 
 
-print(random.randrange(10,50))
+def qwf(abs):
+    print('asdf')
+
+
+print(random.randrange(10, 50))
