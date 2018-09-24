@@ -106,7 +106,7 @@ class MainWindow(QWidget):
         self.listView.btn_removeall.clicked.connect(self.removeAllFootages)
 
         self.exportPanel.setting.clicked.connect(self.toggleSettingPanel)
-        self.exportPanel.export.clicked.connect(self.dosomething)
+        self.exportPanel.export.clicked.connect(self.exportData)
         self.settingPanel.analysisResetButton.clicked.connect(self.loadSettings)
         self.settingPanel.analysisSaveButton.clicked.connect(self.saveSettings)
 
@@ -121,8 +121,26 @@ class MainWindow(QWidget):
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
 
-    def dosomething(self):
-        self.settingPanel.animationOut()
+    def exportData(self):
+        # self.settingPanel.animationOut()
+        print("Export Data!")
+
+        msg = ''
+        # QMessageBox.about(self, 'Files already in the list', msg)
+
+        if MusicPanel.musicPath == 'rawPath':
+            msg = "Please import your Background Music."
+        elif len(self.listView.updateList)==0:
+            msg = "Please import your Footages."
+        elif MusicPanel.musicPath =='rawPath' and len(self.listView.updateList)==0 :
+            msg = "Please Add Footages and Background Music to Generate the Project."
+
+        if msg:
+            QMessageBox.about(self, 'Need More Footages', msg)
+        else:
+            print(self.listView.updateList)
+            print(MusicPanel.musicPath)
+
 
     def toggleSettingPanel(self):
         if self.settingPanel.status:
@@ -609,7 +627,7 @@ class ExportingPanel(QWidget):
 
 
 
-        # self.setVisible(False)
+        self.setVisible(False)
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
 
@@ -891,7 +909,6 @@ class ExportPanel(QWidget):
         self.export.setObjectName("ExportPanel_Export")
         self.export.setParent(self.content)
         self.export.setGeometry(ExportPanel.padding, ExportPanel.padding, (self.w - self.h), self.label_h)
-        self.export.clicked.connect(self.exportData)
         self.export.setCursor(Qt.PointingHandCursor)
 
         self.setting = QPushButton("", self)
@@ -908,16 +925,6 @@ class ExportPanel(QWidget):
         self.start = QPoint(0, 0)
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
-
-    def exportData(self):
-        print("This is Export!")
-        print(MusicPanel.musicPath)
-        print()
-        # def toggleSettingPanel(self):
-        #     print('toggleSettingPanel')
-        #     print('SettingPanel.isVisible()',self.SettingPanel.h)
-        #     pass
-
 
 class BackendLoadWaveformThread(QThread):
     print('Backend Load Waveform Thread')
@@ -960,6 +967,8 @@ class ListView(QListView):
         self.m_pModel.addItem(pitem)
 
     def removeItem(self, index):
+        print("removeItem",index)
+        # MainWindow.listView.updateList.pop(index)
         self.m_pModel.deleteItem(index)
 
     def showSelection(self):
@@ -1144,7 +1153,6 @@ class Example(QWidget):
         self.supdate()
 
     def remove(self):
-        print("This is remove22222222222!")
         self.pListView.removeItem(0)
         self.supdate()
 
