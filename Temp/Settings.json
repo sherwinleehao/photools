@@ -5,17 +5,17 @@
         "ExportProjectPath": "D:/Test/Export/HelloWorld.FMP",
         "FaceDetect": true,
         "FrameRate": 2,
-        "HistogramDetect": false,
-        "MotionDetect": false,
+        "HistogramDetect": true,
+        "MotionDetect": true,
         "MutiCore": true,
         "Resolution": 2,
         "Sample": 0,
-        "VoiceDetect": false,
-        "product0": true,
+        "VoiceDetect": true,
+        "product0": false,
         "product1": true,
         "product2": false,
-        "product3": false,
-        "product4": true
+        "product3": true,
+        "product4": false
     },
     "default": {
         "Analysis": true,

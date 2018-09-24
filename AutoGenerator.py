@@ -115,6 +115,7 @@ class MainWindow(QWidget):
         self.loadSettings()
 
         self.show()
+        print(self.exportingPanel.exportingPreview.width())
         self.settingPanel.initAnimation()  # 需要在显示完窗口瞬间初始化元件位置
 
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
@@ -498,7 +499,7 @@ class SettingPanel(QWidget):
             for obj in group:
                 objID += 1
                 locals()['anim_' + str(groupID) + str(objID)] = QPropertyAnimation(obj[1], b"pos")
-                locals()['anim_' + str(groupID) + str(objID)].setDuration(objID * Duration/len(group))
+                locals()['anim_' + str(groupID) + str(objID)].setDuration(Duration-(objID * Duration/len(group)))
                 locals()['anim_' + str(groupID) + str(objID)].setStartValue(obj[2])
                 locals()['anim_' + str(groupID) + str(objID)].setEndValue(QPointF(obj[2].x() +m_w, obj[2].y()))
                 locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.InExpo)
@@ -528,6 +529,7 @@ class ExportingPanel(QWidget):
         self.attributes = {}
         self.animMainObjectList = []
         self.animSubObjectList = []
+        self.progress = 29
 
         self.parent = parent
         self.w = self.parent.width()
@@ -552,6 +554,62 @@ class ExportingPanel(QWidget):
         self.setLayout(self.layout)
         self.start = QPoint(0, 0)
 
+        self.contentLayout = QVBoxLayout()
+        self.content.setLayout(self.contentLayout)
+
+        self.exportingPreview = QLabel('exportingPreview:')
+        self.exportingPreview.setObjectName("ExportingPanel_exportingPreview")
+        self.exportingPreview.setFixedHeight(160)
+        self.contentLayout.addWidget(self.exportingPreview)
+
+
+        self.exportingPreviewLabel = QLabel('No Preview here, waiting for data.')
+        self.exportingPreviewLabel.setObjectName("ExportingPanel_exportingPreviewLabel")
+        self.exportingPreviewLabel.setAlignment(Qt.AlignCenter)
+        self.contentLayout.addWidget(self.exportingPreviewLabel)
+
+        self.contentLayout.addStretch(1)
+
+
+
+        self.exportingListView = QListView()
+        self.exportingListView.setObjectName("ExportingPanel_exportingListView")
+        self.model = QStringListModel(["item11321321654654654", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3"])
+        self.exportingListView.setModel(self.model)
+        self.exportingListView.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.exportingListView.setFixedHeight(240)
+
+        self.layout = QVBoxLayout()
+        self.layout.addWidget(self.exportingListView)
+        self.contentLayout.addLayout(self.layout)
+
+        self.contentLayout.addStretch(1)
+
+        self.exportingTimeLabel = QLabel('Elapsed Time 00:03:21\nRemaining Time 00:10:51')
+        self.exportingTimeLabel.setObjectName("ExportingPanel_exportingTimeLabel")
+        self.exportingTimeLabel.setAlignment(Qt.AlignCenter)
+        self.contentLayout.addWidget(self.exportingTimeLabel)
+
+        self.contentLayout.addStretch(1)
+
+        self.progressLayout = QVBoxLayout()
+        self.progressLayout.setContentsMargins(0, 0, 0, 0)
+        self.progressLayout.setSpacing(0)
+        self.progressBar = QProgressBar()
+        self.progressBar.setObjectName("ExportingPanel_progressBar")
+        self.progressBar.setFixedHeight(4)
+        self.progressBar.setValue(self.progress)
+        self.progressBar.setTextVisible(False)
+        self.exportingStopBtn = QPushButton("Stop")
+        self.exportingStopBtn.setObjectName("ExportingPanel_exportingStopBtn")
+        self.exportingStopBtn.setFixedHeight(24)
+        self.progressLayout.addWidget(self.progressBar)
+        self.progressLayout.addWidget(self.exportingStopBtn)
+        self.contentLayout.addLayout(self.progressLayout)
+
+
+
+        # self.setVisible(False)
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
 
