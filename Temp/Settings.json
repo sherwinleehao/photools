@@ -12,10 +12,10 @@
         "Sample": 0,
         "VoiceDetect": false,
         "product0": false,
-        "product1": false,
+        "product1": true,
         "product2": false,
-        "product3": false,
-        "product4": true
+        "product3": true,
+        "product4": false
     },
     "default": {
         "Analysis": true,

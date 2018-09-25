@@ -113,8 +113,9 @@ class MainWindow(QWidget):
         self.settingPanel.analysisSaveButton.clicked.connect(self.saveSettings)
 
         # self.setGeometry(1500, 250, self.m_w, self.m_h)
-        self.setGeometry(-450, 850, self.m_w, self.m_h)
+        self.setGeometry(450, 850, self.m_w, self.m_h)
         self.loadSettings()
+
 
         self.show()
         print(self.exportingPanel.exportingPreview.width())
