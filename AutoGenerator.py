@@ -130,9 +130,9 @@ class MainWindow(QWidget):
 
         if MusicPanel.musicPath == 'rawPath':
             msg = "Please import your Background Music."
-        elif len(self.listView.updateList)==0:
+        elif len(self.listView.updateList) == 0:
             msg = "Please import your Footages."
-        elif MusicPanel.musicPath =='rawPath' and len(self.listView.updateList)==0 :
+        elif MusicPanel.musicPath == 'rawPath' and len(self.listView.updateList) == 0:
             msg = "Please Add Footages and Background Music to Generate the Project."
 
         if msg:
@@ -140,7 +140,6 @@ class MainWindow(QWidget):
         else:
             print(self.listView.updateList)
             print(MusicPanel.musicPath)
-
 
     def toggleSettingPanel(self):
         if self.settingPanel.status:
@@ -488,16 +487,16 @@ class SettingPanel(QWidget):
             for obj in group:
                 objID += 1
                 locals()['anim_' + str(groupID) + str(objID)] = QPropertyAnimation(obj[1], b"pos")
-                locals()['anim_' + str(groupID) + str(objID)].setDuration(objID * Duration/len(group))
+                locals()['anim_' + str(groupID) + str(objID)].setDuration(objID * Duration / len(group))
                 locals()['anim_' + str(groupID) + str(objID)].setStartValue(QPointF(obj[2].x() + m_w, obj[2].y()))
                 locals()['anim_' + str(groupID) + str(objID)].setEndValue(obj[2])
                 # locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.OutExpo)
                 locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.OutBack)
 
-                if groupID == 1 :
+                if groupID == 1:
                     locals()['anim_' + str(groupID) + str(objID)].setDuration(800)
                     locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.OutExpo)
-                elif groupID == 5 :
+                elif groupID == 5:
                     locals()['anim_' + str(groupID) + str(objID)].setDuration(500)
 
                 self.group.addAnimation(locals()['anim_' + str(groupID) + str(objID)])
@@ -517,15 +516,15 @@ class SettingPanel(QWidget):
             for obj in group:
                 objID += 1
                 locals()['anim_' + str(groupID) + str(objID)] = QPropertyAnimation(obj[1], b"pos")
-                locals()['anim_' + str(groupID) + str(objID)].setDuration(Duration-(objID * Duration/len(group)))
+                locals()['anim_' + str(groupID) + str(objID)].setDuration(Duration - (objID * Duration / len(group)))
                 locals()['anim_' + str(groupID) + str(objID)].setStartValue(obj[2])
-                locals()['anim_' + str(groupID) + str(objID)].setEndValue(QPointF(obj[2].x() +m_w, obj[2].y()))
+                locals()['anim_' + str(groupID) + str(objID)].setEndValue(QPointF(obj[2].x() + m_w, obj[2].y()))
                 locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.InExpo)
 
-                if groupID == 1 :
+                if groupID == 1:
                     locals()['anim_' + str(groupID) + str(objID)].setDuration(500)
                     locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.InExpo)
-                elif groupID == 5 :
+                elif groupID == 5:
                     locals()['anim_' + str(groupID) + str(objID)].setDuration(500)
 
                 self.group.addAnimation(locals()['anim_' + str(groupID) + str(objID)])
@@ -542,6 +541,7 @@ class ExportingPanel(QWidget):
     padding = 0
     label = "Analysising..."
     label_h = 30
+
     def __init__(self, parent):
         super(ExportingPanel, self).__init__()
         self.attributes = {}
@@ -580,7 +580,6 @@ class ExportingPanel(QWidget):
         self.exportingPreview.setFixedHeight(160)
         self.contentLayout.addWidget(self.exportingPreview)
 
-
         self.exportingPreviewLabel = QLabel('No Preview here, waiting for data.')
         self.exportingPreviewLabel.setObjectName("ExportingPanel_exportingPreviewLabel")
         self.exportingPreviewLabel.setAlignment(Qt.AlignCenter)
@@ -588,11 +587,11 @@ class ExportingPanel(QWidget):
 
         self.contentLayout.addStretch(1)
 
-
-
         self.exportingListView = QListView()
         self.exportingListView.setObjectName("ExportingPanel_exportingListView")
-        self.model = QStringListModel(["item11321321654654654", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3"])
+        self.model = QStringListModel(
+            ["item11321321654654654", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2",
+             "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3"])
         self.exportingListView.setModel(self.model)
         self.exportingListView.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.exportingListView.setFixedHeight(240)
@@ -624,8 +623,6 @@ class ExportingPanel(QWidget):
         self.progressLayout.addWidget(self.progressBar)
         self.progressLayout.addWidget(self.exportingStopBtn)
         self.contentLayout.addLayout(self.progressLayout)
-
-
 
         self.setVisible(False)
         with open('APG.qss', "r") as qss:
@@ -926,6 +923,7 @@ class ExportPanel(QWidget):
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
 
+
 class BackendLoadWaveformThread(QThread):
     print('Backend Load Waveform Thread')
     update_date = pyqtSignal(str)
@@ -967,7 +965,7 @@ class ListView(QListView):
         self.m_pModel.addItem(pitem)
 
     def removeItem(self, index):
-        print("removeItem",index)
+        print("removeItem", index)
         # MainWindow.listView.updateList.pop(index)
         self.m_pModel.deleteItem(index)
 
