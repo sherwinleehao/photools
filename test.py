@@ -1,11 +1,6 @@
-import random
-import cv2
+L= ["0","1","2","3","4","5","6"]
 
-# def getData(url)
+L.pop(2)
 
-
-def qwf(abs):
-    print('asdf')
-
-
-print(random.randrange(10, 50))
+print(L)
+print(L[2])

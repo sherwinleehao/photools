@@ -11,8 +11,8 @@
         "Resolution": 2,
         "Sample": 0,
         "VoiceDetect": false,
-        "product0": true,
-        "product1": true,
+        "product0": false,
+        "product1": false,
         "product2": false,
         "product3": false,
         "product4": true

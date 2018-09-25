@@ -66,9 +66,11 @@ class MainWindow(QWidget):
     m_h = 720
     f_h = 470
 
+
     def __init__(self):
         super(MainWindow, self).__init__()
         self.settings = {}
+        self.exportList = []
 
         self.setFixedSize(360, 720)
         self.layout = QVBoxLayout()
@@ -122,24 +124,25 @@ class MainWindow(QWidget):
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
 
     def exportData(self):
-        # self.settingPanel.animationOut()
-        print("Export Data!")
-
         msg = ''
-        # QMessageBox.about(self, 'Files already in the list', msg)
-
+        self.exportList = []
         if MusicPanel.musicPath == 'rawPath':
             msg = "Please import your Background Music."
-        elif len(self.listView.updateList) == 0:
+        elif len(self.listView.pListView.m_pModel.ListItemData) == 0:
             msg = "Please import your Footages."
-        elif MusicPanel.musicPath == 'rawPath' and len(self.listView.updateList) == 0:
+        elif MusicPanel.musicPath == 'rawPath' and len(self.listView.pListView.m_pModel.ListItemData) == 0:
             msg = "Please Add Footages and Background Music to Generate the Project."
 
         if msg:
             QMessageBox.about(self, 'Need More Footages', msg)
         else:
-            print(self.listView.updateList)
-            print(MusicPanel.musicPath)
+            self.exportList.append(MusicPanel.musicPath)
+            for item in self.listView.pListView.m_pModel.ListItemData:
+                path = item['filePath']
+                self.exportList.append(path)
+
+            print(self.exportList)
+
 
     def toggleSettingPanel(self):
         if self.settingPanel.status:
@@ -239,8 +242,9 @@ class SettingPanel(QWidget):
         self.layout.addWidget(self.content)
         self.setLayout(self.layout)
         self.start = QPoint(0, 0)
-        productCount = 4
+        # productCount = 4
         productSize = 48
+        # productSize = 16
 
         self.productLayout = QHBoxLayout()
         self.product0 = QCheckBox("")
@@ -331,8 +335,8 @@ class SettingPanel(QWidget):
         self.contentLayout.addWidget(self.analysisCheckbox)
         self.analysisContent = QLabel("", self)
         self.analysisContent.setObjectName("SettingPanel_analysisContent")
-        self.analysisContent.setFixedHeight(290)
-        self.analysisContent.setFixedWidth(286)
+        self.analysisContent.setFixedHeight(280)
+        # self.analysisContent.setFixedWidth(286)
 
         self.analysisLayout = QVBoxLayout()
         self.analysisContent.setLayout(self.analysisLayout)
@@ -340,14 +344,15 @@ class SettingPanel(QWidget):
         self.analysisLabel = QLabel(
             "In Order to get a better result\nAnalysis your footages will be necessary\nThese data can let us know more about your shot\nWhile needs more time.")
         self.analysisLabel.setObjectName("SettingPanel_analysisLabel")
+        # self.analysisLabel.setFixedHeight(64)
         self.analysisLayout.addWidget(self.analysisLabel)
 
-        self.analysisLayout.addStretch(1)
+        # self.analysisLayout.addStretch(1)
 
         self.analysisMultiCore = QCheckBox("Multi-Core Enhance", self)
         self.analysisLayout.addWidget(self.analysisMultiCore)
 
-        self.analysisLayout.addStretch(1)
+        # self.analysisLayout.addStretch(1)
 
         self.analysisSampleFrameLayout = QHBoxLayout()
         self.analysisSampleFrameLabel = QLabel("Sample:")
@@ -364,7 +369,7 @@ class SettingPanel(QWidget):
         self.analysisSampleFrameLayout.addWidget(self.analysisSampleFrameCombo)
         self.analysisLayout.addLayout(self.analysisSampleFrameLayout)
 
-        self.analysisLayout.addStretch(1)
+        # self.analysisLayout.addStretch(1)
 
         self.analysisFaceDetect = QCheckBox("Face Detect", self)
         self.analysisBlurDetect = QCheckBox("Blur Detect", self)
@@ -382,7 +387,7 @@ class SettingPanel(QWidget):
 
         self.analysisSaveLayout = QHBoxLayout()
         self.analysisSaveLayout.setSpacing(0)
-        self.analysisSaveButton = QPushButton("Save Settings", self)
+        self.analysisSaveButton = QPushButton("Save Settings xxxx", self)
         self.analysisSaveButton.setObjectName("SettingPanel_analysisSaveButton")
         self.analysisResetButton = QPushButton("", self)
         self.analysisResetButton.setObjectName("SettingPanel_analysisResetButton")
@@ -965,8 +970,10 @@ class ListView(QListView):
         self.m_pModel.addItem(pitem)
 
     def removeItem(self, index):
-        print("removeItem", index)
+        # print("removeItem", index)
+        # print("Pop",  MainWindow.listView.updateList[index])
         # MainWindow.listView.updateList.pop(index)
+        # print(MainWindow.listView.updateList)
         self.m_pModel.deleteItem(index)
 
     def showSelection(self):
@@ -1107,10 +1114,6 @@ class Example(QWidget):
                 ItemData['iconPath'] = "GUI/%sThumbnail.png" % ItemKind
                 ItemData['filePath'] = file
                 ItemData['mediaInfo'] = "Reselution FPS\nDuration"
-                # if ItemKind is "video":
-                #     mediaInfo = pt.getMediaInfo(file)
-                #     print(mediaInfo)
-                #     ItemData['mediaInfo']= mediaInfo
 
                 if ItemData['filePath'] in filePaths:
                     print("\n", basename, "Already in the list!")
