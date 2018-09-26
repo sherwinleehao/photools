@@ -121,29 +121,33 @@ class MainWindow(QWidget):
         self.show()
         print(self.exportingPanel.exportingPreview.width())
         self.settingPanel.initAnimation()  # 需要在显示完窗口瞬间初始化元件位置
+        self.exportingPanel.initAnimation()  # 需要在显示完窗口瞬间初始化元件位置
 
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
 
     def exportData(self):
-        msg = ''
-        self.exportList = []
-        if MusicPanel.musicPath == 'rawPath':
-            msg = "Please import your Background Music."
-        elif len(self.listView.pListView.m_pModel.ListItemData) == 0:
-            msg = "Please import your Footages."
-        elif MusicPanel.musicPath == 'rawPath' and len(self.listView.pListView.m_pModel.ListItemData) == 0:
-            msg = "Please Add Footages and Background Music to Generate the Project."
-
-        if msg:
-            QMessageBox.about(self, 'Need More Footages', msg)
-        else:
-            self.exportList.append(MusicPanel.musicPath)
-            for item in self.listView.pListView.m_pModel.ListItemData:
-                path = item['filePath']
-                self.exportList.append(path)
-
-            print(self.exportList)
+        self.exportingPanel.toggleAnimation()
+        # msg = ''
+        # self.exportList = []
+        # if self.settingPanel.status:
+        #     self.settingPanel.animationOut()
+        # if MusicPanel.musicPath == 'rawPath':
+        #     msg = "Please import your Background Music."
+        # elif len(self.listView.pListView.m_pModel.ListItemData) == 0:
+        #     msg = "Please import your Footages."
+        # elif MusicPanel.musicPath == 'rawPath' and len(self.listView.pListView.m_pModel.ListItemData) == 0:
+        #     msg = "Please Add Footages and Background Music to Generate the Project."
+        #
+        # if msg:
+        #     QMessageBox.about(self, 'Need More Footages', msg)
+        # else:
+        #     self.exportList.append(MusicPanel.musicPath)
+        #     for item in self.listView.pListView.m_pModel.ListItemData:
+        #         path = item['filePath']
+        #         self.exportList.append(path)
+        #     print(self.exportList)
+        pass
 
 
     def toggleSettingPanel(self):
@@ -415,7 +419,6 @@ class SettingPanel(QWidget):
             self.setStyleSheet(qss.read())
 
     def initAnimation(self):
-        print('initAnimation')
         group0 = []
         group0.append([0, self.title])
         group0.append([0, self.content])
@@ -462,9 +465,9 @@ class SettingPanel(QWidget):
             for obj in group:
                 obj.append(obj[1].pos())
 
-        print(self.animSubObjectList)
-        for x in self.animSubObjectList:
-            print(x)
+        # print(self.animSubObjectList)
+        # for x in self.animSubObjectList:
+        #     print(x)
 
     def togglenalysisCover(self, state):
         if state == Qt.Checked:
@@ -551,6 +554,7 @@ class ExportingPanel(QWidget):
 
     def __init__(self, parent):
         super(ExportingPanel, self).__init__()
+        self.status = True
         self.attributes = {}
         self.animMainObjectList = []
         self.animSubObjectList = []
@@ -631,10 +635,110 @@ class ExportingPanel(QWidget):
         self.progressLayout.addWidget(self.exportingStopBtn)
         self.contentLayout.addLayout(self.progressLayout)
 
-        self.setVisible(False)
+        # self.setVisible(False)
         with open('APG.qss', "r") as qss:
             self.setStyleSheet(qss.read())
 
+    def initAnimation(self):
+        print('initAnimation')
+        group0 = []
+        group0.append([0, self.title])
+        group0.append([0, self.content])
+        self.animSubObjectList.append(group0)
+
+        group1 = []
+        group1.append([1, self.exportingPreview])
+        group1.append([1, self.exportingPreviewLabel])
+        self.animSubObjectList.append(group1)
+
+        group2 = []
+        group2.append([2, self.exportingListView])
+        self.animSubObjectList.append(group2)
+
+        group3 = []
+        group3.append([3, self.exportingTimeLabel])
+        self.animSubObjectList.append(group3)
+
+        group4 = []
+        group4.append([3, self.progressBar])
+        group4.append([3, self.exportingStopBtn])
+        self.animSubObjectList.append(group4)
+
+        for group in self.animSubObjectList:
+            for obj in group:
+                obj.append(obj[1].pos())
+
+        print(self.animSubObjectList)
+        for x in self.animSubObjectList:
+            print(x)
+
+    def animationIn(self):
+        print("animationIn")
+        self.status = True
+        self.setVisible(True)
+        self.group = QParallelAnimationGroup()
+        Duration = 1000
+        m_w = MainWindow.m_w
+        groupID = 0
+        for group in self.animSubObjectList:
+            groupID += 1
+            objID = 0
+            for obj in group:
+                objID += 1
+                locals()['anim_' + str(groupID) + str(objID)] = QPropertyAnimation(obj[1], b"pos")
+                locals()['anim_' + str(groupID) + str(objID)].setDuration(objID * Duration / len(group))
+                locals()['anim_' + str(groupID) + str(objID)].setStartValue(QPointF(obj[2].x() - m_w, obj[2].y()))
+                locals()['anim_' + str(groupID) + str(objID)].setEndValue(obj[2])
+                # locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.OutExpo)
+                locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.OutBack)
+
+                if groupID == 1:
+                    locals()['anim_' + str(groupID) + str(objID)].setDuration(800)
+                    locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.OutExpo)
+                elif groupID == 5:
+                    locals()['anim_' + str(groupID) + str(objID)].setDuration(500)
+
+                self.group.addAnimation(locals()['anim_' + str(groupID) + str(objID)])
+
+        self.group.start()
+
+    def animationOut(self):
+        print("animationOut")
+        self.status = False
+        self.group = QParallelAnimationGroup()
+        Duration = 1000
+        m_w = MainWindow.m_w
+        groupID = 0
+        for group in self.animSubObjectList:
+            groupID += 1
+            objID = 0
+            for obj in group:
+                objID += 1
+                locals()['anim_' + str(groupID) + str(objID)] = QPropertyAnimation(obj[1], b"pos")
+                locals()['anim_' + str(groupID) + str(objID)].setDuration(Duration - (objID * Duration / len(group)))
+                locals()['anim_' + str(groupID) + str(objID)].setStartValue(obj[2])
+                locals()['anim_' + str(groupID) + str(objID)].setEndValue(QPointF(obj[2].x() - m_w, obj[2].y()))
+                locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.InExpo)
+
+                if groupID == 1:
+                    locals()['anim_' + str(groupID) + str(objID)].setDuration(500)
+                    locals()['anim_' + str(groupID) + str(objID)].setEasingCurve(QEasingCurve.InExpo)
+                elif groupID == 5:
+                    locals()['anim_' + str(groupID) + str(objID)].setDuration(500)
+
+                self.group.addAnimation(locals()['anim_' + str(groupID) + str(objID)])
+        self.group.start()
+        self.group.finished.connect(self.disVisible)
+
+    def disVisible(self):
+        self.setVisible(False)
+
+    def toggleAnimation(self):
+        print('toggleAnimation')
+        if self.status:
+            self.animationOut()
+        else:
+            self.animationIn()
 
 class TitleBar(QWidget):
     logo_w = 120

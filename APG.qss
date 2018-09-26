@@ -495,7 +495,7 @@ QScrollBar::sub-line:Horizontal {
     border-bottom-left-radius:8px;
     font-size: 14px;
     color:rgb(0, 0, 0);
-    background-color:rgba(128, 128, 128,255);
+    background-color:rgba(132, 85, 118,255);
     }
 
 
