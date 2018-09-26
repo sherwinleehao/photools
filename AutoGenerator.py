@@ -113,7 +113,8 @@ class MainWindow(QWidget):
         self.settingPanel.analysisSaveButton.clicked.connect(self.saveSettings)
 
         # self.setGeometry(1500, 250, self.m_w, self.m_h)
-        self.setGeometry(450, 850, self.m_w, self.m_h)
+        # self.setGeometry(450, 850, self.m_w, self.m_h)
+        self.setGeometry(200, 100, self.m_w, self.m_h)
         self.loadSettings()
 
 
@@ -388,7 +389,7 @@ class SettingPanel(QWidget):
 
         self.analysisSaveLayout = QHBoxLayout()
         self.analysisSaveLayout.setSpacing(0)
-        self.analysisSaveButton = QPushButton("Save Settings xxxx", self)
+        self.analysisSaveButton = QPushButton("Save Settings", self)
         self.analysisSaveButton.setObjectName("SettingPanel_analysisSaveButton")
         self.analysisResetButton = QPushButton("", self)
         self.analysisResetButton.setObjectName("SettingPanel_analysisResetButton")
@@ -1213,7 +1214,9 @@ class BackendThread(QThread):
 
 
 if __name__ == "__main__":
+    os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
     app = QApplication(sys.argv)
+    app.setAttribute(Qt.AA_EnableHighDpiScaling)
     # app.setStyle("fusion")
     # app.setAttribute(Qt.AA_EnableHighDpiScaling)
     # if hasattr(QStyleFactory, 'AA_UseHighDpiPixmaps'):
