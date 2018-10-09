@@ -65,12 +65,11 @@ class MainWindow(QWidget):
     m_w = 360
     m_h = 720
     f_h = 470
-
+    exportList = []
 
     def __init__(self):
         super(MainWindow, self).__init__()
         self.settings = {}
-        self.exportList = []
 
         self.setFixedSize(360, 720)
         self.layout = QVBoxLayout()
@@ -117,38 +116,37 @@ class MainWindow(QWidget):
         self.setGeometry(200, 100, self.m_w, self.m_h)
         self.loadSettings()
 
-
         self.show()
-        print(self.exportingPanel.exportingPreview.width())
         self.settingPanel.initAnimation()  # 需要在显示完窗口瞬间初始化元件位置
         self.exportingPanel.initAnimation()  # 需要在显示完窗口瞬间初始化元件位置
+        self.exportingPanel.disVisible()
 
         # self.setWindowOpacity(0.9)  # 设置窗口透明度
         # self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗口背景透明
 
     def exportData(self):
-        self.exportingPanel.toggleAnimation()
-        # msg = ''
-        # self.exportList = []
-        # if self.settingPanel.status:
-        #     self.settingPanel.animationOut()
-        # if MusicPanel.musicPath == 'rawPath':
-        #     msg = "Please import your Background Music."
-        # elif len(self.listView.pListView.m_pModel.ListItemData) == 0:
-        #     msg = "Please import your Footages."
-        # elif MusicPanel.musicPath == 'rawPath' and len(self.listView.pListView.m_pModel.ListItemData) == 0:
-        #     msg = "Please Add Footages and Background Music to Generate the Project."
-        #
-        # if msg:
-        #     QMessageBox.about(self, 'Need More Footages', msg)
-        # else:
-        #     self.exportList.append(MusicPanel.musicPath)
-        #     for item in self.listView.pListView.m_pModel.ListItemData:
-        #         path = item['filePath']
-        #         self.exportList.append(path)
-        #     print(self.exportList)
-        pass
 
+
+        msg = ''
+        MainWindow.exportList = []
+        if self.settingPanel.status:
+            self.settingPanel.animationOut()
+        if MusicPanel.musicPath == 'rawPath':
+            msg = "Please import your Background Music."
+        elif len(self.listView.pListView.m_pModel.ListItemData) == 0:
+            msg = "Please import your Footages."
+        elif MusicPanel.musicPath == 'rawPath' and len(self.listView.pListView.m_pModel.ListItemData) == 0:
+            msg = "Please Add Footages and Background Music to Generate the Project."
+
+        if msg:
+            QMessageBox.about(self, 'Need More Footages', msg)
+        else:
+            MainWindow.exportList.append(MusicPanel.musicPath)
+            for item in self.listView.pListView.m_pModel.ListItemData:
+                path = item['filePath']
+                MainWindow.exportList.append(path)
+
+        self.exportingPanel.toggleAnimation()
 
     def toggleSettingPanel(self):
         if self.settingPanel.status:
@@ -465,9 +463,9 @@ class SettingPanel(QWidget):
             for obj in group:
                 obj.append(obj[1].pos())
 
-        # print(self.animSubObjectList)
-        # for x in self.animSubObjectList:
-        #     print(x)
+                # print(self.animSubObjectList)
+                # for x in self.animSubObjectList:
+                #     print(x)
 
     def togglenalysisCover(self, state):
         if state == Qt.Checked:
@@ -600,9 +598,7 @@ class ExportingPanel(QWidget):
 
         self.exportingListView = QListView()
         self.exportingListView.setObjectName("ExportingPanel_exportingListView")
-        self.model = QStringListModel(
-            ["item11321321654654654", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2",
-             "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3", "item2", "item3"])
+        self.model = QStringListModel(["item11321321654654654", "item3", "item2", "item3"])
         self.exportingListView.setModel(self.model)
         self.exportingListView.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.exportingListView.setFixedHeight(240)
@@ -732,13 +728,23 @@ class ExportingPanel(QWidget):
 
     def disVisible(self):
         self.setVisible(False)
+        self.status = False
 
     def toggleAnimation(self):
         print('toggleAnimation')
         if self.status:
             self.animationOut()
         else:
+            self.updatePanel()
             self.animationIn()
+
+    def updatePanel(self):
+        print("MainWindow.exportList")
+        print(MainWindow.exportList)
+        self.model = QStringListModel(MainWindow.exportList)
+        self.exportingListView.setModel(self.model)
+        pass
+
 
 class TitleBar(QWidget):
     logo_w = 120
