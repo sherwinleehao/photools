@@ -2,28 +2,6 @@ import cv2
 import numpy as np
 import time
 
-# events = [i for i in dir(cv2) if 'EVENT' in i]
-# print (events)
-
-# def mosueEventOnCV(event, x, y, flags, param):
-#     if event == cv2.EVENT_MOUSEMOVE:
-#         print('EVENT_MOUSEMOVE')
-#         cv2.circle(frame, (x, y), 10, (255, 0, 0), -1)
-#
-#
-# cv2.namedWindow('capture')
-# cv2.setMouseCallback('capture', mosueEventOnCV)
-#
-# cap = cv2.VideoCapture(0)
-# while(1):
-#     # get a frame
-#     ret, frame = cap.read()
-#     # show a frame
-#     cv2.imshow("capture", frame)
-#     if cv2.waitKey(1) & 0xFF == ord('q'):
-#         break
-# cap.release()
-# cv2.destroyAllWindows()
 
 global img,crop,oldImg,oldTime
 global point1, point2
@@ -33,7 +11,7 @@ oldTime = time.time()
 
 FPSList = []
 for i in range(300):
-    FPSList.append(12)
+    FPSList.append(1)
 
 
 def updateFPSList(deltaTime):
@@ -60,28 +38,29 @@ def on_mouse(event, x, y, flags, param):
         print("EVENT_LBUTTONUP", point2)
         cv2.rectangle(img2, point1, point2, (0,0,255), 2)
         cv2.imshow('get ROI', img2)
-        # min_x = min(point1[0],point2[0])
-        # min_y = min(point1[1],point2[1])
-        # width = abs(point1[0] - point2[0])
-        # height = abs(point1[1] -point2[1])
-        # crop = img[min_y:min_y+height, min_x:min_x+width]
         showROI()
-        # print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxx ',point1, point2)
 
 
 def getROI():
     global img
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
+    cap.set(3,1920)
+    cap.set(4,1080)
+    # cap.set(5,30)
     ret, img = cap.read()
     cv2.namedWindow('get ROI')
     cv2.setMouseCallback('get ROI', on_mouse)
     cv2.imshow("get ROI", img)
     cap.release()
     cv2.waitKey(0)
+    cap.release()
 
 def showROI():
     global point1, point2
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
+    cap.set(3,1920)
+    cap.set(4,1080)
+    cap.set(5,60)
     while(1):
         ret, frame = cap.read()
         min_x = min(point1[0],point2[0])
@@ -99,6 +78,9 @@ def showROI():
         cv2.imshow("state", state)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+
+    cap.release()
+    cv2.destroyAllWindows()
 
 def isUpdated(newImg):
     isupdate = False
@@ -132,14 +114,15 @@ def updateFPSState():
     width = len(FPSList)
     state = np.zeros((height,width, 3), np.uint8)
     for i in range(len(FPSList)):
-        if FPSList[i] >= 27:
+        value =sum(FPSList[(i-5):i])/5
+        if value >= 27:
             lineColor = (0, 255, 0)
-        elif FPSList[i] >= 21:
+        elif value >= 21:
             lineColor = (0, 220,220)
         else :
             lineColor = (0, 0, 255)
 
-        cv2.line(state, (i, height), (i, int(height-FPSList[i])), lineColor, 1)
+        cv2.line(state, (i, height), (i, int(height-value)), lineColor, 1)
     return state
 
 
