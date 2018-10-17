@@ -43,9 +43,9 @@ def on_mouse(event, x, y, flags, param):
 
 def getROI():
     global img
-    cap = cv2.VideoCapture(0)
-    # cap.set(3,640)
-    # cap.set(4,360)
+    cap = cv2.VideoCapture(1)
+    cap.set(3,1920)
+    cap.set(4,1080)
     # cap.set(5,30)
     ret, img = cap.read()
     cv2.namedWindow('get ROI')
@@ -57,10 +57,10 @@ def getROI():
 
 def showROI():
     global point1, point2
-    cap = cv2.VideoCapture(0)
-    # cap.set(3,640)
-    # cap.set(4,360)
-    # cap.set(5,30)
+    cap = cv2.VideoCapture(1)
+    cap.set(3,1920)
+    cap.set(4,1080)
+    cap.set(5,60)
     while(1):
         ret, frame = cap.read()
         min_x = min(point1[0],point2[0])
