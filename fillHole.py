@@ -2,6 +2,7 @@ import cv2
 from PIL import Image, ImageDraw, ExifTags
 import numpy as np
 import time
+from photools import *
 
 
 def getBeautyLayer(path):
@@ -113,8 +114,15 @@ def getBeautyLayer(path):
     cv2.imshow("Image", dst)
     cv2.waitKey(0)
 
+def saveAlphaInGreen(im,path):
+    b, g, r, a = cv2.split(im)
+    b[:][:] = 0
+    print(a[200][200])
+    dst = cv2.merge([b, a, b])
+    cv2.imwrite(path,dst)
+
 def getValueROI(path):
-    sample = 16
+    sample = 8
     def getNotZero(list,multi):
         start = 0
         end = len(list)
@@ -132,14 +140,11 @@ def getValueROI(path):
                 break
         return (start-1)*multi,(end+1)*multi
 
-    st = time.time()
-
     img = cv2.imread(path, -1)
     B, G, R, A = cv2.split(img)
     ret, thresh1 = cv2.threshold(A, 0, 255, cv2.THRESH_BINARY)
     mini = cv2.resize(thresh1, None, fx=(1/sample), fy=(1/sample), interpolation=cv2.INTER_NEAREST)
     h,w = mini.shape
-
     horizontal = []
     vertical = []
     for i in range(w):
@@ -148,17 +153,71 @@ def getValueROI(path):
     for i in range(h):
         temp = mini[i,0:w]
         vertical.append(np.sum(temp))
-
     hs,he = getNotZero(horizontal,sample)
     vs,ve = getNotZero(vertical,sample)
-    # print(vs,ve,hs,he)
     # roi = thresh1[vs:ve,hs:he]
-    # print(roi.shape)
-    et = time.time()
-    print("Get %s ROI in %.3f"%(path,(et-st)))
     return vs,ve,hs,he
+
+def getSeqROI(path):
+    st = time.time()
+    files = getAllFiles(path)
+    vss=[]
+    ves=[]
+    hss=[]
+    hes=[]
+    for file in files:
+        if '.png' in file:
+            vs, ve, hs, he = getValueROI(file)
+            vss.append(vs)
+            ves.append(ve)
+            hss.append(hs)
+            hes.append(he)
+    vs = min(vss)
+    ve = max(ves)
+    hs = min(hss)
+    he = max(hes)
+    et = time.time()
+    print("Using %.3f to finish" % (et - st))
+    return vs, ve, hs, he
+
+def saveSeqROI(path):
+    vs, ve, hs, he = getSeqROI(path)
+    st = time.time()
+    files = getAllFiles(path)
+    for file in files:
+        if '.png' in file and 'ROI_' not in file:
+            name = 'ROI_'+os.path.basename(file)
+            aplhaName = 'Alp_'+os.path.basename(file)
+            folder = os.path.dirname(file)
+            newFolder = os.path.join(folder,'ROI')
+            mkdir(newFolder)
+            tga = os.path.join(newFolder,name)
+            tga2 = os.path.join(newFolder,aplhaName)
+            im = cv2.imread(file,-1)
+            saveAlphaInGreen(im,tga2)
+            nim = im[vs:ve, hs:he]
+            cv2.imwrite(tga, nim)
+            print("Finish saving %s" % name)
+
+    et = time.time()
+    print("Using %.3f to finish" % (et - st))
+
+def main():
+    path = r'C:\Users\ws\Desktop\PNG'
+    # print(getSeqROI(path))
+    saveSeqROI(path)
+
+
+def main2():
+    path = r'C:\Users\ws\Desktop\PNG\ROI\test_00006.png'
+    path1 = r'C:\Users\ws\Desktop\PNG\ROI\test_0.png'
+    path2 = r'C:\Users\ws\Desktop\PNG\ROI\test_1.png'
+    im = cv2.imread(path,-1)
+    saveAlphaInGreen(im, path2)
 
 if __name__ == '__main__':
     path = r'Temp/Test_fill_hole.png'
     # getBeautyLayer(path)
-    getValueROI(path)
+    # getValueROI(path)
+    main()
+    # main2()
