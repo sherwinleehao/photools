@@ -16,8 +16,6 @@ def getBeautyLayer(path):
     nG = (G / 255) * (thresh1 / 255)
     nR = (R / 255) * (thresh1 / 255)
     nA = thresh1 / 255
-    cv2.namedWindow("Image")
-    # newImg = cv2.merge([nB, nG, nR])
     newImg = cv2.merge([nB, nG, nR, nA])
 
     def getNearestValueIndex(data):
@@ -68,66 +66,85 @@ def getBeautyLayer(path):
         # im[y,0:x] = (0,0,1.0)
         # return im
 
-    # for x in range(w):
-    #     for y in range(h):
-    #         if thresh1[y][x] == 0:
-    #             newImg[y][x] = getNearestColor(x, y, w, h, newImg, thresh1)
+        # for x in range(w):
+        #     for y in range(h):
+        #         if thresh1[y][x] == 0:
+        #             newImg[y][x] = getNearestColor(x, y, w, h, newImg, thresh1)
 
-    # print(thresh1[120][0:150])
-    # newImg[120][0:150]= (0,0,1.0)
+        # print(thresh1[120][0:150])
+        # newImg[120][0:150]= (0,0,1.0)
 
-    # newImg = getNearestColor(130, 100, w, h,newImg ,thresh1)
+        # newImg = getNearestColor(130, 100, w, h,newImg ,thresh1)
 
-    # print("New Image dtype",newImg.dtype)
-    # img = np.array(newImg*255, dtype=np.uint8)
-    # cv2.imwrite(r'Temp/Test_fill_hole2.png',newImg)
-    # cv2.imshow("Image", newImg)
+        # print("New Image dtype",newImg.dtype)
+        # img = np.array(newImg*255, dtype=np.uint8)
+        # cv2.imwrite(r'Temp/Test_fill_hole2.png',newImg)
+        # cv2.imshow("Image", newImg)
 
-    def expansionEdge(ima, val):
-        b, g, r, a = cv2.split(ima)
-        dst = cv2.blur(ima, (val, val))
-        B, G, R, A = cv2.split(dst)
-        ret, threshA = cv2.threshold(A, 0, 1, cv2.THRESH_BINARY)
 
-        nA = threshA * (1 - a)
-        nB = B/A*nA
-        nG = G/A*nA
-        nR = R/A*nA
-        ndst = cv2.merge([nB, nG, nR, nA])
+def expansionEdge(ima, val):
 
-        where_are_nan = np.isnan(ndst)
-        ndst[where_are_nan] = 0
+    def getUnmult(im):
+        b, g, r, a = cv2.split(im)
+        _, thresh = cv2.threshold(a, 0, 255, cv2.THRESH_BINARY)
+        nA = thresh / 255
+        nB = (b / 255) * (thresh / 255)
+        nG = (g / 255) * (thresh / 255)
+        nR = (r / 255) * (thresh / 255)
+        umIma = cv2.merge([nB*255, nG*255, nR*255, nA*255])
+        dst = umIma.astype(np.uint8)
+        return dst
 
-        final = ndst + ima
-        return final
+    def getUnmult2(im):
+        b, g, r, a = cv2.split(im)
+        _, thresh = cv2.threshold(a, 0, 255, cv2.THRESH_BINARY)
+        nT = thresh / 255
+        nA = a/255
+        nB = (b / 255)/nA * nT
+        nG = (g / 255)/nA * nT
+        nR = (r / 255)/nA * nT
+        umIma = cv2.merge([nB*255, nG*255, nR*255, nT*255])
+        where_are_nan = np.isnan(umIma)
+        umIma[where_are_nan] = 0
+        dst = umIma.astype(np.uint8)
+        return dst
 
-    def getExpansion(ima, levels):
-        for i in range(2,levels):
-            # ima = expansionEdge(ima,int(pow(1.3,i)) )
-            ima = expansionEdge(ima,8)
-        return ima
+    umIma = getUnmult(ima)
 
-    dst = getExpansion(newImg, 20)
-    print(dst.shape)
-    et = time.time()
-    print("Draw the image in %.3f" % (et - st))
-    cv2.imshow("Image", dst)
-    cv2.waitKey(0)
+    blurIma = cv2.blur(umIma, (val, val))
+    # blurIma = cv2.medianBlur(umIma,5)
 
-def saveAlphaInGreen(im,path):
+    umBlurIma = getUnmult2(blurIma)
+
+    cv2.imwrite(r'Temp\PNG\ROI\blurIma.png', blurIma)
+    cv2.imwrite(r'Temp\PNG\ROI\umBlurIma.png', umBlurIma)
+
+    return umBlurIma
+
+
+def getExpansion(ima, levels):
+    ima = expansionEdge(ima, 20)
+    # for i in range(2, levels):
+    #     ima = expansionEdge(ima, 4)
+    return ima
+
+
+def saveAlphaInGreen(im, path):
     b, g, r, a = cv2.split(im)
     b[:][:] = 0
     print(a[200][200])
     dst = cv2.merge([b, a, b])
-    cv2.imwrite(path,dst)
+    cv2.imwrite(path, dst)
+
 
 def getValueROI(path):
     sample = 8
-    def getNotZero(list,multi):
+
+    def getNotZero(list, multi):
         start = 0
         end = len(list)
         for i in range(len(list)):
-            if list[i] == 0 :
+            if list[i] == 0:
                 pass
             else:
                 start = i
@@ -136,35 +153,36 @@ def getValueROI(path):
             if list[-j] == 0:
                 pass
             else:
-                end = len(list)-j
+                end = len(list) - j
                 break
-        return (start-1)*multi,(end+1)*multi
+        return (start - 1) * multi, (end + 1) * multi
 
     img = cv2.imread(path, -1)
     B, G, R, A = cv2.split(img)
     ret, thresh1 = cv2.threshold(A, 0, 255, cv2.THRESH_BINARY)
-    mini = cv2.resize(thresh1, None, fx=(1/sample), fy=(1/sample), interpolation=cv2.INTER_NEAREST)
-    h,w = mini.shape
+    mini = cv2.resize(thresh1, None, fx=(1 / sample), fy=(1 / sample), interpolation=cv2.INTER_NEAREST)
+    h, w = mini.shape
     horizontal = []
     vertical = []
     for i in range(w):
-        temp = mini[0:h,i]
+        temp = mini[0:h, i]
         horizontal.append(np.sum(temp))
     for i in range(h):
-        temp = mini[i,0:w]
+        temp = mini[i, 0:w]
         vertical.append(np.sum(temp))
-    hs,he = getNotZero(horizontal,sample)
-    vs,ve = getNotZero(vertical,sample)
+    hs, he = getNotZero(horizontal, sample)
+    vs, ve = getNotZero(vertical, sample)
     # roi = thresh1[vs:ve,hs:he]
-    return vs,ve,hs,he
+    return vs, ve, hs, he
+
 
 def getSeqROI(path):
     st = time.time()
     files = getAllFiles(path)
-    vss=[]
-    ves=[]
-    hss=[]
-    hes=[]
+    vss = []
+    ves = []
+    hss = []
+    hes = []
     for file in files:
         if '.png' in file:
             vs, ve, hs, he = getValueROI(file)
@@ -180,27 +198,29 @@ def getSeqROI(path):
     print("Using %.3f to finish" % (et - st))
     return vs, ve, hs, he
 
+
 def saveSeqROI(path):
     vs, ve, hs, he = getSeqROI(path)
     st = time.time()
     files = getAllFiles(path)
     for file in files:
         if '.png' in file and 'ROI_' not in file:
-            name = 'ROI_'+os.path.basename(file)
-            aplhaName = 'Alp_'+os.path.basename(file)
+            name = 'ROI_' + os.path.basename(file)
+            aplhaName = 'Alp_' + os.path.basename(file)
             folder = os.path.dirname(file)
-            newFolder = os.path.join(folder,'ROI')
+            newFolder = os.path.join(folder, 'ROI')
             mkdir(newFolder)
-            tga = os.path.join(newFolder,name)
-            tga2 = os.path.join(newFolder,aplhaName)
-            im = cv2.imread(file,-1)
-            saveAlphaInGreen(im,tga2)
+            tga = os.path.join(newFolder, name)
+            tga2 = os.path.join(newFolder, aplhaName)
+            im = cv2.imread(file, -1)
+            saveAlphaInGreen(im, tga2)
             nim = im[vs:ve, hs:he]
             cv2.imwrite(tga, nim)
             print("Finish saving %s" % name)
 
     et = time.time()
     print("Using %.3f to finish" % (et - st))
+
 
 def main():
     path = r'C:\Users\ws\Desktop\PNG'
@@ -209,15 +229,18 @@ def main():
 
 
 def main2():
-    path = r'C:\Users\ws\Desktop\PNG\ROI\test_00006.png'
-    path1 = r'C:\Users\ws\Desktop\PNG\ROI\test_0.png'
-    path2 = r'C:\Users\ws\Desktop\PNG\ROI\test_1.png'
-    im = cv2.imread(path,-1)
-    saveAlphaInGreen(im, path2)
+    path = r'Temp\PNG\ROI\test_00001.png'
+    path1 = r'Temp\PNG\ROI\test_0.png'
+    path2 = r'Temp\PNG\ROI\test_path2.png'
+    im = cv2.imread(path, -1)
+    saveAlphaInGreen(im, path1)
+    dst = getExpansion(im, 20)
+    cv2.imwrite(path2, dst)
+
 
 if __name__ == '__main__':
-    path = r'Temp/Test_fill_hole.png'
+    # path = r'Temp/Test_fill_hole.png'
     # getBeautyLayer(path)
     # getValueROI(path)
-    main()
-    # main2()
+    # main()
+    main2()
