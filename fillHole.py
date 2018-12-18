@@ -84,40 +84,81 @@ def getBeautyLayer(path):
 
     def expansionEdge(ima, val):
         b, g, r, a = cv2.split(ima)
-        print(a[200][200])
         dst = cv2.blur(ima, (val, val))
         B, G, R, A = cv2.split(dst)
-        nA = A / A * (1 - a)
-        nB = B / A * nA * (1 - a)
-        nG = G / A * nA * (1 - a)
-        nR = R / A * nA * (1 - a)
+        ret, threshA = cv2.threshold(A, 0, 1, cv2.THRESH_BINARY)
+
+        nA = threshA * (1 - a)
+        nB = B/A*nA
+        nG = G/A*nA
+        nR = R/A*nA
         ndst = cv2.merge([nB, nG, nR, nA])
+
+        where_are_nan = np.isnan(ndst)
+        ndst[where_are_nan] = 0
+
         final = ndst + ima
-        _, _, _, Alpha = cv2.split(final)
-        cv2.imshow("Alphafinal", Alpha)
-        cv2.waitKey(1)
         return final
 
     def getExpansion(ima, levels):
-        ima = expansionEdge(ima, levels)
-        ima = expansionEdge(ima, levels)
-        # imad = expansionEdge(imac, levels)
-        # imae = expansionEdge(imad, levels)
+        for i in range(2,levels):
+            # ima = expansionEdge(ima,int(pow(1.3,i)) )
+            ima = expansionEdge(ima,8)
         return ima
 
-    dst = getExpansion(newImg, 12)
-    b, g, r, a = cv2.split(dst)
-    print('1AA',a[10][10])
-    print('AAAA',a[200][200])
+    dst = getExpansion(newImg, 20)
     print(dst.shape)
     et = time.time()
     print("Draw the image in %.3f" % (et - st))
-    cv2.imshow("Alpha", a)
-    cv2.waitKey(1)
     cv2.imshow("Image", dst)
     cv2.waitKey(0)
 
+def getValueROI(path):
+    sample = 16
+    def getNotZero(list,multi):
+        start = 0
+        end = len(list)
+        for i in range(len(list)):
+            if list[i] == 0 :
+                pass
+            else:
+                start = i
+                break
+        for j in range(len(list)):
+            if list[-j] == 0:
+                pass
+            else:
+                end = len(list)-j
+                break
+        return (start-1)*multi,(end+1)*multi
+
+    st = time.time()
+
+    img = cv2.imread(path, -1)
+    B, G, R, A = cv2.split(img)
+    ret, thresh1 = cv2.threshold(A, 0, 255, cv2.THRESH_BINARY)
+    mini = cv2.resize(thresh1, None, fx=(1/sample), fy=(1/sample), interpolation=cv2.INTER_NEAREST)
+    h,w = mini.shape
+
+    horizontal = []
+    vertical = []
+    for i in range(w):
+        temp = mini[0:h,i]
+        horizontal.append(np.sum(temp))
+    for i in range(h):
+        temp = mini[i,0:w]
+        vertical.append(np.sum(temp))
+
+    hs,he = getNotZero(horizontal,sample)
+    vs,ve = getNotZero(vertical,sample)
+    # print(vs,ve,hs,he)
+    # roi = thresh1[vs:ve,hs:he]
+    # print(roi.shape)
+    et = time.time()
+    print("Get %s ROI in %.3f"%(path,(et-st)))
+    return vs,ve,hs,he
 
 if __name__ == '__main__':
     path = r'Temp/Test_fill_hole.png'
-    getBeautyLayer(path)
+    # getBeautyLayer(path)
+    getValueROI(path)
