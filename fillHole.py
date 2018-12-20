@@ -31,6 +31,7 @@ def getUnmult2(im):
     dst = umIma.astype(np.uint8)
     return dst
 
+
 # def getBeautyLayer(path):
 #     st = time.time()
 #
@@ -109,7 +110,6 @@ def getUnmult2(im):
 
 
 def expansionEdge(ima, val):
-
     umIma = getUnmult(ima)
 
     blurIma = cv2.blur(umIma, (val, val))
@@ -118,28 +118,29 @@ def expansionEdge(ima, val):
     umBlurIma = getUnmult2(blurIma)
 
     _, _, _, a = cv2.split(umIma)
-    newa = 1-(a / 255)
+    newa = 1 - (a / 255)
     bb, gg, rr, aa = cv2.split(umBlurIma)
-    BG = cv2.merge([bb*newa,gg*newa,rr*newa,aa*newa])
+    BG = cv2.merge([bb * newa, gg * newa, rr * newa, aa * newa])
     BG = BG.astype(np.uint8)
     final = umIma + BG
 
     return final
 
 
-def draftExpansion(ima,val,sample):
+def draftExpansion(ima, val, sample):
     _, _, _, a = cv2.split(ima)
     ret, thresh1 = cv2.threshold(a, 0, 255, cv2.THRESH_BINARY)
-    mask = 255-thresh1
+    mask = 255 - thresh1
     miniIma = cv2.resize(ima, None, fx=(1 / sample), fy=(1 / sample), interpolation=cv2.INTER_NEAREST)
     blurIma = cv2.blur(miniIma, (val, val))
     umBlurIma = getUnmult2(blurIma)
-    bigIma = cv2.resize(umBlurIma, None, fx= sample, fy= sample, interpolation=cv2.INTER_NEAREST)
+    bigIma = cv2.resize(umBlurIma, None, fx=sample, fy=sample, interpolation=cv2.INTER_NEAREST)
     masked = cv2.bitwise_and(bigIma, bigIma, mask=mask)
-    dst = cv2.add(masked,ima)
+    dst = cv2.add(masked, ima)
     return dst
 
-def offsetMerge(ima,x,y):
+
+def offsetMerge(ima, x, y):
     dst = getUnmult(ima)
     _, _, _, a = cv2.split(dst)
     matte = 1 - (a / 255)
@@ -162,6 +163,7 @@ def offsetMerge(ima,x,y):
 
     return dst
 
+
 def fillEmpty(ima):
     st = time.time()
     for i in range(1):
@@ -172,8 +174,9 @@ def fillEmpty(ima):
     #     ima = draftExpansion(ima,4,4)
     dst = ima
     et = time.time()
-    print("Fill Empty Using %.3f"%(et-st))
+    print("Fill Empty Using %.3f" % (et - st))
     return dst
+
 
 def saveAlphaInGreen(im, path):
     b, g, r, a = cv2.split(im)
@@ -243,16 +246,43 @@ def getSeqROI(path):
     print("Using %.3f to finish" % (et - st))
     return vs, ve, hs, he
 
+def getEdgeKeyColor(path):
+    from collections import Counter
+    im = cv2.imread(path, -1)
+    im = getUnmult(im)
+    sample = 4
+    im = cv2.resize(im, None, fx=(1 / sample), fy=(1 / sample), interpolation=cv2.INTER_NEAREST)
+    _, _, _, a = cv2.split(im)
+    h, w, _ = im.shape
+    canny = cv2.Canny(a, 50, 150, apertureSize=5)
+    im = expansionEdge(im, 4)
+    edgeColors = []
+    for y in range(h):
+        for x in range(w):
+            if canny[y][x] != 0:
+                edgeColors.append(str(im[y][x].tolist()))
+    result = Counter(edgeColors)
+    color = result.most_common(1)[0][0][1:-1].split(', ')
+    return int(color[0]),int(color[1]),int(color[2]),int(color[3])
+
+def getSolidColor(b,g,r,h,w,d):
+    img = np.zeros([h, w, d], np.uint8)
+    img[:, :, 0] = np.ones([h, w])* b
+    img[:, :, 1] = np.ones([h, w])* g
+    img[:, :, 2] = np.ones([h, w])* r
+    return img
+
 def initTga(path):
     mkdir(path)
     files = getAllFiles(path)
     for file in files:
         os.remove(file)
 
-def saveSeqROI(path,tga):
+
+def saveSeqROI(path, tga):
     initTga(tga)
     vs, ve, hs, he = getSeqROI(path)
-    print("Get Seq ROI of:",vs, ve, hs, he,'\n')
+    print("Get Seq ROI of:", vs, ve, hs, he, '\n')
 
     files = getAllFiles(path)
     for file in files:
@@ -274,30 +304,98 @@ def saveSeqROI(path,tga):
     os.system(cmd_Str)
     os.system(cmd_Alp)
 
+def getAlphaBlend(ima,imb,premult):
+    if ima.shape == imb.shape:
+        _,_,_,a = cv2.split(ima)
+        a = a.astype(np.float)/255
+        h,w,d = ima.shape
+        if d ==3:
+            alpha = cv2.merge([a,a,a])
+        else:
+            alpha = cv2.merge([a, a, a, a])
+        matte = 1 - alpha
+        if premult:
+            FG = ima.astype(np.float)
+        else:
+            FG = ima.astype(np.float) * alpha
+        BG = imb.astype(np.float) * matte
+        dst = FG + BG
+        return dst
+
+    else:
+        print("Please chech about the two IMGs channels.")
+
+
 def main():
     st = time.time()
 
     path = r'C:\Python\photools\Temp\PNG'
-    tga  = r'C:\Python\photools\Temp\EXP'
-    saveSeqROI(path,tga)
+    tga = r'C:\Python\photools\Temp\EXP'
+    saveSeqROI(path, tga)
 
     et = time.time()
     print("Using %.3f to finish" % (et - st))
 
-
 def main2():
-    path  = r'Temp\PNG\ROI\test_00001.png'
-    path1 = r'Temp\PNG\ROI\test_path1.png'
-    path2 = r'Temp\PNG\ROI\test_path2.png'
-    im = cv2.imread(path, -1)
-    saveAlphaInGreen(im,path1)
-    dst = fillEmpty(im)
-    cv2.imwrite(path2, dst)
+    path = r'Temp\ROII\test_00001.png'
+    path1 = r'Temp\ROII\test_path1.png'
+    path2 = r'Temp\ROII\test_path2.png'
 
+    im = cv2.imread(path,-1)
+    sample = 2
+    im = cv2.resize(im, None, fx=(1 / sample), fy=(1 / sample), interpolation=cv2.INTER_NEAREST)
+    im = getUnmult(im)
+    val =20
+    # blurIma = cv2.blur(im, (val, val))
+    blurIma = im
+    b,g,r,a = cv2.split(blurIma)
+    im = cv2.merge([b,g,r])
+    h,w,d = im.shape
+    solid = getSolidColor(0,255,0,h,w,d)
+    mask = 1-(a/255)
+    # dst = cv2.multiply(solid,a)
+
+    alpha = cv2.merge([a,a,a])
+    print(im[150][600])
+
+    foreground = im.astype(float)
+    background = solid.astype(float)
+    alpha = alpha.astype(float) / 255
+    matte = 1-alpha
+
+    print(foreground.dtype)
+    print(foreground[150][600])
+
+    foreground = cv2.multiply(alpha, foreground)
+    background = cv2.multiply(matte, background)
+    outImage = cv2.add(foreground, background)
+    print(foreground.dtype)
+    print(foreground[150][600])
+
+
+    cv2.imshow('XXX',outImage)
+    cv2.waitKey(0)
+
+    # cv2.imshow('xxx',edge)
+    # cv2.waitKey(0)
+
+def main3():
+    path = r'Temp\ROII\test_00001.png'
+    im = cv2.imread(path,-1)
+    sample = 2
+    blurVal =5
+    im = cv2.resize(im, None, fx=(1 / sample), fy=(1 / sample), interpolation=cv2.INTER_NEAREST)
+    im = getUnmult(im)
+    im = cv2.blur(im, (blurVal, blurVal))
+    h,w,d = im.shape
+    solid = getSolidColor(0,255,0,h,w,d)
+    dst = getAlphaBlend(im,solid,0)
+    cv2.imshow('dst',dst/255)
+    cv2.waitKey(0)
 
 if __name__ == '__main__':
     # path = r'Temp/Test_fill_hole.png'
     # getBeautyLayer(path)
     # getValueROI(path)
-    main()
-    # main2()
+    # main()
+    main3()
