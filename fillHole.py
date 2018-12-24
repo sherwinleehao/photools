@@ -389,7 +389,7 @@ def main3():
     im = cv2.blur(im, (blurVal, blurVal))
     h,w,d = im.shape
     solid = getSolidColor(0,255,0,h,w,d)
-    dst = getAlphaBlend(im,solid,0)
+    dst = getAlphaBlend(im,solid,1)
     cv2.imshow('dst',dst/255)
     cv2.waitKey(0)
 
