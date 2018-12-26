@@ -1,0 +1,46 @@
+{
+        startTime        : +new Date,
+        ver              : '7.19.12',
+        st               : '',
+        online           : true,
+        shopVer          : 2,
+        appId            : 1 ,
+        itemId           : '583386602006',
+        shopId           : '212571903',
+        shopName         : 'u[4227574789]',
+        sellerId         : '4227574789',
+        sellerNick       : '金牌卖家优佳',
+        sibUrl           : '//detailskip.taobao.com/service/getData/1/p1/item/detail/sib.htm?itemId=583386602006&sellerId=4227574789&modules=dynStock,qrcode,viewer,price,duty,xmpPromotion,delivery,activity,fqg,zjys,couponActivity,soldQuantity,originalPrice,tradeContract',  
+        descUrl          : location.protocol==='http:' ? '//dsc.taobaocdn.com/i2/580/380/583386602006/TB145QvtCzqK1RjSZFp8qukSXla.desc%7Cvar%5Edesc%3Bsign%5Ec0e66842a1237e55fa6cbc1b88c523d2%3Blang%5Egbk%3Bt%5E1543827737' : '//desc.alicdn.com/i2/580/380/583386602006/TB145QvtCzqK1RjSZFp8qukSXla.desc%7Cvar%5Edesc%3Bsign%5Ec0e66842a1237e55fa6cbc1b88c523d2%3Blang%5Egbk%3Bt%5E1543827737',  
+        counterApi       : '//count.taobao.com/counter3?inc=ICVT_7_583386602006&sign=86434baf82313a504150dc52f4c029ede6b9b&keys=DFX_200_1_583386602006,ICVT_7_583386602006,ICCP_1_583386602006,SCCP_2_212571903',
+        rateCounterApi   : '//rate.taobao.com/detailCount.do?itemId=583386602006',
+        areaPrice        : false,
+        
+        lazyload         : '#J_DivItemDesc',
+        
+        tadComponetCdn   : true,
+        delayInsurance   : false,
+        fuwubao          : false,
+        
+        cdn              : true,
+        sibFirst         : true,
+        
+        webp             : true,
+        descWebP         : false,
+        
+        newDomain        : true,
+        asyncStock       : true,
+        enable           : true,
+        
+        m_ratio          : 20,
+        
+        beacon           : {},
+        DyBase           : {
+            iurl : '//item.taobao.com',
+            purl : '//paimai.taobao.com',
+            durl : '//siteadmin.taobao.com',
+            lgurl: 'https://login.taobao.com/member/login.jhtml',
+            surl : '//upload.taobao.com',
+            suitUrl: '//jubao.taobao.com/index.htm?&spm=a1z6q.7847058&itemId='
+        }   
+    }

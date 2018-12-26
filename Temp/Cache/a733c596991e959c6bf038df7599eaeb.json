@@ -1,0 +1,79 @@
+{
+    "format": {
+        "bit_rate": "29897867",
+        "duration": "5.840000",
+        "filename": "C:/Footages/FilmoraGoGoGo/H264/S43B.mp4",
+        "format_long_name": "QuickTime / MOV",
+        "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+        "nb_programs": 0,
+        "nb_streams": 1,
+        "probe_score": 100,
+        "size": "21825443",
+        "start_time": "0.000000",
+        "tags": {
+            "compatible_brands": "mp42mp41",
+            "creation_time": "2017-11-17T07:36:49.000000Z",
+            "major_brand": "mp42",
+            "minor_version": "0"
+        }
+    },
+    "streams": [
+        {
+            "avg_frame_rate": "25/1",
+            "bit_rate": "29871458",
+            "bits_per_raw_sample": "8",
+            "chroma_location": "left",
+            "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+            "codec_name": "h264",
+            "codec_tag": "0x31637661",
+            "codec_tag_string": "avc1",
+            "codec_time_base": "1/50",
+            "codec_type": "video",
+            "coded_height": 1080,
+            "coded_width": 1920,
+            "color_primaries": "bt709",
+            "color_range": "tv",
+            "color_space": "bt709",
+            "color_transfer": "bt709",
+            "display_aspect_ratio": "0:1",
+            "disposition": {
+                "attached_pic": 0,
+                "clean_effects": 0,
+                "comment": 0,
+                "default": 1,
+                "dub": 0,
+                "forced": 0,
+                "hearing_impaired": 0,
+                "karaoke": 0,
+                "lyrics": 0,
+                "original": 0,
+                "timed_thumbnails": 0,
+                "visual_impaired": 0
+            },
+            "duration": "5.840000",
+            "duration_ts": 146000,
+            "has_b_frames": 0,
+            "height": 1080,
+            "index": 0,
+            "is_avc": "true",
+            "level": 41,
+            "nal_length_size": "4",
+            "nb_frames": "146",
+            "pix_fmt": "yuv420p",
+            "profile": "Main",
+            "r_frame_rate": "25/1",
+            "refs": 1,
+            "sample_aspect_ratio": "0:1",
+            "start_pts": 0,
+            "start_time": "0.000000",
+            "tags": {
+                "creation_time": "2017-11-17T07:36:49.000000Z",
+                "encoder": "AVC Coding",
+                "handler_name": "Alias Data Handler",
+                "language": "eng"
+            },
+            "time_base": "1/25000",
+            "width": 1920
+        }
+    ]
+}

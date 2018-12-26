@@ -1,0 +1,82 @@
+{
+    "format": {
+        "bit_rate": "60029049",
+        "duration": "70.770700",
+        "filename": "C:/Footages/import_test/DJI_0015.MOV",
+        "format_long_name": "QuickTime / MOV",
+        "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+        "nb_programs": 0,
+        "nb_streams": 1,
+        "probe_score": 100,
+        "size": "531037235",
+        "start_time": "0.000000",
+        "tags": {
+            "comment": "0.91.142",
+            "compatible_brands": "qt  ",
+            "creation_time": "2016-12-22T17:09:51.000000Z",
+            "location": "+22.525898+113.934870-1.300",
+            "location-\u007f{\u007f": "+22.525898+113.934870-1.300",
+            "major_brand": "qt  ",
+            "minor_version": "538182144"
+        }
+    },
+    "streams": [
+        {
+            "avg_frame_rate": "30000/1001",
+            "bit_rate": "60024983",
+            "bits_per_raw_sample": "8",
+            "chroma_location": "left",
+            "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+            "codec_name": "h264",
+            "codec_tag": "0x31637661",
+            "codec_tag_string": "avc1",
+            "codec_time_base": "1001/60000",
+            "codec_type": "video",
+            "coded_height": 2160,
+            "coded_width": 3840,
+            "color_primaries": "bt709",
+            "color_range": "tv",
+            "color_space": "bt709",
+            "color_transfer": "bt709",
+            "display_aspect_ratio": "16:9",
+            "disposition": {
+                "attached_pic": 0,
+                "clean_effects": 0,
+                "comment": 0,
+                "default": 1,
+                "dub": 0,
+                "forced": 0,
+                "hearing_impaired": 0,
+                "karaoke": 0,
+                "lyrics": 0,
+                "original": 0,
+                "timed_thumbnails": 0,
+                "visual_impaired": 0
+            },
+            "duration": "70.770700",
+            "duration_ts": 2123121,
+            "has_b_frames": 1,
+            "height": 2160,
+            "index": 0,
+            "is_avc": "true",
+            "level": 51,
+            "nal_length_size": "4",
+            "nb_frames": "2121",
+            "pix_fmt": "yuv420p",
+            "profile": "High",
+            "r_frame_rate": "30000/1001",
+            "refs": 1,
+            "sample_aspect_ratio": "1:1",
+            "start_pts": 0,
+            "start_time": "0.000000",
+            "tags": {
+                "creation_time": "2016-12-22T17:09:51.000000Z",
+                "encoder": "Dji AVC encoder",
+                "handler_name": "DJI.AVC",
+                "language": "eng"
+            },
+            "time_base": "1/30000",
+            "width": 3840
+        }
+    ]
+}
