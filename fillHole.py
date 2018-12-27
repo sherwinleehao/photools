@@ -5,7 +5,7 @@ import time
 from photools import *
 
 
-def getUnmult(im):
+def getUnmult1(im):
     b, g, r, a = cv2.split(im)
     _, thresh = cv2.threshold(a, 0, 255, cv2.THRESH_BINARY)
     nA = thresh / 255
@@ -32,85 +32,8 @@ def getUnmult2(im):
     return dst
 
 
-# def getBeautyLayer(path):
-#     st = time.time()
-#
-#     img = cv2.imread(path, -1)
-#     h, w, _ = img.shape
-#     B, G, R, A = cv2.split(img)
-#     ret, thresh1 = cv2.threshold(A, 0, 255, cv2.THRESH_BINARY)
-#     nB = (B / 255) * (thresh1 / 255)
-#     nG = (G / 255) * (thresh1 / 255)
-#     nR = (R / 255) * (thresh1 / 255)
-#     nA = thresh1 / 255
-#     newImg = cv2.merge([nB, nG, nR, nA])
-#
-#     def getNearestValueIndex(data):
-#         for i in range(len(data)):
-#             if data[i] != 0:
-#                 return i
-#
-#     def getIndex(data):
-#         index = getNearestValueIndex(data)
-#         if index is None:
-#             return 100000
-#         else:
-#             return index
-#
-#     def getNearestColor(x, y, w, h, im, alpha):
-#         line0 = alpha[0:y, x]  # checked
-#         line1 = alpha[y, x:w]  # checked
-#         line2 = alpha[y:h, x]  # checked
-#         line3 = alpha[y, 0:x]  # checked
-#
-#         index0 = getIndex(line0)
-#         index1 = getIndex(line1)
-#         index2 = getIndex(line2)
-#         index3 = getIndex(line3)
-#         indexs = [index0, index1, index2, index3]
-#         index = min(indexs)
-#
-#         if index0 == index1 == index2 == index3:
-#             val = im[y][x]
-#         else:
-#             if index0 == index:
-#                 val = im[y - index0][x]
-#                 # print(val)
-#             elif index1 == index:
-#                 val = im[y][x + index1]
-#                 # print(val)
-#             elif index2 == index:
-#                 val = im[y + index2][x]
-#                 # print(val)
-#             elif index3 == index:
-#                 val = im[y][x - index3]
-#                 # print(val)
-#
-#         return val
-#         # im[0:y, x] = (0,0,1.0)
-#         # im[y, x:w] = (0,0,1.0)
-#         # im[y:h,x] = (0,0,1.0)
-#         # im[y,0:x] = (0,0,1.0)
-#         # return im
-#
-#         # for x in range(w):
-#         #     for y in range(h):
-#         #         if thresh1[y][x] == 0:
-#         #             newImg[y][x] = getNearestColor(x, y, w, h, newImg, thresh1)
-#
-#         # print(thresh1[120][0:150])
-#         # newImg[120][0:150]= (0,0,1.0)
-#
-#         # newImg = getNearestColor(130, 100, w, h,newImg ,thresh1)
-#
-#         # print("New Image dtype",newImg.dtype)
-#         # img = np.array(newImg*255, dtype=np.uint8)
-#         # cv2.imwrite(r'Temp/Test_fill_hole2.png',newImg)
-#         # cv2.imshow("Image", newImg)
-
-
-def expansionEdge(ima, val):
-    umIma = getUnmult(ima)
+def getExpansionEdge(ima, val):
+    umIma = getUnmult1(ima)
 
     blurIma = cv2.blur(umIma, (val, val))
     # blurIma = cv2.medianBlur(umIma,5)
@@ -127,7 +50,7 @@ def expansionEdge(ima, val):
     return final
 
 
-def draftExpansion(ima, val, sample):
+def getDraftExpansion(ima, val, sample):
     _, _, _, a = cv2.split(ima)
     ret, thresh1 = cv2.threshold(a, 0, 255, cv2.THRESH_BINARY)
     mask = 255 - thresh1
@@ -140,8 +63,8 @@ def draftExpansion(ima, val, sample):
     return dst
 
 
-def offsetMerge(ima, x, y):
-    dst = getUnmult(ima)
+def getOffsetMerge(ima, x, y):
+    dst = getUnmult1(ima)
     _, _, _, a = cv2.split(dst)
     matte = 1 - (a / 255)
     # dst = getExpansion(dst,4)
@@ -164,14 +87,14 @@ def offsetMerge(ima, x, y):
     return dst
 
 
-def fillEmpty(ima):
+def getEmptyFill(ima):
     st = time.time()
     for i in range(1):
-        ima = expansionEdge(ima, 4)
+        ima = getExpansionEdge(ima, 4)
     # for i in range(10):
-    #     ima = draftExpansion(ima,4,2)
+    #     ima = getDraftExpansion(ima,4,2)
     # for i in range(20):
-    #     ima = draftExpansion(ima,4,4)
+    #     ima = getDraftExpansion(ima,4,4)
     dst = ima
     et = time.time()
     print("Fill Empty Using %.3f" % (et - st))
@@ -249,13 +172,13 @@ def getSeqROI(path):
 def getEdgeKeyColor(path):
     from collections import Counter
     im = cv2.imread(path, -1)
-    im = getUnmult(im)
+    im = getUnmult1(im)
     sample = 4
     im = cv2.resize(im, None, fx=(1 / sample), fy=(1 / sample), interpolation=cv2.INTER_NEAREST)
     _, _, _, a = cv2.split(im)
     h, w, _ = im.shape
     canny = cv2.Canny(a, 50, 150, apertureSize=5)
-    im = expansionEdge(im, 4)
+    im = getExpansionEdge(im, 4)
     edgeColors = []
     for y in range(h):
         for x in range(w):
@@ -279,30 +202,6 @@ def initTga(path):
         os.remove(file)
 
 
-def saveSeqROI(path, tga):
-    initTga(tga)
-    vs, ve, hs, he = getSeqROI(path)
-    print("Get Seq ROI of:", vs, ve, hs, he, '\n')
-
-    files = getAllFiles(path)
-    for file in files:
-        if '.png' in file:
-            straight_name = 'Str_' + os.path.basename(file)
-            aplha_Name = 'Alp_' + os.path.basename(file)
-
-            straight_path = os.path.join(tga, straight_name)
-            aplha_path = os.path.join(tga, aplha_Name)
-            im = cv2.imread(file, -1)
-            ROI_im = im[vs:ve, hs:he]
-            saveAlphaInGreen(ROI_im, aplha_path)
-            dst = fillEmpty(ROI_im)
-            cv2.imwrite(straight_path, dst)
-            print("Finish saving %s" % os.path.basename(file))
-
-    cmd_Str = 'ffmpeg -r 25 -i C:\Python\photools\Temp\EXP\Str_test_%05d.png  -b:v 3000K -vcodec h264  -pix_fmt yuv420p C:\Python\photools\Temp\EXP\Str_test.mp4'
-    cmd_Alp = 'ffmpeg -r 25 -i C:\Python\photools\Temp\EXP\Alp_test_%05d.png  -b:v 3000K -vcodec h264  -pix_fmt yuv420p C:\Python\photools\Temp\EXP\Alp_test.mp4'
-    os.system(cmd_Str)
-    os.system(cmd_Alp)
 
 def getAlphaBlend(ima,imb,premult):
     if ima.shape == imb.shape:
@@ -323,7 +222,33 @@ def getAlphaBlend(ima,imb,premult):
         return dst
 
     else:
-        print("Please chech about the two IMGs channels.")
+        print("Please check about the two IMGs channels.")
+
+
+def saveSeqROI(path, tga):
+    initTga(tga)
+    vs, ve, hs, he = getSeqROI(path)
+    print("Get Seq ROI of:", vs, ve, hs, he, '\n')
+
+    files = getAllFiles(path)
+    for file in files:
+        if '.png' in file:
+            straight_name = 'Str_' + os.path.basename(file)
+            aplha_Name = 'Alp_' + os.path.basename(file)
+
+            straight_path = os.path.join(tga, straight_name)
+            aplha_path = os.path.join(tga, aplha_Name)
+            im = cv2.imread(file, -1)
+            ROI_im = im[vs:ve, hs:he]
+            saveAlphaInGreen(ROI_im, aplha_path)
+            dst = getEmptyFill(ROI_im)
+            cv2.imwrite(straight_path, dst)
+            print("Finish saving %s" % os.path.basename(file))
+
+    cmd_Str = 'ffmpeg -r 25 -i C:\Python\photools\Temp\EXP\Str_test_%05d.png  -b:v 3000K -vcodec h264  -pix_fmt yuv420p C:\Python\photools\Temp\EXP\Str_test.mp4'
+    cmd_Alp = 'ffmpeg -r 25 -i C:\Python\photools\Temp\EXP\Alp_test_%05d.png  -b:v 3000K -vcodec h264  -pix_fmt yuv420p C:\Python\photools\Temp\EXP\Alp_test.mp4'
+    os.system(cmd_Str)
+    os.system(cmd_Alp)
 
 
 def main():
@@ -344,7 +269,7 @@ def main2():
     im = cv2.imread(path,-1)
     sample = 2
     im = cv2.resize(im, None, fx=(1 / sample), fy=(1 / sample), interpolation=cv2.INTER_NEAREST)
-    im = getUnmult(im)
+    im = getUnmult1(im)
     val =20
     # blurIma = cv2.blur(im, (val, val))
     blurIma = im
@@ -385,7 +310,7 @@ def main3():
     sample = 2
     blurVal =5
     im = cv2.resize(im, None, fx=(1 / sample), fy=(1 / sample), interpolation=cv2.INTER_NEAREST)
-    im = getUnmult(im)
+    im = getUnmult1(im)
     im = cv2.blur(im, (blurVal, blurVal))
     h,w,d = im.shape
     solid = getSolidColor(0,255,0,h,w,d)
