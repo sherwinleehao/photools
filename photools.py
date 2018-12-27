@@ -31,7 +31,9 @@ import numpy
 import zipfile
 import hashlib
 from pydub import AudioSegment
-
+import xmltodict
+import re
+import numpy as np
 
 ######## fill holes for AEC ########
 
@@ -282,6 +284,63 @@ def saveSeqROI(path, tga):
     cmd_Alp = 'ffmpeg -r 25 -i C:\Python\photools\Temp\EXP\Alp_test_%05d.png  -b:v 3000K -vcodec h264  -pix_fmt yuv420p C:\Python\photools\Temp\EXP\Alp_test.mp4'
     os.system(cmd_Str)
     os.system(cmd_Alp)
+
+
+def code2text(code):
+    hexmap = {"0": 0, "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "A": 10, "B": 11, "C": 12,
+              "D": 13, "E": 14, "F": 15, }
+    texts = []
+    for i in range(int(len(code) / 4)):
+        k = code[4 * i:4 * (i + 1)]
+        x = hexmap[k[3]] + hexmap[k[2]] * 16 + hexmap[k[1]] * 16 * 16 + hexmap[k[0]] * 16 * 16 * 16
+        texts.append(x)
+    return texts
+
+
+def intARGB2ARGB(val):
+    color = str(hex((val + (1 << 32)) % (1 << 32))).replace("0x", "")
+    A = int(color[0] + color[1], 16)
+    R = int(color[2] + color[3], 16)
+    G = int(color[4] + color[5], 16)
+    B = int(color[6] + color[7], 16)
+
+    return A, B, G, R
+
+
+def intARGB2intRGB(val):
+    color = str(hex((val + (1 << 32)) % (1 << 32))).replace("0x", "")
+    if len(color) == 8:
+        hexColor = color[6] + color[7] + color[4] + color[5] + color[2] + color[3]
+    if len(color) == 6:
+        hexColor = color[4] + color[5] + color[2] + color[3] + color[0] + color[1]
+    return int(hexColor, 16)
+
+
+def int2RGB(val):
+    print('Color Index:',val)
+    if val == 0:
+        return 0.0,0.0,0.0
+
+    color = str(hex(val)).replace('0x', '')
+    R = int(color[0:2], 16)
+    G = int(color[2:4], 16)
+    B = int(color[4:6], 16)
+
+    f_R = R / 255
+    f_G = G / 255
+    f_B = B / 255
+
+    return f_R, f_G, f_B
+
+
+def textcode2token(textcodeList, GUID):
+    token = []
+    header = {'@V': '1', '@Tp': '1', '@Jf': '1', '@Li': '0', '@Ri': '0', '@Fi': '0', '@Sb': '0', '@Sa': '0'}
+    token.append(header)
+    for textcode in textcodeList:
+        Tk = {'@V': '1', '@Tp': '0', '@Ch': str(textcode), '@Ft': GUID}
+        token.append(Tk)
+    return token
 
 
 ####################################
@@ -698,6 +757,21 @@ def findWaveform(filePath):
     else:
         saveWaveform(filePath, tgaPath, 512, 128)
         return tgaPath
+
+
+
+def xml2dict(xmlstr):
+    xmlparse = xmltodict.parse(xmlstr)
+    jsonData = json.dumps(xmlparse)
+    dictData = json.loads(jsonData)
+    return dictData
+
+
+def dict2xml(dict):
+    xml = xmltodict.unparse(dict, pretty=True)
+    regex = re.compile(r"></(.*?)>", re.IGNORECASE)
+    final = regex.sub('/>', xml)
+    return final
 
 
 # def findMediaInfo(filePath, cachePath):

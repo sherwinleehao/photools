@@ -62,7 +62,6 @@ def code2text(code):
     texts = []
     for i in range(int(len(code) / 4)):
         k = code[4 * i:4 * (i + 1)]
-
         x = hexmap[k[3]] + hexmap[k[2]] * 16 + hexmap[k[1]] * 16 * 16 + hexmap[k[0]] * 16 * 16 * 16
         texts.append(x)
     return texts
@@ -74,21 +73,15 @@ def intARGB2ARGB(val):
     R = int(color[2] + color[3], 16)
     G = int(color[4] + color[5], 16)
     B = int(color[6] + color[7], 16)
-    # A = int(color[0]+color[1],16)
-    # B = int(color[2]+color[3],16)
-    # G = int(color[4]+color[5],16)
-    # R = int(color[6]+color[7],16)
+
     return A, B, G, R
 
 
 def intARGB2intRGB(val):
     color = str(hex((val + (1 << 32)) % (1 << 32))).replace("0x", "")
-    # print(color)
     if len(color) == 8:
-        # hexColor = color[2]+color[3]+color[4]+color[5]+color[6]+color[7]
         hexColor = color[6] + color[7] + color[4] + color[5] + color[2] + color[3]
     if len(color) == 6:
-        # hexColor = color[0] + color[1] + color[2] + color[3] + color[4] + color[5]
         hexColor = color[4] + color[5] + color[2] + color[3] + color[0] + color[1]
     return int(hexColor, 16)
 
