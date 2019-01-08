@@ -24,7 +24,9 @@ def getCBSData():
     pass
 
 def getODSData():
-    url = r'http://ods.wondershare.cn/admin/index/index.html'
+    # url = r'http://ods.wondershare.cn/admin/index/index.html'
+    url = r'http://ods.wondershare.cn/admin/norm.norm_api/export?tmp_base_date=2019-01-01%20-%202019-01-08&tmp_compare_date=&search_arr[brand][]=1&search_arr[product][]=4622&search_arr[product][]=4895&search_arr[product][]=4623&search_arr[product][]=4896&graininess=1&group=datatime&sort=1&colum=online_notax_amt_include_refund&norm_id=101'
+    url = r'http://ods.wondershare.cn/admin/norm.norm_api/export?tmp_base_date=2019-01-01%20-%202019-01-08&tmp_compare_date=&search_arr[brand][]=1&search_arr[product][]=3235&search_arr[product][]=3302&search_arr[product][]=3289&search_arr[product][]=3288&search_arr[product][]=3292&search_arr[product][]=3374&search_arr[product][]=3291&search_arr[product][]=3290&search_arr[product][]=4086&search_arr[product][]=3236&search_arr[product][]=3375&search_arr[product][]=4087&search_arr[product][]=3303&search_arr[product][]=3294&search_arr[product][]=3296&search_arr[product][]=3295&search_arr[product][]=3297&search_arr[product][]=3293&graininess=1&group=datatime&sort=1&colum=online_notax_amt_include_refund&norm_id=101'
     headers = {
         'Accept-Encoding': 'gzip, deflate',
         'Accept-Language': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
@@ -37,8 +39,6 @@ def getODSData():
     # r = requests.get(url, headers=headers, allow_redirects=True)
     r = requests.get(url, headers=headers, allow_redirects=True)
     print(r.text)
-    print('\n')
-    print(r.headers)
 
 
     pass
